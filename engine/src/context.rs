@@ -1,14 +1,12 @@
-use wgpu::{Surface, Device, Queue, RenderPipeline};
-
-use crate::Render;
+use crate::Graphics;
 
 pub struct Context<'a> {
-    render:&'a mut Render
+    render:&'a mut Graphics
 }
 
 
 impl<'a> Context<'a> {
-    pub fn new(render:&'a mut Render) -> Self {
+    pub fn new(render:&'a mut Graphics) -> Self {
         Self {
             render
         }
@@ -23,6 +21,7 @@ impl<'a> Context<'a> {
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
+                
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
                     resolve_target: None,

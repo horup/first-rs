@@ -1,13 +1,13 @@
 use wgpu::{self, Backends, Device};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder, self}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Game, Context, Render};
+use crate::{Game, Context, Graphics};
 
 pub struct Engine<T : Game> {
     game:Option<T>,
     window:Option<winit::window::Window>,
     event_loop:Option<winit::event_loop::EventLoop<()>>,
-    render:Render
+    render:Graphics
 }
 
 impl<T : Game> Engine<T> {
@@ -98,7 +98,7 @@ impl<T : Game> Engine<T> {
             multiview: None, // 5.
         });
 
-        let render = Render {
+        let render = Graphics {
             surface,
             device,
             queue,

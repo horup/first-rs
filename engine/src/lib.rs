@@ -7,5 +7,5 @@ pub use game::*;
 mod context;
 pub use context::*;
 
-mod render;
-pub use render::*;
+mod graphics;
+pub use graphics::*;
