@@ -1,26 +1,22 @@
 use wgpu::{Surface, Device, Queue, RenderPipeline};
 
+use crate::Render;
+
 pub struct Context<'a> {
-    surface:&'a Surface,
-    device:&'a Device,
-    queue:&'a Queue,
-    render_pipeline:&'a RenderPipeline
+    render:&'a mut Render
 }
 
 
 impl<'a> Context<'a> {
-    pub fn new(surface:&'a Surface, device:&'a Device, queue:&'a Queue, render_pipeline:&'a RenderPipeline) -> Self {
+    pub fn new(render:&'a mut Render) -> Self {
         Self {
-            surface,
-            device,
-            queue,
-            render_pipeline
+            render
         }
     }
     pub fn draw(&self) {
-        let output = self.surface.get_current_texture().unwrap();
+        let output = self.render.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+        let mut encoder = self.render.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("Render Encoder"),
         });
 
@@ -43,11 +39,11 @@ impl<'a> Context<'a> {
                 depth_stencil_attachment: None,
             });
 
-            render_pass.set_pipeline(self.render_pipeline);
+            render_pass.set_pipeline(&self.render.render_pipeline);
             render_pass.draw(0..3, 0..1);
         }
 
-        self.queue.submit(std::iter::once(encoder.finish()));
+        self.render.queue.submit(std::iter::once(encoder.finish()));
         output.present();
     }
 }

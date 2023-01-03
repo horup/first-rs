@@ -1,17 +1,13 @@
 use wgpu::{self, Backends, Device};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder, self}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Game, Context};
+use crate::{Game, Context, Render};
 
 pub struct Engine<T : Game> {
     game:Option<T>,
     window:Option<winit::window::Window>,
     event_loop:Option<winit::event_loop::EventLoop<()>>,
-    surface: wgpu::Surface,
-    device: Device,
-    queue: wgpu::Queue,
-    config: wgpu::SurfaceConfiguration,
-    render_pipeline: wgpu::RenderPipeline
+    render:Render
 }
 
 impl<T : Game> Engine<T> {
@@ -102,11 +98,19 @@ impl<T : Game> Engine<T> {
             multiview: None, // 5.
         });
 
-        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), surface, queue, config, device, render_pipeline  }
+        let render = Render {
+            surface,
+            device,
+            queue,
+            config,
+            render_pipeline,
+        };
+
+        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), render  }
     }
 
-    pub fn context(&self) -> Context {
-        Context::new(&self.surface, &self.device, &self.queue, &self.render_pipeline)
+    pub fn context(&mut self) -> Context {
+        Context::new(&mut self.render)
     }
 
     pub fn tick(&mut self) {
@@ -137,9 +141,7 @@ impl<T : Game> Engine<T> {
                     ..
                 } => *control_flow = ControlFlow::Exit,
                 WindowEvent::Resized(new_size) => {
-                    self.config.width = new_size.width;
-                    self.config.height = new_size.height;
-                    self.surface.configure(&self.device, &self.config);
+                    self.render.resize(new_size);
                 },
                 _ => {
                     
