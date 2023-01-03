@@ -4,8 +4,8 @@ struct MyGame {
 }
 
 impl Game for MyGame {
-    fn update(ctx:&mut engine::Context) {
-        todo!()
+    fn update(&mut self, ctx:&mut engine::Context) {
+        ctx.draw();
     }
 }
 
