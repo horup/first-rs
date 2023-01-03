@@ -1,3 +1,7 @@
+use engine::Engine;
 fn main() {
-    println!("Hello, world!");
+    pollster::block_on(async {
+        let engine = Engine::new().await;
+        engine.run().await;
+    });
 }
