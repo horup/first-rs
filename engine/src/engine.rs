@@ -1,5 +1,5 @@
-use wgpu::{self, Backends, Device};
-use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder, self}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
+use wgpu::{self};
+use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
 use crate::{Game, Context, Graphics};
 
@@ -147,7 +147,7 @@ impl<T : Game> Engine<T> {
                     
                 }
             },
-            Event::RedrawRequested(window_id) => {
+            Event::RedrawRequested(_window_id) => {
                 self.tick();
             },
             Event::MainEventsCleared => {
