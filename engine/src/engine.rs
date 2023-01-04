@@ -2,13 +2,13 @@ use engine_sdk::Game;
 use wgpu::{self};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Context, Graphics};
+use crate::{Graphics};
 
 pub struct Engine {
-    game:Option<Box<dyn Game>>,
-    window:Option<winit::window::Window>,
-    event_loop:Option<winit::event_loop::EventLoop<()>>,
-    render:Graphics
+    pub(crate) game:Option<Box<dyn Game>>,
+    pub(crate) window:Option<winit::window::Window>,
+    pub(crate) event_loop:Option<winit::event_loop::EventLoop<()>>,
+    pub(crate) render:Graphics
 }
 
 impl Engine {
@@ -110,21 +110,16 @@ impl Engine {
         Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), render  }
     }
 
-    pub fn context(&mut self) -> Context {
-        Context::new(&mut self.render)
-    }
-
     pub fn tick(&mut self) {
         let game = self.game.take();
         if let Some(mut game) = game {
-            let mut ctx = self.context();
-            //game.update(&mut ctx);
+            game.update(self);
             self.game = Some(game);
         }
     }
 
     pub async fn run(mut self) {
-        let mut last_tick = std::time::Instant::now();
+        let last_tick = std::time::Instant::now();
         let event_loop = self.event_loop.take().unwrap();
         let window = self.window.take().unwrap();
         event_loop.run(move |event, _, control_flow| match event {

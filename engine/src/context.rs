@@ -1,16 +1,8 @@
-use crate::Graphics;
+use crate::{Engine};
+use engine_sdk::Context;
 
-pub struct Context<'a> {
-    render:&'a mut Graphics
-}
-
-impl<'a> Context<'a> {
-    pub fn new(render:&'a mut Graphics) -> Self {
-        Self {
-            render
-        }
-    }
-    pub fn draw(&self) {
+impl Context for Engine {
+    fn draw(&mut self) {
         let output = self.render.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self.render.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
