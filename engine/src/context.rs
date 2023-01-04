@@ -4,7 +4,6 @@ pub struct Context<'a> {
     render:&'a mut Graphics
 }
 
-
 impl<'a> Context<'a> {
     pub fn new(render:&'a mut Graphics) -> Self {
         Self {

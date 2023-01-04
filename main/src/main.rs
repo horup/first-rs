@@ -1,13 +1,5 @@
-use engine::{Engine, Game};
-
-struct MyGame {
-}
-
-impl Game for MyGame {
-    fn update(&mut self, ctx:&mut engine::Context) {
-        ctx.draw();
-    }
-} 
+use engine::{Engine};
+use game::MyGame;
 
 fn main() {
     pollster::block_on(async {

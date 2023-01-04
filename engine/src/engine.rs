@@ -1,7 +1,8 @@
+use engine_sdk::Game;
 use wgpu::{self};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Game, Context, Graphics};
+use crate::{Context, Graphics};
 
 pub struct Engine {
     game:Option<Box<dyn Game>>,
@@ -117,7 +118,7 @@ impl Engine {
         let game = self.game.take();
         if let Some(mut game) = game {
             let mut ctx = self.context();
-            game.update(&mut ctx);
+            //game.update(&mut ctx);
             self.game = Some(game);
         }
     }
