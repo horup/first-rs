@@ -39,7 +39,7 @@ impl<'a> Context<'a> {
             });
 
             render_pass.set_pipeline(&self.render.render_pipeline);
-            render_pass.draw(0..3, 0..1);
+            render_pass.draw(0..6, 0..2);
         }
 
         self.render.queue.submit(std::iter::once(encoder.finish()));

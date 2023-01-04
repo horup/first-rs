@@ -3,15 +3,15 @@ use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event
 
 use crate::{Game, Context, Graphics};
 
-pub struct Engine<T : Game> {
-    game:Option<T>,
+pub struct Engine {
+    game:Option<Box<dyn Game>>,
     window:Option<winit::window::Window>,
     event_loop:Option<winit::event_loop::EventLoop<()>>,
     render:Graphics
 }
 
-impl<T : Game> Engine<T> {
-    pub async fn new(game:T) -> Self {
+impl Engine {
+    pub async fn new(game:Box<dyn Game>) -> Self {
         let event_loop = EventLoop::new();
         let window = WindowBuilder::new().with_title("First-RS").build(&event_loop).unwrap();
         let size = window.inner_size();
