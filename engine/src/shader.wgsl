@@ -9,7 +9,7 @@ struct VertexOutput {
 fn vs_main(
     @builtin(vertex_index) in_vertex_index: u32,
 ) -> VertexOutput {
-    let s = 0.01;
+    let s = 1.0/256.0;
     let verts = array(
         vec2(0., 0.),
         vec2(s, s),
@@ -29,9 +29,10 @@ fn vs_main(
     if (index == 4) {v = verts[4];}
     if (index == 5) {v = verts[5];}
 
-    var xy = f32(i32(f32(in_vertex_index) / 6.0)) * s;
-    var x = v.x - s/2.0 + xy; 
-    var y = v.y - s/2.0;
+    var vx = f32(i32(f32(in_vertex_index) / 6.0) % 256) * s;
+    var vy = f32(i32(f32(in_vertex_index) / 6.0) / 256) * s;
+    var x = v.x - s/2.0 + vx; 
+    var y = v.y - s/2.0 + vy;
 
     var out: VertexOutput;
     let index = i32(in_vertex_index) % 3;

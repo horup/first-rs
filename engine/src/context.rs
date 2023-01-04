@@ -38,7 +38,7 @@ impl<'a> Context<'a> {
             });
 
             render_pass.set_pipeline(&self.render.render_pipeline);
-            let size = 1024*1024;
+            let size = 256*256;
             render_pass.draw(0..(size*6), 0..1);
         }
 
