@@ -1,11 +1,17 @@
 use engine_sdk::Game;
 
-pub struct MyGame {
+#[derive(Default)]
+pub struct State {
+    
+}
 
+#[derive(Default)]
+pub struct MyGame {
+    pub first_run:Option<State>
 }
 
 impl Game for MyGame {
-    fn update(&mut self, ctx:&mut dyn engine_sdk::Context) {
+    fn update(&mut self, ctx:&mut dyn engine_sdk::Engine) {
         ctx.draw();
     }
 } 

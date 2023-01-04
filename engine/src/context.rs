@@ -1,7 +1,7 @@
 use crate::{Engine};
-use engine_sdk::Context;
+use engine_sdk;
 
-impl Context for Engine {
+impl engine_sdk::Engine for Engine {
     fn draw(&mut self) {
         let output = self.render.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());

@@ -1,3 +1,3 @@
-pub trait Context {
+pub trait Engine {
     fn draw(&mut self);
 }
