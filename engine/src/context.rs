@@ -21,7 +21,6 @@ impl<'a> Context<'a> {
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
-                
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
                     resolve_target: None,
@@ -39,7 +38,8 @@ impl<'a> Context<'a> {
             });
 
             render_pass.set_pipeline(&self.render.render_pipeline);
-            render_pass.draw(0..6, 0..2);
+            let size = 1024*1024;
+            render_pass.draw(0..(size*6), 0..1);
         }
 
         self.render.queue.submit(std::iter::once(encoder.finish()));

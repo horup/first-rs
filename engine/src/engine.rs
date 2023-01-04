@@ -30,12 +30,12 @@ impl Engine {
                 features: wgpu::Features::empty(),
                 // WebGL doesn't support all of wgpu's features, so if
                 // we're building for the web we'll have to disable some.
-              /*  limits: if cfg!(target_arch = "wasm32") {
+                limits: if cfg!(target_arch = "wasm32") {
                     wgpu::Limits::downlevel_webgl2_defaults()
                 } else {
                     wgpu::Limits::default()
-                },*/
-                limits: wgpu::Limits::downlevel_webgl2_defaults(),
+                },
+               // limits: wgpu::Limits::downlevel_webgl2_defaults(),
                 label: None,
             },
             None, // Trace path
@@ -123,6 +123,7 @@ impl Engine {
     }
 
     pub async fn run(mut self) {
+        let mut last_tick = std::time::Instant::now();
         let event_loop = self.event_loop.take().unwrap();
         let window = self.window.take().unwrap();
         event_loop.run(move |event, _, control_flow| match event {
@@ -148,7 +149,10 @@ impl Engine {
                 }
             },
             Event::RedrawRequested(_window_id) => {
+                let last_tick = std::time::Instant::now();
                 self.tick();
+                let took = std::time::Instant::now() - last_tick;
+                dbg!(took);
             },
             Event::MainEventsCleared => {
                 window.request_redraw();
