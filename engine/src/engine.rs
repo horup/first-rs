@@ -1,8 +1,11 @@
+
+use std::collections::HashMap;
+
 use engine_sdk::Game;
-use wgpu::{self};
+use wgpu::{self, BufferDescriptor};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Graphics, Diagnostics};
+use crate::{Graphics, Diagnostics, Model};
 
 pub struct Engine {
     pub(crate) game:Option<Box<dyn Game>>,
@@ -100,12 +103,24 @@ impl Engine {
             multiview: None, // 5.
         });
 
+        let max_vertices = 1024*1024*16;
+        /*let vertex_buffer = device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("Vertex Buffer"),
+                contents: &[0;max_vertices],//bytemuck::cast_slice(VERTICES),
+                usage: wgpu::BufferUsages::VERTEX,
+            }
+        );*/
+
+       
+
         let render = Graphics {
             surface,
             device,
             queue,
             config,
             render_pipeline,
+            models:HashMap::default()
         };
 
         Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), graphics: render, diagnostics:Default::default()  }
@@ -120,10 +135,19 @@ impl Engine {
         self.diagnostics.measure_frame_time();
     }
 
+    pub fn init(&mut self) {
+        let game = self.game.take();
+        if let Some(mut game) = game {
+            game.init(self);
+            self.game = Some(game);
+        }
+    }
+
     pub async fn run(mut self) {
-        let last_tick = std::time::Instant::now();
         let event_loop = self.event_loop.take().unwrap();
         let window = self.window.take().unwrap();
+        self.init();
+        
         event_loop.run(move |event, _, control_flow| match event {
             Event::WindowEvent {
                 ref event,
@@ -147,7 +171,6 @@ impl Engine {
                 }
             },
             Event::RedrawRequested(_window_id) => {
-                let last_tick = std::time::Instant::now();
                 self.tick();
             },
             Event::MainEventsCleared => {
@@ -160,6 +183,8 @@ impl Engine {
 
 impl engine_sdk::Engine for Engine {
     fn define_texture(&mut self, id:u32, texture:String) {
+        self.graphics.models.insert(id, Model::new(&self.graphics.device));
+        dbg!(self.graphics.models.len());
     }
 
     fn draw_scene(&mut self, camera:&engine_sdk::Camera, scene:&engine_sdk::Scene) {

@@ -1,12 +1,17 @@
+use std::collections::HashMap;
+
 use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture};
 use winit::dpi::PhysicalSize;
+
+use crate::Model;
 
 pub struct Graphics {
     pub surface: wgpu::Surface,
     pub device: Device,
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
-    pub render_pipeline: wgpu::RenderPipeline
+    pub render_pipeline: wgpu::RenderPipeline,
+    pub models: HashMap<u32, Model>
 }
 
 impl Graphics {

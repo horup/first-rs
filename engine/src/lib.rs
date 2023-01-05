@@ -6,3 +6,9 @@ pub use graphics::*;
 
 mod diagnostics;
 pub use diagnostics::*;
+
+mod vertex;
+pub use vertex::*;
+
+mod model;
+pub use model::*;
