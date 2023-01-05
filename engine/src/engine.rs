@@ -2,13 +2,14 @@ use engine_sdk::Game;
 use wgpu::{self};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Graphics};
+use crate::{Graphics, Diagnostics};
 
 pub struct Engine {
     pub(crate) game:Option<Box<dyn Game>>,
     pub(crate) window:Option<winit::window::Window>,
     pub(crate) event_loop:Option<winit::event_loop::EventLoop<()>>,
-    pub(crate) render:Graphics
+    pub(crate) graphics:Graphics,
+    pub diagnostics:Diagnostics
 }
 
 impl Engine {
@@ -107,7 +108,7 @@ impl Engine {
             render_pipeline,
         };
 
-        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), render  }
+        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), graphics: render, diagnostics:Default::default()  }
     }
 
     pub fn tick(&mut self) {
@@ -116,6 +117,7 @@ impl Engine {
             game.update(self);
             self.game = Some(game);
         }
+        self.diagnostics.measure_frame_time();
     }
 
     pub async fn run(mut self) {
@@ -138,7 +140,7 @@ impl Engine {
                     ..
                 } => *control_flow = ControlFlow::Exit,
                 WindowEvent::Resized(new_size) => {
-                    self.render.resize(new_size);
+                    self.graphics.resize(new_size);
                 },
                 _ => {
                     
@@ -161,13 +163,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_scene(&mut self, camera:&engine_sdk::Camera, scene:&engine_sdk::Scene) {
-        // 
-
-        let output = self.render.surface.get_current_texture().unwrap();
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self.render.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let (output, view, mut encoder) = self.graphics.begin();
 
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -188,12 +184,16 @@ impl engine_sdk::Engine for Engine {
                 depth_stencil_attachment: None,
             });
 
-            render_pass.set_pipeline(&self.render.render_pipeline);
+            render_pass.set_pipeline(&self.graphics.render_pipeline);
             let size = 256*256;
             render_pass.draw(0..(size*6), 0..1);
         }
 
-        self.render.queue.submit(std::iter::once(encoder.finish()));
+        self.graphics.queue.submit(std::iter::once(encoder.finish()));
         output.present();
+    }
+
+    fn frame_time(&self) -> std::time::Duration {
+        self.diagnostics.frame_time
     }
 }

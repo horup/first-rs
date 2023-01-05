@@ -4,7 +4,8 @@ const TEST_SPRITE:u32 = 0;
 
 #[derive(Default)]
 pub struct MyGame {
-    pub scene:Scene
+    pub scene:Scene,
+    pub iterations:u64
 }
 
 impl MyGame {
@@ -32,6 +33,12 @@ impl Game for MyGame {
 
         let camera = Camera::default();
         engine.draw_scene(&camera, &self.scene);
+
+        self.iterations += 1;
+
+        if self.iterations % 60 == 0 {
+            dbg!(engine.frame_time());
+        }
     }
 
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
