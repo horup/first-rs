@@ -157,7 +157,12 @@ impl Engine {
 }
 
 impl engine_sdk::Engine for Engine {
-    fn draw(&mut self) {
+    fn define_texture(&mut self, id:u32, texture:String) {
+    }
+
+    fn draw_scene(&mut self, camera:&engine_sdk::Camera, scene:&engine_sdk::Scene) {
+        // 
+
         let output = self.render.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
         let mut encoder = self.render.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -190,8 +195,5 @@ impl engine_sdk::Engine for Engine {
 
         self.render.queue.submit(std::iter::once(encoder.finish()));
         output.present();
-    }
-
-    fn define_texture(&mut self, id:u32, texture:String) {
     }
 }

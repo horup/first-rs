@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, Sprite, glam::Vec2, Engine};
+use engine_sdk::{Game, Scene, Sprite, glam::Vec2, Engine, Camera};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -30,7 +30,8 @@ impl Game for MyGame {
             self.start(engine);
         }
 
-        engine.draw();
+        let camera = Camera::default();
+        engine.draw_scene(&camera, &self.scene);
     }
 
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
