@@ -10,7 +10,7 @@ pub struct MyGame {
 
 impl MyGame {
     pub fn start(&mut self, engine:&mut dyn Engine) {
-        let size = 10;
+        let size = 256;
             for y in 0..size {
                 for x in 0..size {
                     let sprite = Sprite {
