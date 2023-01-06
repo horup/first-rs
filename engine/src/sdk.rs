@@ -11,40 +11,37 @@ impl engine_sdk::Engine for Engine {
         let tex = 0;
         if let Some(model) = self.models.get_mut(&tex) {
             //let mut vertices = Vec::with_capacity(scene.sprites.len() * 6);
-            if model.vertices.len() == 0 {
-                model.vertices.clear();
-                for sprite in scene.sprites.iter() {
-                    if sprite.tex == tex {
-                        let s = sprite.size / 2.0;
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(-s, s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(s, -s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                        model.vertices.push(Vertex {
-                            position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
-                            color: [1.0, 1.0, 1.0, 1.0],
-                        });
-                    }
+            model.vertices.clear();
+            for sprite in scene.sprites.iter() {
+                if sprite.tex == tex {
+                    let s = sprite.size / 2.0;
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(-s, s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(s, -s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
+                    model.vertices.push(Vertex {
+                        position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
+                        color: [1.0, 1.0, 1.0, 1.0],
+                    });
                 }
             }
             model.write(&self.graphics);
-
             model.draw(&self.graphics);
         }
     }
