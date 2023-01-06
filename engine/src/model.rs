@@ -3,8 +3,8 @@ use wgpu::{self, TextureView, RenderPipeline, RenderPass};
 use crate::{Vertex, Graphics};
 
 pub struct Model {
-    pub vertex_buffer:wgpu::Buffer,
-    pub num_vertices:u64
+    vertex_buffer:wgpu::Buffer,
+    pub vertices:Vec<Vertex>,
 }
 
 impl Model {
@@ -13,7 +13,7 @@ impl Model {
 
         Model {
             vertex_buffer,
-            num_vertices:0
+            vertices:Vec::new()
         }
     }
 
@@ -26,20 +26,17 @@ impl Model {
         })
     }
 
-
-    pub fn set_vertices(&mut self, device:&wgpu::Device, queue:&wgpu::Queue, vertices:&[Vertex]) {
-        let size = vertices.len() as wgpu::BufferAddress * Vertex::size();
+    pub fn write(&mut self, graphics:&Graphics) {
+        let size = self.vertices.len() as wgpu::BufferAddress * Vertex::size();
         if self.vertex_buffer.size() < size {
-            self.vertex_buffer = Self::create_vertex_buffer(device, size);
+            self.vertex_buffer = Self::create_vertex_buffer(&graphics.device, size);
         }
 
-        queue.write_buffer(&self.vertex_buffer, 0, bytemuck::cast_slice(vertices));
-
-        self.num_vertices = vertices.len() as u64;
+        graphics.queue.write_buffer(&self.vertex_buffer, 0, bytemuck::cast_slice(&self.vertices));
     }
 
     pub fn draw<'a>(&'a self, graphics:&Graphics) {
-        if self.num_vertices == 0 {
+        if self.vertex_buffer.size() == 0 || self.vertices.len() == 0 {
             return;
         }
 
@@ -68,7 +65,7 @@ impl Model {
             });
             render_pass.set_pipeline(&graphics.render_pipeline);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.draw(0..self.num_vertices as u32, 0..1);
+            render_pass.draw(0..self.vertices.len() as u32, 0..1);
         }
 
         graphics.queue.submit(std::iter::once(encoder.finish()));

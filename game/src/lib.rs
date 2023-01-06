@@ -10,11 +10,13 @@ pub struct MyGame {
 
 impl MyGame {
     pub fn start(&mut self, engine:&mut dyn Engine) {
-        let size = 256;
+        let size = 1024;
             for y in 0..size {
                 for x in 0..size {
+                    let s = 1.0 / size as f32;
                     let sprite = Sprite {
-                        pos:Vec2::new(x as f32,  y as f32).extend(0.0),
+                        pos:Vec2::new(x as f32 * s,  y as f32 * s).extend(0.0),
+                        size:s * 0.8,
                         tex:TEST_SPRITE
                     };
                     self.scene.sprites.push(sprite);
