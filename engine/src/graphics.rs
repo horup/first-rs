@@ -1,11 +1,10 @@
 use std::collections::HashMap;
-
 use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture};
 use winit::{dpi::PhysicalSize, window::Window};
-
 use crate::{Model, Vertex};
 
 pub struct Graphics {
+    pub egui_renderer:egui_wgpu::Renderer,
     pub surface: wgpu::Surface,
     pub device: Device,
     pub queue: wgpu::Queue,
@@ -14,7 +13,7 @@ pub struct Graphics {
 }
 
 impl Graphics {
-    pub async fn  new(window:&Window) -> Self {
+    pub async fn new<'a>(window:&'a Window) -> Self {
         let size = window.inner_size();
         let instance = wgpu::Instance::new(wgpu::Backends::all());
         let surface = unsafe { instance.create_surface(&window) };
@@ -94,28 +93,10 @@ impl Graphics {
             multiview: None, // 5.
         });
 
-        let max_vertices = 1024*1024*16;
-        /*let vertex_buffer = device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: Some("Vertex Buffer"),
-                contents: &[0;max_vertices],//bytemuck::cast_slice(VERTICES),
-                usage: wgpu::BufferUsages::VERTEX,
-            }
-        );*/
-
-       
-
-        /*let render = Graphics {
-            surface,
-            device,
-            queue,
-            config,
-            render_pipeline,
-            models:HashMap::default()
-        };*/
-
+        let egui_renderer = egui_wgpu::Renderer::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb, None, 1);
 
         Self {
+            egui_renderer,
             surface,
             device,
             queue,
