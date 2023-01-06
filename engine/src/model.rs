@@ -24,6 +24,7 @@ impl Model {
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         })
+
     }
 
     pub fn write(&mut self, graphics:&Graphics) {
@@ -32,7 +33,8 @@ impl Model {
             self.vertex_buffer = Self::create_vertex_buffer(&graphics.device, size);
         }
 
-        graphics.queue.write_buffer(&self.vertex_buffer, 0, bytemuck::cast_slice(&self.vertices));
+        let slice:&[u8] = bytemuck::cast_slice(&self.vertices);
+        graphics.queue.write_buffer(&self.vertex_buffer, 0, slice);
     }
 
     pub fn draw<'a>(&'a self, graphics:&Graphics) {
