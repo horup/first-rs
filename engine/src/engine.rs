@@ -5,7 +5,7 @@ use engine_sdk::Game;
 use wgpu::{self, BufferDescriptor};
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Graphics, Diagnostics, Model};
+use crate::{Graphics, Diagnostics, Model, Canvas};
 
 pub struct Engine {
     pub(crate) game:Option<Box<dyn Game>>,
@@ -13,6 +13,7 @@ pub struct Engine {
     pub(crate) event_loop:Option<winit::event_loop::EventLoop<()>>,
     pub(crate) graphics:Graphics,
     pub(crate) models: HashMap<u32, Model>,
+    pub(crate) canvas: Canvas,
     pub diagnostics:Diagnostics
 }
 
@@ -21,8 +22,9 @@ impl Engine {
         let event_loop = EventLoop::new();
         let window = WindowBuilder::new().with_title("First-RS").build(&event_loop).unwrap();
         let graphics = Graphics::new(&window).await;
+        let canvas = Canvas::new(&graphics);
 
-        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), graphics, diagnostics:Default::default(), models:HashMap::default() }
+        Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), graphics, diagnostics:Default::default(), models:HashMap::default(), canvas }
     }
 
     pub fn tick(&mut self) {
@@ -31,10 +33,13 @@ impl Engine {
             game.update(self);
             self.game = Some(game);
         }
+
+        self.canvas.draw(&self.graphics);
         self.diagnostics.measure_frame_time();
     }
 
     pub fn init(&mut self) {
+        self.canvas.clear();
         let game = self.game.take();
         if let Some(mut game) = game {
             game.init(self);

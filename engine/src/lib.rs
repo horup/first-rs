@@ -15,3 +15,6 @@ pub use model::*;
 
 mod sdk;
 pub use sdk::*;
+
+mod canvas;
+pub use canvas::*;

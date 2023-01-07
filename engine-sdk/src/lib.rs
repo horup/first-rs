@@ -13,4 +13,7 @@ pub use sprite::*;
 mod camera;
 pub use camera::*;
 
+mod color;
+pub use color::*;
+
 pub use glam;

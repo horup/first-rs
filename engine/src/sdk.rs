@@ -49,4 +49,8 @@ impl engine_sdk::Engine for Engine {
     fn frame_time(&self) -> std::time::Duration {
         self.diagnostics.frame_time
     }
+
+    fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32) {
+        self.canvas.draw_rect(px, py, w, h, wgpu::Color::BLACK);
+    }
 }
