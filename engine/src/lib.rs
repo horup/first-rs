@@ -18,3 +18,6 @@ pub use sdk::*;
 
 mod canvas;
 pub use canvas::*;
+
+mod camerauniform;
+pub use camerauniform::*;

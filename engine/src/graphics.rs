@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture};
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt};
 use winit::{dpi::PhysicalSize, window::Window};
-use crate::{Model, Vertex};
+use crate::{Model, Vertex, CameraUniform};
 
 pub struct Graphics {
     pub egui_renderer:egui_wgpu::Renderer,
@@ -10,6 +9,7 @@ pub struct Graphics {
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
     pub render_pipeline: wgpu::RenderPipeline,
+    pub camera_uniform:CameraUniform
 }
 
 impl Graphics {
@@ -55,6 +55,46 @@ impl Graphics {
             push_constant_ranges: &[],
         });
 
+
+
+        let mut camera_uniform = CameraUniform::new();
+        
+        let camera_buffer = device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("Camera Buffer"),
+                contents: bytemuck::cast_slice(&[camera_uniform]),
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            }
+        );
+        
+        let camera_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }
+            ],
+            label: Some("camera_bind_group_layout"),
+        });
+ 
+        
+        let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &camera_bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: camera_buffer.as_entire_binding(),
+                }
+            ],
+            label: Some("camera_bind_group"),
+        });
+
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
             layout: Some(&render_pipeline_layout),
@@ -93,9 +133,14 @@ impl Graphics {
             multiview: None, // 5.
         });
 
+
+
+
+
         let egui_renderer = egui_wgpu::Renderer::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb, None, 1);
 
         Self {
+            camera_uniform,
             egui_renderer,
             surface,
             device,
