@@ -35,7 +35,8 @@ impl Game for MyGame {
 
         let camera = Camera::default();
         //engine.draw_scene(&camera, &self.scene);
-        engine.draw_rect(0.0, 0.0, 1.0, 1.0);
+        engine.draw_rect(0.0, 0.0, 0.5, 0.12, engine_sdk::Color::WHITE);
+        engine.draw_rect(-0.3, -0.3, 0.2, 0.2, [1.0, 0.0, 0.0, 1.0].into());
 
         self.iterations += 1;
 

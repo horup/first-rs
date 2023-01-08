@@ -17,9 +17,8 @@ impl Canvas {
         self.model.vertices.clear();
     }
 
-    pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: Color) {
+    pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: [f32;4]) {
         let model = &mut self.model;
-        let color = [1.0, 0.0, 0.0, 1.0];//[color.r as f32, color.g as f32, color.b as f32, color.a as f32];
         let px2 = px + w;
         let py2 = px + h;
         
