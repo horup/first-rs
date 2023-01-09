@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, Sprite, glam::Vec2, Engine, Camera};
+use engine_sdk::{Game, Scene, Sprite, glam::Vec2, Engine, Camera, DrawLineParams};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -40,6 +40,11 @@ impl Game for MyGame {
 
         engine.draw_rect(25.0, 25.0, 100.0, 100.0, engine_sdk::Color::WHITE);
         engine.draw_rect(120.0, 120.0, 100.0, 100.0, engine_sdk::Color::RED);
+
+        engine.draw_line(DrawLineParams {
+            begin:Vec2::new(0.0, 0.0),
+            end:Vec2::new(100.0, 100.0)
+        });
 
         self.iterations += 1;
 
