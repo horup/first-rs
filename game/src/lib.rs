@@ -45,7 +45,8 @@ impl Game for MyGame {
 
         //engine.draw_rect(0.0, 0.0, 10.0, 10.0, Color::WHITE);
 
-        let s = 8;
+        
+        let s = 1024;
         let mut center = engine.screen_size() / 2.0;
         center.y = -center.y;
         for i in 0..s {
@@ -59,6 +60,7 @@ impl Game for MyGame {
                 line_width:2.0
             });
         }
+
        
 
         self.iterations += 1;
