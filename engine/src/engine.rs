@@ -28,6 +28,7 @@ impl Engine {
     }
 
     pub fn update(&mut self) {
+        self.canvas.clear();
         let game = self.game.take();
         if let Some(mut game) = game {
             game.update(self);

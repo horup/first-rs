@@ -13,6 +13,7 @@ impl engine_sdk::Engine for Engine {
         if let Some(model) = self.models.get_mut(&tex) {
             //let mut vertices = Vec::with_capacity(scene.sprites.len() * 6);
             model.vertices.clear();
+            model.indicies.clear();
             for sprite in scene.sprites.iter() {
                 if sprite.tex == tex {
                     let s = sprite.size / 2.0;

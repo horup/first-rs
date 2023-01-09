@@ -15,6 +15,7 @@ impl Canvas {
 
     pub fn clear(&mut self) {
         self.model.vertices.clear();
+        self.model.indicies.clear();
     }
 
     pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: [f32;4]) {
@@ -26,26 +27,32 @@ impl Canvas {
             position: [px, py, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px2, py2, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px, py2, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px, py, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px2, py, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px2, py2, 0.0],
             color
         });
+        model.indicies.push(model.indicies.len() as u32);
     }
 
     pub fn draw(&mut self, graphics:&Graphics) {
