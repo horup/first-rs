@@ -1,6 +1,6 @@
 use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup};
 use winit::{dpi::PhysicalSize, window::Window};
-use crate::{Model, Vertex, CameraUniform};
+use crate::{Vertex, CameraUniform};
 
 pub struct Graphics {
     pub surface: wgpu::Surface,

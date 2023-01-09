@@ -9,7 +9,7 @@ pub struct MyGame {
 }
 
 impl MyGame {
-    pub fn start(&mut self, engine:&mut dyn Engine) {
+    pub fn start(&mut self, _engine:&mut dyn Engine) {
         let size = 16;
             for y in 0..size {
                 for x in 0..size {
@@ -33,7 +33,7 @@ impl Game for MyGame {
             self.start(engine);
         }
 
-        let camera = Camera::default();
+        let _camera = Camera::default();
         //engine.draw_scene(&camera, &self.scene);
         //engine.draw_rect(0.0, 0.0, 0.5, 0.12, engine_sdk::Color::WHITE);
         //engine.draw_rect(-0.3, -0.3, 0.2, 0.2, [1.0, 0.0, 0.0, 1.0].into());

@@ -1,4 +1,4 @@
-use wgpu::{self, TextureView, RenderPipeline, RenderPass};
+use wgpu::{self};
 
 use crate::{Vertex, Graphics};
 

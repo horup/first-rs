@@ -2,12 +2,12 @@ use crate::{Engine, Model, Vertex};
 use engine_sdk::{self, glam::{Vec3, Vec2}};
 
 impl engine_sdk::Engine for Engine {
-    fn define_texture(&mut self, id: u32, texture: String) {
+    fn define_texture(&mut self, id: u32, _texture: String) {
         self.models.insert(id, Model::new(&self.graphics.device));
         dbg!(self.models.len());
     }
 
-    fn draw_scene(&mut self, camera: &engine_sdk::Camera, scene: &engine_sdk::Scene) {
+    fn draw_scene(&mut self, _camera: &engine_sdk::Camera, scene: &engine_sdk::Scene) {
         let tex = 0;
         if let Some(model) = self.models.get_mut(&tex) {
             //let mut vertices = Vec::with_capacity(scene.sprites.len() * 6);

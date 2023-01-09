@@ -1,5 +1,5 @@
-use wgpu;
-use engine_sdk::glam::{self, Mat4};
+
+use engine_sdk::glam::{Mat4};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct CameraUniform {
@@ -7,7 +7,7 @@ pub struct CameraUniform {
 }
 
 impl CameraUniform {
-    pub fn new_orth_screen(mut width:f32, mut height:f32) -> Self {
+    pub fn new_orth_screen(width:f32, height:f32) -> Self {
         //let aspect = height / width;
         //height = aspect * width;
         let matrix = Mat4::orthographic_rh(0.0, width, -height, 0.0, 0.0, -1000.0);

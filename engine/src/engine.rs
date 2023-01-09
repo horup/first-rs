@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use engine_sdk::Game;
-use wgpu::{self, BufferDescriptor};
+
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
 use crate::{Graphics, Diagnostics, Model, Canvas};
