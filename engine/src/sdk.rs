@@ -60,40 +60,9 @@ impl engine_sdk::Engine for Engine {
         Vec2::new(self.graphics.screen_size.width as f32, self.graphics.screen_size.height as f32)
     }
 
-    fn draw_line(&mut self, params:engine_sdk::DrawLineParams) {
-        let tolerance = 0.02;
-        let mut builder = Path::builder();
-        builder.begin(point(params.begin.x, params.begin.y));
-        builder.line_to(point(params.end.x, params.end.y));
-        builder.end(true);
-        let line = builder.build();
+    fn draw_line(&mut self, mut params:engine_sdk::DrawLineParams) {
+        self.canvas.draw_line(params.begin, params.end, [1.0, 1.0, 1.0, 1.0], params.line_width);
 
-        let mut stroke_tess = StrokeTessellator::new();
-
-        let mut geometry: VertexBuffers<Vertex, u16> = VertexBuffers::new();
-        stroke_tess
-        .tessellate_path(
-            &line,
-            &StrokeOptions::tolerance(tolerance),
-            &mut BuffersBuilder::new(&mut geometry, VertexConstructor),
-        )
-        .unwrap();
-
-
-        // https://github.com/nical/lyon/blob/0367e5a6cf1b8658a29041215c3903d865863d41/examples/wgpu/src/main.rs#L723
-
-       // let stroke_range = fill_range.end..(geometry.indices.len() as u32);
     }
 }
 
-
-pub struct VertexConstructor;
-
-impl StrokeVertexConstructor<Vertex> for VertexConstructor {
-    fn new_vertex(&mut self, vertex: lyon::lyon_tessellation::StrokeVertex) -> Vertex {
-        Vertex {
-            position: [vertex.position().x, vertex.position().y, 0.0],
-            color: [1.0, 0.0, 0.0, 1.0],
-        }
-    }
-}

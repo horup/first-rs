@@ -95,7 +95,7 @@ impl Model {
             render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.draw(0..self.vertices.len() as u32, 0..1);
+            render_pass.draw_indexed(0..self.indicies.len() as u32, 0, 0..1);
         }
 
         graphics.queue.submit(std::iter::once(encoder.finish()));

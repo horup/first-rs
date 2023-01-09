@@ -7,7 +7,8 @@ use crate::{Camera, Scene, Color};
 #[derive(Clone, Copy, Debug, Default)]
 pub struct DrawLineParams {
     pub begin:Vec2,
-    pub end:Vec2
+    pub end:Vec2,
+    pub line_width:f32
 }
 
 pub trait Engine {
