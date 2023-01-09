@@ -1,20 +1,22 @@
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt};
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Model, Vertex, CameraUniform};
 
 pub struct Graphics {
-    pub egui_renderer:egui_wgpu::Renderer,
     pub surface: wgpu::Surface,
     pub device: Device,
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub camera_uniform:CameraUniform
+    pub camera_uniform:CameraUniform,
+    pub camera_buffer:Buffer,
+    pub camera_bind_group:BindGroup,
+    pub screen_size:PhysicalSize<u32>
 }
 
 impl Graphics {
     pub async fn new<'a>(window:&'a Window) -> Self {
-        let size = window.inner_size();
+        let screen_size = window.inner_size();
         let instance = wgpu::Instance::new(wgpu::Backends::all());
         let surface = unsafe { instance.create_surface(&window) };
         let adapter = instance.request_adapter(
@@ -40,24 +42,18 @@ impl Graphics {
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: surface.get_supported_formats(&adapter)[0],
-            width: size.width,
-            height: size.height,
+            width: screen_size.width,
+            height: screen_size.height,
             present_mode: wgpu::PresentMode::Fifo,
             alpha_mode: wgpu::CompositeAlphaMode::Auto,
         };
         surface.configure(&device, &config);
 
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
-        let render_pipeline_layout =
-        device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[],
-            push_constant_ranges: &[],
-        });
+       
 
 
 
-        let mut camera_uniform = CameraUniform::new();
+        let camera_uniform = CameraUniform::new_orth_screen(screen_size.width as f32, screen_size.height as f32);
         
         let camera_buffer = device.create_buffer_init(
             &wgpu::util::BufferInitDescriptor {
@@ -82,7 +78,6 @@ impl Graphics {
             ],
             label: Some("camera_bind_group_layout"),
         });
- 
         
         let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &camera_bind_group_layout,
@@ -93,6 +88,14 @@ impl Graphics {
                 }
             ],
             label: Some("camera_bind_group"),
+        });
+
+        let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
+        let render_pipeline_layout =
+        device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("Render Pipeline Layout"),
+            bind_group_layouts: &[&camera_bind_group_layout],
+            push_constant_ranges: &[],
         });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -134,23 +137,21 @@ impl Graphics {
         });
 
 
-
-
-
-        let egui_renderer = egui_wgpu::Renderer::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb, None, 1);
-
         Self {
             camera_uniform,
-            egui_renderer,
             surface,
             device,
             queue,
             config,
             render_pipeline,
+            camera_buffer,
+            camera_bind_group,
+            screen_size
         }
 
     }
-    pub fn resize(&mut self, new_size:&PhysicalSize<u32>) {
+    pub fn resize(&mut self, new_size:PhysicalSize<u32>) {
+        self.screen_size = new_size;
         self.config.width = new_size.width;
         self.config.height = new_size.height;
         self.surface.configure(&self.device, &self.config);

@@ -1,5 +1,5 @@
 use crate::{Engine, Model, Vertex};
-use engine_sdk::{self, glam::Vec3};
+use engine_sdk::{self, glam::{Vec3, Vec2}};
 
 impl engine_sdk::Engine for Engine {
     fn define_texture(&mut self, id: u32, texture: String) {
@@ -51,6 +51,10 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color:engine_sdk::Color) {
-        self.canvas.draw_rect(px, py, w, h, color.into());
+        self.canvas.draw_rect(px, -py-h, w, h, color.into());
+    }
+
+    fn screen_size(&self) -> engine_sdk::glam::Vec2 {
+        Vec2::new(self.graphics.screen_size.width as f32, self.graphics.screen_size.height as f32)
     }
 }

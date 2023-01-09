@@ -66,6 +66,7 @@ impl Model {
                 depth_stencil_attachment: None,
             });
             render_pass.set_pipeline(&graphics.render_pipeline);
+            render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.draw(0..self.vertices.len() as u32, 0..1);
         }

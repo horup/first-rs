@@ -20,7 +20,7 @@ impl Canvas {
     pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: [f32;4]) {
         let model = &mut self.model;
         let px2 = px + w;
-        let py2 = px + h;
+        let py2 = py + h;
         
         model.vertices.push(Vertex {
             position: [px, py, 0.0],

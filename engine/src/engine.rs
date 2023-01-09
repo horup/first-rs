@@ -68,7 +68,7 @@ impl Engine {
                     ..
                 } => *control_flow = ControlFlow::Exit,
                 WindowEvent::Resized(new_size) => {
-                    self.graphics.resize(new_size);
+                    self.graphics.resize(*new_size);
                 },
                 _ => {
                     
