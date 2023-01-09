@@ -27,13 +27,14 @@ impl Engine {
         Engine { window:Some(window), event_loop:Some(event_loop), game:Some(game), graphics, diagnostics:Default::default(), models:HashMap::default(), canvas }
     }
 
-    pub fn tick(&mut self) {
+    pub fn update(&mut self) {
         let game = self.game.take();
         if let Some(mut game) = game {
             game.update(self);
             self.game = Some(game);
         }
 
+        self.graphics.update();
         self.canvas.draw(&self.graphics);
         self.diagnostics.measure_frame_time();
     }
@@ -75,7 +76,7 @@ impl Engine {
                 }
             },
             Event::RedrawRequested(_window_id) => {
-                self.tick();
+                self.update();
             },
             Event::MainEventsCleared => {
                 window.request_redraw();

@@ -49,10 +49,6 @@ impl Graphics {
         };
         surface.configure(&device, &config);
 
-       
-
-
-
         let camera_uniform = CameraUniform::new_orth_screen(screen_size.width as f32, screen_size.height as f32);
         
         let camera_buffer = device.create_buffer_init(
@@ -170,5 +166,15 @@ impl Graphics {
     pub fn end(&self, output:SurfaceTexture, encoder:CommandEncoder) {
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
+    }
+
+    pub fn update_camera(&mut self) {
+        let camera_uniform = CameraUniform::new_orth_screen(self.screen_size.width as f32, self.screen_size.height as f32);
+        
+        self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));
+    }
+
+    pub fn update(&mut self) {
+        self.update_camera();
     }
 }
