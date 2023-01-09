@@ -170,7 +170,6 @@ impl Graphics {
 
     pub fn update_camera(&mut self) {
         let camera_uniform = CameraUniform::new_orth_screen(self.screen_size.width as f32, self.screen_size.height as f32);
-        
         self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));
     }
 
