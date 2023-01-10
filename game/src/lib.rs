@@ -35,7 +35,7 @@ impl Game for MyGame {
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
-        if self.scene.sprites.len() == 0 {
+        if self.scene.sprites.is_empty() {
             self.start(engine);
         }
 
