@@ -13,3 +13,4 @@ wgpu = "0.14.2"
 engine-sdk = { path = "../engine-sdk" }
 bytemuck = {version = "1.12.3", features = ["derive"]}
 lyon = "1.0.1"
+wgpu_glyph = "0.18.0"
