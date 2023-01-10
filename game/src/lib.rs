@@ -64,7 +64,7 @@ impl Game for MyGame {
                 line_width:2.0
             });
         }
-/*
+
         engine.draw_text(DrawTextParams {
             screen_pos: vec2(30.0, 30.0),
             text: "Hello world!".into(),
@@ -77,7 +77,7 @@ impl Game for MyGame {
             text: "Søren rules alot!".into(),
             scale: 16.0,
             color: Color::BLUE,
-        });*/
+        });
 
        /* engine.draw_text(DrawTextParams {
             screen_pos: vec2(30.0, 30.0),

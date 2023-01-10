@@ -25,7 +25,7 @@ impl Canvas {
         }
     }
 
-    pub fn begin(&mut self) {
+    pub fn prepare(&mut self) {
         self.model.vertices.clear();
         self.model.indicies.clear();
         self.staging_belt.recall();
@@ -117,7 +117,7 @@ impl Canvas {
         self.model.draw(graphics);
        // self.model.write(graphics);
        // self.model.draw(graphics);
-/*
+
         let draw_calls = self.draw_calls.drain(..);
         for draw_call in draw_calls {
             match draw_call {
@@ -134,23 +134,23 @@ impl Canvas {
             }
         }
 
-        self.draw_glyph(graphics);*/
+        self.draw_glyph(graphics);
     }
 
-    fn draw_glyph(&mut self, graphics:&mut Graphics) {
+    fn draw_glyph(&mut self, graphics:&mut GraphicsContext) {
        /* let output = graphics.surface.get_current_texture().unwrap();
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());*/
         let size = graphics.screen_size;
         self.glyph_brush.draw_queued(
             &graphics.device, 
             &mut self.staging_belt, 
-            &mut graphics.encoder.as_mut().unwrap(), 
-            graphics.surface_view.as_ref().unwrap(), 
+            &mut graphics.encoder, 
+            graphics.surface_view, 
             size.width, 
             size.height)
             .unwrap();
 
-        self.staging_belt.recall();
+        self.staging_belt.finish();
     }
 
     pub fn finish(&mut self) {

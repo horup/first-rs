@@ -92,11 +92,5 @@ impl Model {
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.draw_indexed(0..self.indicies.len() as u32, 0, 0..1);
         }
-
-      //  graphics.queue.submit(std::iter::once(encoder.finish()));
-     /*   render_pass.set_pipeline(&render_pipeline);
-        let slice = self.vertex_buffer.slice(0..self.num_vertices);
-        render_pass.set_vertex_buffer(0, slice);
-        render_pass.draw(0..(self.num_vertices * 6) as u32, 0..1);*/
     }
 }

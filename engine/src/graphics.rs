@@ -184,7 +184,7 @@ impl Graphics {
         });
     }
 
-    pub fn begin(&mut self) {
+    pub fn prepare(&mut self) {
         let surface_texture = self.surface.get_current_texture().unwrap();
         let surface_view = surface_texture.texture.create_view(&wgpu::TextureViewDescriptor::default()); 
         self.surface_view = Some(surface_view);
@@ -199,7 +199,7 @@ impl Graphics {
         //run.set_pipeline(&self.render_pipeline);
     }
 
-    pub fn finish(&mut self) {
+    pub fn present(&mut self) {
         self.surface_view = None;
         let encoder = self.encoder.take().unwrap();
         let surface_texture = self.surface_texture.take().unwrap();

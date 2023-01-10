@@ -28,27 +28,25 @@ impl Engine {
     }
 
     pub fn update(&mut self) {
-        self.canvas.begin();
+        self.canvas.prepare();
+
+        // do game update
         let game = self.game.take();
         if let Some(mut game) = game {
             game.update(self);
             self.game = Some(game);
         }
 
-        self.graphics.begin();
+        // render results:
+        self.graphics.prepare();
         let mut context = GraphicsContext::new(&mut self.graphics);
-
         self.canvas.draw(&mut context);
-
-
-        self.graphics.finish();
-
-
+        self.graphics.present();
         self.diagnostics.measure_frame_time();
     }
 
     pub fn init(&mut self) {
-        self.canvas.begin();
+        self.canvas.prepare();
         let game = self.game.take();
         if let Some(mut game) = game {
             game.init(self);
