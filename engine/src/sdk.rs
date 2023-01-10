@@ -9,6 +9,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_scene(&mut self, _camera: &engine_sdk::Camera, scene: &engine_sdk::Scene) {
+        return;
         let tex = 0;
         if let Some(model) = self.models.get_mut(&tex) {
             //let mut vertices = Vec::with_capacity(scene.sprites.len() * 6);
@@ -43,8 +44,8 @@ impl engine_sdk::Engine for Engine {
                     });
                 }
             }
-            model.write(&self.graphics);
-            model.draw(&self.graphics);
+           // model.write(&self.graphics);
+           // model.draw(&self.graphics);
         }
     }
 

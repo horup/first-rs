@@ -5,7 +5,7 @@ use engine_sdk::Game;
 
 use winit::{event_loop::{EventLoop, ControlFlow}, window::{WindowBuilder}, event::{Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode}};
 
-use crate::{Graphics, Diagnostics, Model, Canvas};
+use crate::{Graphics, Diagnostics, Model, Canvas, GraphicsContext};
 
 pub struct Engine {
     pub(crate) game:Option<Box<dyn Game>>,
@@ -28,20 +28,27 @@ impl Engine {
     }
 
     pub fn update(&mut self) {
-        self.canvas.clear();
+        self.canvas.begin();
         let game = self.game.take();
         if let Some(mut game) = game {
             game.update(self);
             self.game = Some(game);
         }
 
-        self.graphics.update();
-        self.canvas.draw(&self.graphics);
+        self.graphics.begin();
+        let mut context = GraphicsContext::new(&mut self.graphics);
+
+        self.canvas.draw(&mut context);
+
+
+        self.graphics.finish();
+
+
         self.diagnostics.measure_frame_time();
     }
 
     pub fn init(&mut self) {
-        self.canvas.clear();
+        self.canvas.begin();
         let game = self.game.take();
         if let Some(mut game) = game {
             game.init(self);

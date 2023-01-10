@@ -1,9 +1,13 @@
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup};
+use engine_sdk::glam::Vec2;
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Vertex, CameraUniform};
 
 pub struct Graphics {
     pub surface: wgpu::Surface,
+    pub surface_view: Option<TextureView>,
+    pub surface_texture: Option<SurfaceTexture>,
+    pub encoder:Option<CommandEncoder>,
     pub device: Device,
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
@@ -11,7 +15,7 @@ pub struct Graphics {
     pub camera_uniform:CameraUniform,
     pub camera_buffer:Buffer,
     pub camera_bind_group:BindGroup,
-    pub screen_size:PhysicalSize<u32>
+    pub screen_size:PhysicalSize<u32>,
 }
 
 impl Graphics {
@@ -107,7 +111,7 @@ impl Graphics {
                 entry_point: "fs_main",
                 targets: &[Some(wgpu::ColorTargetState { // 4.
                     format: config.format,
-                    blend: Some(wgpu::BlendState::REPLACE),
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
@@ -142,7 +146,10 @@ impl Graphics {
             render_pipeline,
             camera_buffer,
             camera_bind_group,
-            screen_size
+            screen_size,
+            surface_view:None,
+            surface_texture:None,
+            encoder:None
         }
 
     }
@@ -153,12 +160,77 @@ impl Graphics {
         self.surface.configure(&self.device, &self.config);
     }
 
-    pub fn update_camera(&mut self) {
+    fn update_camera(&mut self) {
         let camera_uniform = CameraUniform::new_orth_screen(self.screen_size.width as f32, self.screen_size.height as f32);
         self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));
     }
 
-    pub fn update(&mut self) {
+    fn clear(&mut self) {
+        self.encoder.as_mut().unwrap().begin_render_pass(&wgpu::RenderPassDescriptor {
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: self.surface_view.as_ref().unwrap(),
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color {
+                        r: 0.1,
+                        g: 0.2,
+                        b: 0.3,
+                        a: 1.0,
+                    }),
+                    store: true,
+                },
+            })],
+            ..Default::default()
+        });
+    }
+
+    pub fn begin(&mut self) {
+        let surface_texture = self.surface.get_current_texture().unwrap();
+        let surface_view = surface_texture.texture.create_view(&wgpu::TextureViewDescriptor::default()); 
+        self.surface_view = Some(surface_view);
+        self.surface_texture = Some(surface_texture);
+        let encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("Render Encoder"),
+        });
+        self.encoder = Some(encoder);
+
         self.update_camera();
+        self.clear();
+        //run.set_pipeline(&self.render_pipeline);
+    }
+
+    pub fn finish(&mut self) {
+        self.surface_view = None;
+        let encoder = self.encoder.take().unwrap();
+        let surface_texture = self.surface_texture.take().unwrap();
+        self.queue.submit(std::iter::once(encoder.finish()));
+        surface_texture.present();
+    }
+}
+
+
+pub struct GraphicsContext<'a> {
+    pub device:&'a Device,
+    pub queue:&'a Queue,
+    pub screen_size:PhysicalSize<u32>,
+    pub encoder:&'a mut CommandEncoder,
+    pub surface_view:&'a TextureView,
+    pub surface_texture:&'a SurfaceTexture,
+    pub render_pipeline:&'a RenderPipeline,
+    pub camera_bind_group:&'a BindGroup
+}
+
+impl<'a> GraphicsContext<'a> {
+    pub fn new(graphics:&'a mut Graphics) -> Self {
+        Self {
+            device:&graphics.device,
+            queue:&graphics.queue,
+            screen_size:graphics.screen_size,
+            encoder:graphics.encoder.as_mut().unwrap(),
+            surface_texture:graphics.surface_texture.as_ref().unwrap(),
+            surface_view:graphics.surface_view.as_ref().unwrap(),
+            render_pipeline:&graphics.render_pipeline,
+            camera_bind_group:&graphics.camera_bind_group
+        }
     }
 }

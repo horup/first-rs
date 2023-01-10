@@ -2,7 +2,7 @@ use std::mem::size_of;
 
 use wgpu::{self};
 
-use crate::{Vertex, Graphics};
+use crate::{Vertex, Graphics, GraphicsContext};
 
 pub struct Model {
     vertex_buffer:wgpu::Buffer,
@@ -44,16 +44,16 @@ impl Model {
 
     }
 
-    pub fn write(&mut self, graphics:&Graphics) {
+    pub fn write(&mut self, graphics:&mut GraphicsContext) {
         let vertices_size = self.vertices.len() as wgpu::BufferAddress * Vertex::size();
         if self.vertex_buffer.size() < vertices_size {
-            self.vertex_buffer = Self::create_vertex_buffer(&graphics.device, vertices_size);
+            self.vertex_buffer = Self::create_vertex_buffer(graphics.device, vertices_size);
             
         }
 
         let indicies_size = self.indicies.len() as wgpu::BufferAddress * size_of::<u32>() as wgpu::BufferAddress;
         if self.index_buffer.size() < indicies_size {
-            self.index_buffer = Self::create_index_buffer(&graphics.device, vertices_size);
+            self.index_buffer = Self::create_index_buffer(graphics.device, vertices_size);
         }
 
         let slice:&[u8] = bytemuck::cast_slice(&self.vertices);
@@ -63,21 +63,16 @@ impl Model {
         graphics.queue.write_buffer(&self.index_buffer, 0, slice);
     }
 
-    pub fn draw<'a>(&'a self, graphics:&Graphics) {
+    pub fn draw<'a>(&'a self, graphics:&mut GraphicsContext) {
         if self.index_buffer.size() == 0 || self.indicies.len() == 0 {
             return;
         }
 
-        let output = graphics.surface.get_current_texture().unwrap();
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = graphics.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
         {
-            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &view,
+                    view: &graphics.surface_view,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -98,8 +93,7 @@ impl Model {
             render_pass.draw_indexed(0..self.indicies.len() as u32, 0, 0..1);
         }
 
-        graphics.queue.submit(std::iter::once(encoder.finish()));
-        output.present();
+      //  graphics.queue.submit(std::iter::once(encoder.finish()));
      /*   render_pass.set_pipeline(&render_pipeline);
         let slice = self.vertex_buffer.slice(0..self.num_vertices);
         render_pass.set_vertex_buffer(0, slice);

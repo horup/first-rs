@@ -1,7 +1,7 @@
 use engine_sdk::{glam::Vec2, DrawTextParams};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::point};
 use wgpu::util::StagingBelt;
-use crate::{Model, Graphics, Vertex};
+use crate::{Model, Graphics, Vertex, GraphicsContext};
 use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush};
 
 pub struct Canvas {
@@ -25,9 +25,10 @@ impl Canvas {
         }
     }
 
-    pub fn clear(&mut self) {
+    pub fn begin(&mut self) {
         self.model.vertices.clear();
         self.model.indicies.clear();
+        self.staging_belt.recall();
     }
 
     pub fn draw_line(&mut self, begin:Vec2, end:Vec2, color: [f32;4], line_width:f32) {
@@ -110,11 +111,13 @@ impl Canvas {
         model.indicies.push(model.indicies.len() as u32);
     }
 
-    pub fn draw(&mut self, graphics:&Graphics) {
+    pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         let size = graphics.screen_size;
+        self.model.write(graphics);
+        self.model.draw(graphics);
        // self.model.write(graphics);
        // self.model.draw(graphics);
-
+/*
         let draw_calls = self.draw_calls.drain(..);
         for draw_call in draw_calls {
             match draw_call {
@@ -131,23 +134,27 @@ impl Canvas {
             }
         }
 
-        self.draw_glyph(graphics);
+        self.draw_glyph(graphics);*/
     }
 
-    fn draw_glyph(&mut self, graphics:&Graphics) {
-        let output = graphics.surface.get_current_texture().unwrap();
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = graphics.device.create_command_encoder(
-            &wgpu::CommandEncoderDescriptor {
-                label: Some("draw_glyph"),
-            },
-        );
+    fn draw_glyph(&mut self, graphics:&mut Graphics) {
+       /* let output = graphics.surface.get_current_texture().unwrap();
+        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());*/
         let size = graphics.screen_size;
-        self.glyph_brush.draw_queued(&graphics.device, &mut self.staging_belt, &mut encoder, &view, size.width, size.height).unwrap();
-        self.staging_belt.finish();
-        graphics.queue.submit(Some(encoder.finish()));
-        output.present();
+        self.glyph_brush.draw_queued(
+            &graphics.device, 
+            &mut self.staging_belt, 
+            &mut graphics.encoder.as_mut().unwrap(), 
+            graphics.surface_view.as_ref().unwrap(), 
+            size.width, 
+            size.height)
+            .unwrap();
+
         self.staging_belt.recall();
+    }
+
+    pub fn finish(&mut self) {
+        self.staging_belt.finish();
     }
 }
 
