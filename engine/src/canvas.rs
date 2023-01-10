@@ -1,18 +1,27 @@
-
-
-use engine_sdk::glam::Vec2;
+use engine_sdk::{glam::Vec2, DrawTextParams};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::point};
-
+use wgpu::util::StagingBelt;
 use crate::{Model, Graphics, Vertex};
+use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush};
 
 pub struct Canvas {
-    pub model:Model
+    pub model:Model,
+    pub glyph_brush:GlyphBrush<()>,
+    pub staging_belt:StagingBelt,
+    pub draw_calls:Vec<DrawCall>
 }
 
 impl Canvas {
     pub fn new(graphics:&Graphics) -> Self {
+        let staging_belt = wgpu::util::StagingBelt::new(1024);
+        let inconsolata = ab_glyph::FontArc::try_from_slice(include_bytes!("../fonts/joystix_monospace.ttf")).unwrap();
+        let glyph_brush = GlyphBrushBuilder::using_font(inconsolata)
+            .build(&graphics.device, wgpu::TextureFormat::Bgra8UnormSrgb);
         Self {
-            model:Model::new(&graphics.device)
+            model:Model::new(&graphics.device),
+            glyph_brush,
+            staging_belt,
+            draw_calls:Vec::new()
         }
     }
 
@@ -49,12 +58,19 @@ impl Canvas {
             v.color = color;
             self.model.vertices.push(v);
         }
+    }
 
-        // FIX winding
-        
-        // https://github.com/nical/lyon/blob/0367e5a6cf1b8658a29041215c3903d865863d41/examples/wgpu/src/main.rs#L723
+    pub fn draw_text(&mut self, params:DrawTextParams) {
+       /* self.glyph_brush.queue(Section {
+            screen_position: (30.0, 30.0),
+            bounds: (self.width as f32, size.height as f32),
+            text: vec![Text::new("Hello wgpu_glyph!")
+                .with_color([0.0, 0.0, 0.0, 1.0])
+                .with_scale(40.0)],
+            ..Section::default()
+        });*/
 
-       // let stroke_range = fill_range.end..(geometry.indices.len() as u32);
+        self.draw_calls.push(DrawCall::Text(params));
     }
 
     pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: [f32;4]) {
@@ -95,9 +111,48 @@ impl Canvas {
     }
 
     pub fn draw(&mut self, graphics:&Graphics) {
-        self.model.write(graphics);
-        self.model.draw(graphics);
+        let size = graphics.screen_size;
+       // self.model.write(graphics);
+       // self.model.draw(graphics);
+
+        let draw_calls = self.draw_calls.drain(..);
+        for draw_call in draw_calls {
+            match draw_call {
+                DrawCall::Text(params) => {
+                    self.glyph_brush.queue(Section {
+                        screen_position: params.screen_pos.into(),
+                      //  bounds: (size.width as f32, size.height as f32),
+                        text: vec![Text::new(&params.text)
+                            .with_color([1.0, 1.0, 1.0, 1.0])
+                            .with_scale(params.scale)],
+                        ..Section::default()
+                    });
+                },
+            }
+        }
+
+        self.draw_glyph(graphics);
     }
+
+    fn draw_glyph(&mut self, graphics:&Graphics) {
+        let output = graphics.surface.get_current_texture().unwrap();
+        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = graphics.device.create_command_encoder(
+            &wgpu::CommandEncoderDescriptor {
+                label: Some("draw_glyph"),
+            },
+        );
+        let size = graphics.screen_size;
+        self.glyph_brush.draw_queued(&graphics.device, &mut self.staging_belt, &mut encoder, &view, size.width, size.height).unwrap();
+        self.staging_belt.finish();
+        graphics.queue.submit(Some(encoder.finish()));
+        output.present();
+        self.staging_belt.recall();
+    }
+}
+
+pub enum DrawCall {
+    Text(DrawTextParams)
 }
 
 pub struct VertexConstructor;

@@ -153,21 +153,6 @@ impl Graphics {
         self.surface.configure(&self.device, &self.config);
     }
 
-    pub fn begin(&self) -> (SurfaceTexture, TextureView, CommandEncoder) {
-        let output = self.surface.get_current_texture().unwrap();
-        let texture_view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
-
-        (output, texture_view, encoder)
-    }
-
-    pub fn end(&self, output:SurfaceTexture, encoder:CommandEncoder) {
-        self.queue.submit(std::iter::once(encoder.finish()));
-        output.present();
-    }
-
     pub fn update_camera(&mut self) {
         let camera_uniform = CameraUniform::new_orth_screen(self.screen_size.width as f32, self.screen_size.height as f32);
         self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));

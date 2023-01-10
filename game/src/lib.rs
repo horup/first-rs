@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, Scene, Sprite, glam::Vec2, Engine, Camera, DrawLineParams, Color};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -30,6 +30,10 @@ impl MyGame {
 }
 
 impl Game for MyGame {
+    fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
+        engine.define_texture(TEST_SPRITE, "some_sprite.png".into());
+    }
+
     fn update(&mut self, engine:&mut dyn Engine) {
         if self.scene.sprites.len() == 0 {
             self.start(engine);
@@ -61,6 +65,20 @@ impl Game for MyGame {
             });
         }
 
+        engine.draw_text(DrawTextParams {
+            screen_pos: vec2(30.0, 30.0),
+            text: "Hello world!".into(),
+            scale: 40.0,
+            color: Color::BLUE,
+        });
+
+        engine.draw_text(DrawTextParams {
+            screen_pos: vec2(30.0, 64.0),
+            text: "Søren rules alot!".into(),
+            scale: 16.0,
+            color: Color::BLUE,
+        });
+
        
 
         self.iterations += 1;
@@ -68,9 +86,5 @@ impl Game for MyGame {
         if self.iterations % 60 == 0 {
             dbg!(engine.frame_time());
         }
-    }
-
-    fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        engine.define_texture(TEST_SPRITE, "some_sprite.png".into());
     }
 } 
