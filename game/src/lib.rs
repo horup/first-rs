@@ -1,4 +1,4 @@
-use std::f32::consts::PI;
+
 
 use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams};
 
@@ -120,13 +120,13 @@ impl Game for MyGame {
 
         for i in (0..screen_size.y as i32).step_by(cell_size) {
             let begin = vec2(0.0, i as f32);
-            let end = vec2(screen_size.x as f32, i as f32);
+            let _end = vec2(screen_size.x as f32, i as f32);
             draw_pos(engine, begin, cell_size as f32);
         }
 
         for i in (0..screen_size.x as i32).step_by(cell_size) {
             let begin = vec2(i as f32, 0.0);
-            let end = vec2(i as f32, screen_size.y as f32);
+            let _end = vec2(i as f32, screen_size.y as f32);
             draw_pos(engine, begin, cell_size as f32);
         }
 
