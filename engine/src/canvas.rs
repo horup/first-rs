@@ -34,8 +34,8 @@ impl Canvas {
     pub fn draw_line(&mut self, begin:Vec2, end:Vec2, color: [f32;4], line_width:f32) {
         let tolerance = 0.02;
         let mut builder = Path::builder();
-        builder.begin(point(begin.x, begin.y));
-        builder.line_to(point(end.x, end.y));
+        builder.begin(point(begin.x, -begin.y));
+        builder.line_to(point(end.x, -end.y));
         builder.end(true);
         let line = builder.build();
 
@@ -126,7 +126,7 @@ impl Canvas {
                         screen_position: params.screen_pos.into(),
                       //  bounds: (size.width as f32, size.height as f32),
                         text: vec![Text::new(&params.text)
-                            .with_color([1.0, 1.0, 1.0, 1.0])
+                            .with_color::<[f32;4]>(params.color.into())
                             .with_scale(params.scale)],
                         ..Section::default()
                     });

@@ -50,7 +50,7 @@ impl Game for MyGame {
         //engine.draw_rect(0.0, 0.0, 10.0, 10.0, Color::WHITE);
 
         
-        let s = 1024;
+     /*    let s = 1024;
         let mut center = engine.screen_size() / 2.0;
         center.y = -center.y;
         for i in 0..s {
@@ -78,6 +78,46 @@ impl Game for MyGame {
             scale: 16.0,
             color: Color::BLUE,
         });
+*/
+
+
+
+        let cell_size = 64;
+        let screen_size = engine.screen_size();
+
+        fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
+            let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
+            engine.draw_text(DrawTextParams {
+                screen_pos: mid,
+                text: begin.to_string(),
+                scale: 8.0,
+                color: Color::WHITE,
+            })
+        }
+        
+        for i in (0..screen_size.y as i32).step_by(cell_size) {
+            let begin = vec2(0.0, i as f32);
+            let end = vec2(screen_size.x as f32, i as f32);
+            engine.draw_line(DrawLineParams {
+                begin,
+                end,
+                line_width: 1.0,
+            });
+
+            draw_pos(engine, begin, cell_size as f32);
+        }
+
+        for i in (0..screen_size.x as i32).step_by(cell_size) {
+            let begin = vec2(i as f32, 0.0);
+            let end = vec2(i as f32, screen_size.y as f32);
+            engine.draw_line(DrawLineParams {
+                begin,
+                end,
+                line_width: 1.0,
+            });
+
+            draw_pos(engine, begin, cell_size as f32);
+        }
 
        /* engine.draw_text(DrawTextParams {
             screen_pos: vec2(30.0, 30.0),
