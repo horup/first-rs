@@ -91,7 +91,7 @@ impl Game for MyGame {
                 screen_pos: mid,
                 text: begin.to_string(),
                 scale: 8.0,
-                color: Color::WHITE,
+                color: Color::RED,
             })
         }
         
