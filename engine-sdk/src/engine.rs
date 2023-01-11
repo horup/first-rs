@@ -35,5 +35,6 @@ pub struct DrawTextParams {
 pub struct DrawLineParams {
     pub begin:Vec2,
     pub end:Vec2,
-    pub line_width:f32
+    pub line_width:f32,
+    pub color:Color
 }

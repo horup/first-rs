@@ -102,6 +102,7 @@ impl Game for MyGame {
                 begin,
                 end,
                 line_width: 1.0,
+                color: Color::WHITE,
             });
 
             draw_pos(engine, begin, cell_size as f32);
@@ -114,6 +115,7 @@ impl Game for MyGame {
                 begin,
                 end,
                 line_width: 1.0,
+                color: Color::WHITE,
             });
 
             draw_pos(engine, begin, cell_size as f32);
