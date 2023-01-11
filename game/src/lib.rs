@@ -82,7 +82,7 @@ impl Game for MyGame {
 
 
 
-        let cell_size = 64;
+        let cell_size = 128;
         let screen_size = engine.screen_size();
 
         fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
@@ -90,7 +90,7 @@ impl Game for MyGame {
             engine.draw_text(DrawTextParams {
                 screen_pos: mid,
                 text: begin.to_string(),
-                scale: 8.0,
+                scale: 16.0,
                 color: Color::RED,
             })
         }
@@ -105,7 +105,6 @@ impl Game for MyGame {
                 color: Color::WHITE,
             });
 
-            draw_pos(engine, begin, cell_size as f32);
         }
 
         for i in (0..screen_size.x as i32).step_by(cell_size) {
@@ -117,25 +116,19 @@ impl Game for MyGame {
                 line_width: 1.0,
                 color: Color::WHITE,
             });
+        }
 
+        for i in (0..screen_size.y as i32).step_by(cell_size) {
+            let begin = vec2(0.0, i as f32);
+            let end = vec2(screen_size.x as f32, i as f32);
             draw_pos(engine, begin, cell_size as f32);
         }
 
-       /* engine.draw_text(DrawTextParams {
-            screen_pos: vec2(30.0, 30.0),
-            text: "Hello world!".into(),
-            scale: 40.0,
-            color: Color::BLUE,
-        });
-
-        engine.draw_text(DrawTextParams {
-            screen_pos: vec2(30.0, 64.0),
-            text: "Søren rules alot!".into(),
-            scale: 16.0,
-            color: Color::BLUE,
-        });*/
-
-       
+        for i in (0..screen_size.x as i32).step_by(cell_size) {
+            let begin = vec2(i as f32, 0.0);
+            let end = vec2(i as f32, screen_size.y as f32);
+            draw_pos(engine, begin, cell_size as f32);
+        }
 
         self.iterations += 1;
 

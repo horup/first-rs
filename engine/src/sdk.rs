@@ -62,7 +62,8 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_line(&mut self, mut params:engine_sdk::DrawLineParams) {
-        self.canvas.draw_line(params.begin, params.end, params.color.into(), params.line_width);
+        //self.canvas.draw_line(params.begin, params.end, params.color.into(), params.line_width);
+        self.canvas.draw_lines([params].into());
     }
 
     fn draw_text(&mut self, params:engine_sdk::DrawTextParams) {

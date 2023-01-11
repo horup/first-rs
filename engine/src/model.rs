@@ -1,8 +1,8 @@
-use std::mem::size_of;
+use std::{mem::size_of, ops::Range};
 
 use wgpu::{self};
 
-use crate::{Vertex, Graphics, GraphicsContext};
+use crate::{Vertex, GraphicsContext};
 
 pub struct Model {
     vertex_buffer:wgpu::Buffer,
@@ -22,6 +22,11 @@ impl Model {
             vertices:Vec::new(),
             indicies:Vec::new()
         }
+    }
+
+    pub fn clear(&mut self) {
+        self.vertices.clear();
+        self.indicies.clear();
     }
 
     fn create_vertex_buffer(device:&wgpu::Device, size:u64) -> wgpu::Buffer {
@@ -64,6 +69,10 @@ impl Model {
     }
 
     pub fn draw<'a>(&'a self, graphics:&mut GraphicsContext) {
+        self.draw_indexed(graphics, 0..self.indicies.len() as u32);
+    }
+
+    pub fn draw_indexed<'a>(&'a self, graphics:&mut GraphicsContext, indicies:Range<u32>) {
         if self.index_buffer.size() == 0 || self.indicies.len() == 0 {
             return;
         }
@@ -75,12 +84,7 @@ impl Model {
                     view: &graphics.surface_view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.2,
-                            b: 0.3,
-                            a: 1.0,
-                        }),
+                        load: wgpu::LoadOp::Load,
                         store: true,
                     },
                 })],
@@ -90,7 +94,7 @@ impl Model {
             render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.draw_indexed(0..self.indicies.len() as u32, 0, 0..1);
+            render_pass.draw_indexed(indicies, 0, 0..1);
         }
     }
 }
