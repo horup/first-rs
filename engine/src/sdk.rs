@@ -20,26 +20,32 @@ impl engine_sdk::Engine for Engine {
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(-s, s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(-s, -s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(s, -s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                     model.vertices.push(Vertex {
                         position: (sprite.pos + Vec3::new(s, s, 0.0)).into(),
                         color: [1.0, 1.0, 1.0, 1.0],
+                        uv:[0.0, 0.0]
                     });
                 }
             }

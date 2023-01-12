@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use engine_sdk::image::DynamicImage;
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline};
+use engine_sdk::image::{DynamicImage, RgbaImage, GenericImage};
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline, BindGroupLayout};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Vertex, CameraUniform};
 
@@ -18,7 +18,10 @@ pub struct Graphics {
     pub camera_buffer:Buffer,
     pub camera_bind_group:BindGroup,
     pub screen_size:PhysicalSize<u32>,
-    pub textures:HashMap<u32, crate::Texture>
+    pub textures:HashMap<u32, crate::Texture>,
+    pub texture_bind_group_layout:BindGroupLayout,
+    pub texture_missing:crate::Texture,
+    pub texture_white:crate::Texture
 }
 
 impl Graphics {
@@ -93,14 +96,39 @@ impl Graphics {
             label: Some("camera_bind_group"),
         });
 
+        let texture_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        // This should match the filterable field of the
+                        // corresponding Texture entry above.
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                        count: None,
+                    },
+                ],
+                label: Some("texture_bind_group_layout"),
+        });
+
         let shader = device.create_shader_module(wgpu::include_wgsl!("../shaders/shader.wgsl"));
         let render_pipeline_layout =
         device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&camera_bind_group_layout],
+            bind_group_layouts: &[&camera_bind_group_layout, &texture_bind_group_layout],
             push_constant_ranges: &[],
         });
-
+    
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
             layout: Some(&render_pipeline_layout),
@@ -136,6 +164,24 @@ impl Graphics {
             multiview: None, // 5.
         });
 
+        // white texture
+        let mut white = DynamicImage::new_rgba8(1, 1);
+        white.as_mut_rgba8().unwrap().iter_mut().for_each(|c|{
+            *c = 255;
+        });
+        
+        let texture_white = crate::Texture::new(&device, &queue, &texture_bind_group_layout, &white);
+
+        // missing texture
+        let mut texture_missing = DynamicImage::new_rgba8(2, 2);
+        texture_missing.put_pixel(0, 0, [255, 0, 0, 255].into());
+        texture_missing.put_pixel(1, 0, [0, 255, 0, 255].into());
+        texture_missing.put_pixel(0, 1, [0, 0, 255, 255].into());
+        texture_missing.put_pixel(1, 1, [0, 0, 0, 255].into());
+
+        
+        let texture_missing = crate::Texture::new(&device, &queue, &texture_bind_group_layout, &texture_missing);
+
 
         Self {
             camera_uniform,
@@ -150,13 +196,16 @@ impl Graphics {
             surface_view:None,
             surface_texture:None,
             encoder:None,
-            textures:HashMap::new()
+            textures:HashMap::new(),
+            texture_missing: texture_missing,
+            texture_white: texture_white,
+            texture_bind_group_layout
         }
 
     }
 
     pub fn load_texture(&mut self, id:u32, image:&DynamicImage) {
-        let texture = crate::Texture::new(&self, image);
+        let texture = crate::Texture::new(&self.device, &self.queue, &self.texture_bind_group_layout, image);
         self.textures.insert(id, texture);
     }
 
@@ -224,7 +273,10 @@ pub struct GraphicsContext<'a> {
     pub surface_view:&'a TextureView,
     pub surface_texture:&'a SurfaceTexture,
     pub render_pipeline:&'a RenderPipeline,
-    pub camera_bind_group:&'a BindGroup
+    pub camera_bind_group:&'a BindGroup,
+    pub texture_white:&'a crate::Texture,
+    pub texture_missing:&'a crate::Texture,
+    pub textures:&'a HashMap<u32, crate::Texture>
 }
 
 impl<'a> GraphicsContext<'a> {
@@ -237,7 +289,10 @@ impl<'a> GraphicsContext<'a> {
             surface_texture:graphics.surface_texture.as_ref().unwrap(),
             surface_view:graphics.surface_view.as_ref().unwrap(),
             render_pipeline:&graphics.render_pipeline,
-            camera_bind_group:&graphics.camera_bind_group
+            camera_bind_group:&graphics.camera_bind_group,
+            texture_white:&graphics.texture_white,
+            texture_missing:&graphics.texture_missing,
+            textures:&graphics.textures
         }
     }
 }

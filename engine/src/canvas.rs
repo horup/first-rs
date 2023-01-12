@@ -89,19 +89,23 @@ impl Canvas {
 
         model.vertices.push(Vertex {
             position: [px, py, 0.0],
-            color
+            color,
+            uv:[0.0, 0.0]
         });
         model.vertices.push(Vertex {
             position: [px, py2, 0.0],
-            color
+            color,
+            uv:[0.0, 1.0]
         });
         model.vertices.push(Vertex {
             position: [px2, py2, 0.0],
-            color
+            color,
+            uv:[1.0, 1.0]
         });
         model.vertices.push(Vertex {
             position: [px2, py, 0.0],
-            color
+            color,
+            uv:[1.0, 0.0]
         });
 
         model.indicies.push(vs + 0);
@@ -170,6 +174,7 @@ impl StrokeVertexConstructor<Vertex> for VertexConstructor {
         Vertex {
             position: [vertex.position().x, vertex.position().y, 0.0],
             color: [1.0, 0.0, 0.0, 1.0],
+            uv:[0.0, 0.0]
         }
     }
 }

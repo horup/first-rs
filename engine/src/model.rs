@@ -92,6 +92,7 @@ impl Model {
             });
             render_pass.set_pipeline(&graphics.render_pipeline);
             render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
+            render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.draw_indexed(indicies, 0, 0..1);

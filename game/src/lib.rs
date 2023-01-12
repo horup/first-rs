@@ -44,7 +44,7 @@ impl Game for MyGame {
         let cell_size = 128;
         let screen_size = engine.screen_size();
 
-        fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
+     /*   fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
             let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
             engine.draw_text(DrawTextParams {
                 screen_pos: mid,
@@ -88,11 +88,11 @@ impl Game for MyGame {
             let _end = vec2(i as f32, screen_size.y);
             draw_pos(engine, begin, cell_size as f32);
         }
-
+*/
         engine.draw_rect(DrawRectParams {
-            pos: vec2(20.0, 20.0),
-            size: vec2(60.0, 60.0),
-            color: Color::GREEN,
+            pos: vec2(25.0, 25.2),
+            size: vec2(160.1, 60.1),
+            color: Color::WHITE,
         });
 
 
