@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams, DrawRectParams, image};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -41,8 +41,8 @@ impl Game for MyGame {
         }
 
         let _camera = Camera::default();
-        let cell_size = 128;
-        let screen_size = engine.screen_size();
+        let _cell_size = 128;
+        let _screen_size = engine.screen_size();
 
      /*   fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
             let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
