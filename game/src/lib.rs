@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams, DrawRectParams};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -129,6 +129,13 @@ impl Game for MyGame {
             let _end = vec2(i as f32, screen_size.y as f32);
             draw_pos(engine, begin, cell_size as f32);
         }
+
+        engine.draw_rect(DrawRectParams {
+            pos: vec2(20.0, 20.0),
+            size: vec2(60.0, 60.0),
+            color: Color::GREEN,
+        });
+
 
         self.iterations += 1;
 

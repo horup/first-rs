@@ -12,7 +12,7 @@ pub trait Engine {
     /**
     On the screen with y axis pointing downards
     */
-    fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color:Color);
+    fn draw_rect(&mut self, params:DrawRectParams);
 
     /**
     On the screen with y axis pointing downards
@@ -21,6 +21,14 @@ pub trait Engine {
     fn screen_size(&self) -> Vec2;
 
     fn draw_text(&mut self, params:DrawTextParams);
+}
+
+
+#[derive(Clone, Debug, Default)]
+pub struct DrawRectParams {
+    pub pos:Vec2,
+    pub size:Vec2,
+    pub color:Color
 }
 
 #[derive(Clone, Debug, Default)]

@@ -1,5 +1,5 @@
 use crate::{Engine, Model, Vertex};
-use engine_sdk::{self, glam::{Vec3, Vec2}};
+use engine_sdk::{self, glam::{Vec3, Vec2}, DrawRectParams};
 use lyon::{path::{Path}, geom::point, lyon_tessellation::{StrokeTessellator, StrokeOptions, BuffersBuilder, VertexBuffers, StrokeVertexConstructor}};
 
 impl engine_sdk::Engine for Engine {
@@ -53,8 +53,8 @@ impl engine_sdk::Engine for Engine {
         self.diagnostics.frame_time
     }
 
-    fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color:engine_sdk::Color) {
-        self.canvas.draw_rect(px, -py-h, w, h, color.into());
+    fn draw_rect(&mut self, params:DrawRectParams) {
+        self.canvas.draw_rect(params);
     }
 
     fn screen_size(&self) -> engine_sdk::glam::Vec2 {

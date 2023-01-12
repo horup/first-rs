@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-use engine_sdk::{glam::Vec2, DrawTextParams, DrawLineParams};
-use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::point};
+use engine_sdk::{glam::Vec2, DrawTextParams, DrawLineParams, DrawRectParams};
+use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point, Box2D, euclid::Point2D}};
 use wgpu::util::StagingBelt;
 use crate::{Model, Graphics, Vertex, GraphicsContext};
 use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush};
@@ -73,41 +73,46 @@ impl Canvas {
         self.draw_calls.push(DrawCall::Text(params));
     }
 
-    pub fn draw_rect(&mut self, px:f32, py:f32, w:f32, h:f32, color: [f32;4]) {
-        let model = &mut self.geometry;
+    pub fn draw_rect(&mut self, params:DrawRectParams) {
+        let px = params.pos.x;
+        let py = -params.pos.y;
+        let w = params.size.x;
+        let h = params.size.y;
         let px2 = px + w;
-        let py2 = py + h;
-        
+        let py2 = py - h;
+        let color = params.color.into();
+
+        let model = &mut self.geometry;
+
+        let vs = model.vertices.len() as u32;
+        let start = model.indicies.len() as u32;
+
         model.vertices.push(Vertex {
             position: [px, py, 0.0],
             color
         });
-        model.indicies.push(model.indicies.len() as u32);
-        model.vertices.push(Vertex {
-            position: [px2, py2, 0.0],
-            color
-        });
-        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px, py2, 0.0],
             color
         });
-        model.indicies.push(model.indicies.len() as u32);
-        model.vertices.push(Vertex {
-            position: [px, py, 0.0],
-            color
-        });
-        model.indicies.push(model.indicies.len() as u32);
-        model.vertices.push(Vertex {
-            position: [px2, py, 0.0],
-            color
-        });
-        model.indicies.push(model.indicies.len() as u32);
         model.vertices.push(Vertex {
             position: [px2, py2, 0.0],
             color
         });
-        model.indicies.push(model.indicies.len() as u32);
+        model.vertices.push(Vertex {
+            position: [px2, py, 0.0],
+            color
+        });
+
+        model.indicies.push(vs + 0);
+        model.indicies.push(vs + 1);
+        model.indicies.push(vs + 2);
+        model.indicies.push(vs + 0);
+        model.indicies.push(vs + 2);
+        model.indicies.push(vs + 3);
+
+        let end = model.indicies.len() as u32;
+        self.draw_calls.push(DrawCall::Geometry(start..end));
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
