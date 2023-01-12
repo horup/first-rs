@@ -1,11 +1,10 @@
 use crate::{Engine, Model, Vertex};
-use engine_sdk::{self, glam::{Vec3, Vec2}, DrawRectParams};
+use engine_sdk::{self, glam::{Vec3, Vec2}, DrawRectParams, image::DynamicImage};
 use lyon::{path::{Path}, geom::point, lyon_tessellation::{StrokeTessellator, StrokeOptions, BuffersBuilder, VertexBuffers, StrokeVertexConstructor}};
 
 impl engine_sdk::Engine for Engine {
-    fn define_texture(&mut self, id: u32, _texture: String) {
-        self.models.insert(id, Model::new(&self.graphics.device));
-        dbg!(self.models.len());
+    fn load_texture(&mut self, id: u32, image: &DynamicImage) {
+        self.graphics.load_texture(id, image);
     }
 
     fn draw_scene(&mut self, _camera: &engine_sdk::Camera, scene: &engine_sdk::Scene) {

@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams, DrawRectParams};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, DrawLineParams, Color, DrawTextParams, DrawRectParams, image};
 
 const TEST_SPRITE:u32 = 0;
 
@@ -31,7 +31,8 @@ impl MyGame {
 
 impl Game for MyGame {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        engine.define_texture(TEST_SPRITE, "some_sprite.png".into());
+        let img = image::load_from_memory(include_bytes!("../assets/textures/test.png")).unwrap();
+        engine.load_texture(TEST_SPRITE, &img);
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
@@ -40,48 +41,6 @@ impl Game for MyGame {
         }
 
         let _camera = Camera::default();
-        //engine.draw_scene(&camera, &self.scene);
-        //engine.draw_rect(0.0, 0.0, 0.5, 0.12, engine_sdk::Color::WHITE);
-        //engine.draw_rect(-0.3, -0.3, 0.2, 0.2, [1.0, 0.0, 0.0, 1.0].into());
-
-        //engine.draw_rect(25.0, 25.0, 100.0, 100.0, engine_sdk::Color::WHITE);
-        //engine.draw_rect(120.0, 120.0, 100.0, 100.0, engine_sdk::Color::RED);
-
-        //engine.draw_rect(0.0, 0.0, 10.0, 10.0, Color::WHITE);
-
-        
-     /*    let s = 1024;
-        let mut center = engine.screen_size() / 2.0;
-        center.y = -center.y;
-        for i in 0..s {
-            let a = i as f32;
-            let a = a / s as f32;
-            let a = PI * 2.0 * a;
-            let d = 100.0 + a * 50.0;
-            engine.draw_line(DrawLineParams {
-                begin:center,
-                end:center + Vec2::new(a.cos() * d, a.sin() * d),
-                line_width:2.0
-            });
-        }
-
-        engine.draw_text(DrawTextParams {
-            screen_pos: vec2(30.0, 30.0),
-            text: "Hello world!".into(),
-            scale: 40.0,
-            color: Color::BLUE,
-        });
-
-        engine.draw_text(DrawTextParams {
-            screen_pos: vec2(30.0, 64.0),
-            text: "Søren rules alot!".into(),
-            scale: 16.0,
-            color: Color::BLUE,
-        });
-*/
-
-
-
         let cell_size = 128;
         let screen_size = engine.screen_size();
 

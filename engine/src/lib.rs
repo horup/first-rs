@@ -21,3 +21,6 @@ pub use canvas::*;
 
 mod camerauniform;
 pub use camerauniform::*;
+
+mod texture;
+pub use texture::*;

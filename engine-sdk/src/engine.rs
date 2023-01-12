@@ -1,11 +1,12 @@
 use std::time::{Duration};
 
 use glam::Vec2;
+use image::DynamicImage;
 
 use crate::{Camera, Scene, Color};
 
 pub trait Engine {
-    fn define_texture(&mut self, id:u32, texture:String);
+    fn load_texture(&mut self, id:u32, image:&DynamicImage);
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn frame_time(&self) -> Duration;
 

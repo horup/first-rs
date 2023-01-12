@@ -17,3 +17,4 @@ mod color;
 pub use color::*;
 
 pub use glam;
+pub use image;

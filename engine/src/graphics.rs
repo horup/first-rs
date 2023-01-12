@@ -1,4 +1,6 @@
-use engine_sdk::glam::Vec2;
+use std::collections::HashMap;
+
+use engine_sdk::image::DynamicImage;
 use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Vertex, CameraUniform};
@@ -16,6 +18,7 @@ pub struct Graphics {
     pub camera_buffer:Buffer,
     pub camera_bind_group:BindGroup,
     pub screen_size:PhysicalSize<u32>,
+    pub textures:HashMap<u32, crate::Texture>
 }
 
 impl Graphics {
@@ -120,11 +123,8 @@ impl Graphics {
                 strip_index_format: None,
                 front_face: wgpu::FrontFace::Ccw, // 2.
                 cull_mode: Some(wgpu::Face::Back),
-                // Setting this to anything other than Fill requires Features::NON_FILL_POLYGON_MODE
                 polygon_mode: wgpu::PolygonMode::Fill,
-                // Requires Features::DEPTH_CLIP_CONTROL
                 unclipped_depth: false,
-                // Requires Features::CONSERVATIVE_RASTERIZATION
                 conservative: false,
             },
             depth_stencil: None, // 1.
@@ -149,10 +149,17 @@ impl Graphics {
             screen_size,
             surface_view:None,
             surface_texture:None,
-            encoder:None
+            encoder:None,
+            textures:HashMap::new()
         }
 
     }
+
+    pub fn load_texture(&mut self, id:u32, image:&DynamicImage) {
+        let texture = crate::Texture::new(&self, image);
+        self.textures.insert(id, texture);
+    }
+
     pub fn resize(&mut self, new_size:PhysicalSize<u32>) {
         self.screen_size = new_size;
         self.config.width = new_size.width;
