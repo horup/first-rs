@@ -124,6 +124,20 @@ impl Game for MyGame {
             x += size.x;
         }
 
+        let s = 128;
+        for y in 0..s {
+            for x in 0..s {
+                let x = x as f32;
+                let y = y as f32;
+                engine.draw_rect(DrawRectParams {
+                    pos: vec2(x, y),
+                    size:vec2(1.0,1.0),
+                    color: Color::WHITE,
+                    texture: Some(WILLIAM),
+                });
+            }
+        }
+
         self.iterations += 1;
 
         if self.iterations % 60 == 0 {

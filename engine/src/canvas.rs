@@ -65,7 +65,7 @@ impl Canvas {
             let end = self.geometry.vertices.len() as u32;
         }
         let end = self.geometry.indicies.len() as u32;
-        self.draw_calls.push(DrawCall::Geometry {
+        self.push_draw_call(DrawCall::Geometry {
             range: start..end,
             diffuse_texture:None
         });
@@ -73,7 +73,7 @@ impl Canvas {
     }
 
     pub fn draw_text(&mut self, params:DrawTextParams) {
-        self.draw_calls.push(DrawCall::Text(params));
+        self.push_draw_call(DrawCall::Text(params));
     }
 
     pub fn draw_rect(&mut self, params:DrawRectParams) {
@@ -119,10 +119,38 @@ impl Canvas {
         model.indicies.push(vs + 3);
 
         let end = model.indicies.len() as u32;
-        self.draw_calls.push(DrawCall::Geometry {
+        self.push_draw_call(DrawCall::Geometry {
             range: start..end,
             diffuse_texture:params.texture
         });
+    }
+
+    pub fn push_draw_call(&mut self, call:DrawCall) {
+        match &call {
+            DrawCall::Geometry { range, diffuse_texture } => {
+                let diffuse_texture1 = diffuse_texture;
+                let range1 = range;
+                match self.draw_calls.last_mut() {
+                    Some(last) => {
+                        match last {
+                            DrawCall::Geometry { range, diffuse_texture } => {
+                                if diffuse_texture1 == diffuse_texture {
+                                    range.end = range1.end;
+                                } else {
+                                    return self.draw_calls.push(call);
+                                }
+                            },
+                            _=> return self.draw_calls.push(call)
+                        }
+                    },
+                    None => return self.draw_calls.push(call),
+                }
+            },
+            _=> {
+                return self.draw_calls.push(call);
+            }
+        }
+      
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
