@@ -1,0 +1,13 @@
+[package]
+name = "main-web"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+log = "0.4.17"
+console_error_panic_hook = "0.1.6"
+console_log = "0.2.0"
+engine = {path = "../engine"}
+game = {path = "../game"}
+wasm-bindgen-futures = "0.4.33"
