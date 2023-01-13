@@ -138,6 +138,19 @@ impl Game for MyGame {
             }
         }
 
+        let mouse_pos = engine.mouse_pos();
+        engine.draw_rect(DrawRectParams {
+            pos: mouse_pos,
+            size:vec2(24.0,48.0),
+            color: Color::WHITE,
+            texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
+        });
+
+
+        if engine.key_just_pressed(32) {
+            dbg!("pressed");
+        }
+
         self.iterations += 1;
 
         if self.iterations % 60 == 0 {

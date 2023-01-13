@@ -24,6 +24,15 @@ pub trait Engine {
 
     fn draw_text(&mut self, params:DrawTextParams);
 
+    fn mouse_pos(&self) -> Vec2;
+    fn mouse_down(&self, button:u8) -> bool;
+    fn key_down(&self, key_code:u32) -> bool;
+    fn keys_just_pressed(&self) -> &[u32];
+
+    fn key_just_pressed(&self, key_code:u32) -> bool {
+        self.keys_just_pressed().iter().position(|kc| kc == &key_code).is_some()
+    }
+
     //fn draw_texture(&mut self, params:DrawTextureParams)
 }
 /*

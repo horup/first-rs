@@ -24,3 +24,6 @@ pub use camerauniform::*;
 
 mod texture;
 pub use texture::*;
+
+mod input;
+pub use input::*;

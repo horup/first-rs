@@ -85,5 +85,27 @@ impl engine_sdk::Engine for Engine {
 
         None
     }
+
+    fn mouse_pos(&self) -> Vec2 {
+        self.input.mouse_pos
+    }
+
+    fn mouse_down(&self, button:u8) -> bool {
+        self.input.mouse_pressed[button as usize % 4]
+    }
+
+    fn key_down(&self, key_code:u32) -> bool {
+        if let Some(k) = self.input.keys_pressed.get(&key_code) {
+            return *k;
+        }
+
+        return false;
+    }
+
+    fn keys_just_pressed(&self) -> &[u32] {
+        &self.input.keys_just_pressed
+    }
+
+    
 }
 
