@@ -107,7 +107,7 @@ impl Game for MyGame {
             texture: None,
         });
 
-        let textures = [WILLIAM, VIKTOR];
+        let textures = [WILLIAM, VIKTOR, PLANT, BRICK_WALL];
         let mut x = 16.0;
         let y = 16.0;
         let scale = 3.0;
@@ -118,7 +118,7 @@ impl Game for MyGame {
                 pos: vec2(x, y),
                 size,
                 color: Color::WHITE,
-                texture: Some(WILLIAM),
+                texture: Some(id),
             });
 
             x += size.x;
