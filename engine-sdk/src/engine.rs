@@ -7,6 +7,7 @@ use crate::{Camera, Scene, Color};
 
 pub trait Engine {
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
+    fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn frame_time(&self) -> Duration;
 
@@ -22,14 +23,29 @@ pub trait Engine {
     fn screen_size(&self) -> Vec2;
 
     fn draw_text(&mut self, params:DrawTextParams);
-}
 
+    //fn draw_texture(&mut self, params:DrawTextureParams)
+}
+/*
+#[derive(Clone, Debug, Default)]
+pub struct DrawTextureParams {
+    pub pos:Vec2,
+    pub size:Vec2,
+    pub 
+}*/
+
+#[derive(Clone, Debug, Default)]
+pub struct TextureInfo {
+    pub width:f32,
+    pub height:f32
+}
 
 #[derive(Clone, Debug, Default)]
 pub struct DrawRectParams {
     pub pos:Vec2,
     pub size:Vec2,
-    pub color:Color
+    pub color:Color,
+    pub texture:Option<u32>
 }
 
 #[derive(Clone, Debug, Default)]

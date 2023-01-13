@@ -65,7 +65,10 @@ impl Canvas {
             let end = self.geometry.vertices.len() as u32;
         }
         let end = self.geometry.indicies.len() as u32;
-        self.draw_calls.push(DrawCall::Geometry(start..end));
+        self.draw_calls.push(DrawCall::Geometry {
+            range: start..end,
+            diffuse_texture:None
+        });
         
     }
 
@@ -116,7 +119,10 @@ impl Canvas {
         model.indicies.push(vs + 3);
 
         let end = model.indicies.len() as u32;
-        self.draw_calls.push(DrawCall::Geometry(start..end));
+        self.draw_calls.push(DrawCall::Geometry {
+            range: start..end,
+            diffuse_texture:params.texture
+        });
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
@@ -149,9 +155,20 @@ impl Canvas {
 
                     self.staging_belt.finish();
                 },
-                DrawCall::Geometry(range) => {
-                    self.geometry.draw_indexed(graphics, range);
-                },
+                DrawCall::Geometry { range, diffuse_texture } => {
+                    let mut texture = graphics.texture_white;
+                    match diffuse_texture {
+                        Some(id) => {
+                            match graphics.textures.get(&id) {
+                                Some(tex) => texture = tex,
+                                None => texture = graphics.texture_missing,
+                            }
+                        },
+                        None => {},
+                    }
+                   
+                    self.geometry.draw_indexed(graphics, range, texture);
+                }
             }
         }
 
@@ -164,7 +181,10 @@ impl Canvas {
 
 pub enum DrawCall {
     Text(DrawTextParams),
-    Geometry(Range<u32>)
+    Geometry {
+        range:Range<u32>,
+        diffuse_texture:Option<u32>
+    }
 }
 
 pub struct VertexConstructor;

@@ -2,7 +2,10 @@
 
 use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image};
 
-const TEST_SPRITE:u32 = 0;
+const BRICK_WALL:u32 = 1;
+const PLANT:u32 = 2;
+const VIKTOR:u32 = 3;
+const WILLIAM:u32 = 4;
 
 #[derive(Default)]
 pub struct MyGame {
@@ -19,7 +22,7 @@ impl MyGame {
                     let sprite = Sprite {
                         pos:Vec2::new(x as f32 * s,  y as f32 * s).extend(0.0),
                         size:s * 0.8,
-                        tex:TEST_SPRITE
+                        tex:VIKTOR
                     };
                     self.scene.sprites.push(sprite);
                 }
@@ -31,8 +34,16 @@ impl MyGame {
 
 impl Game for MyGame {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        let img = image::load_from_memory(include_bytes!("../assets/textures/test.png")).unwrap();
-        engine.load_texture(TEST_SPRITE, &img);
+        macro_rules! load_texture {
+            ($id:expr, $path:expr) => {
+                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
+            };
+        }
+        
+        load_texture!(BRICK_WALL, "../assets/textures/brick_wall_red.png");
+        load_texture!(PLANT, "../assets/textures/plant.png");
+        load_texture!(VIKTOR, "../assets/textures/viktor.png");
+        load_texture!(WILLIAM, "../assets/textures/william.png");
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
@@ -42,7 +53,7 @@ impl Game for MyGame {
 
         let _camera = Camera::default();
         let _cell_size = 128;
-        let _screen_size = engine.screen_size();
+        let screen_size = engine.screen_size();
 
      /*   fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
             let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
@@ -90,11 +101,28 @@ impl Game for MyGame {
         }
 */
         engine.draw_rect(DrawRectParams {
-            pos: vec2(25.0, 25.2),
-            size: vec2(160.1, 60.1),
-            color: Color::WHITE,
+            pos: vec2(0.0, 0.0),
+            size: vec2(screen_size.x, screen_size.y),
+            color: Color::RED,
+            texture: None,
         });
 
+        let textures = [WILLIAM, VIKTOR];
+        let mut x = 16.0;
+        let y = 16.0;
+        let scale = 3.0;
+        for id in textures {
+            let tex = engine.texture_info(&id).unwrap();
+            let size = vec2(tex.width, tex.height) * scale;
+            engine.draw_rect(DrawRectParams {
+                pos: vec2(x, y),
+                size,
+                color: Color::WHITE,
+                texture: Some(WILLIAM),
+            });
+
+            x += size.x;
+        }
 
         self.iterations += 1;
 

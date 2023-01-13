@@ -35,5 +35,5 @@ var diffuse_sampler:sampler;
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    return textureSample(diffuse_texture, diffuse_sampler, in.uv);
+    return textureSample(diffuse_texture, diffuse_sampler, in.uv) * in.color;
 }

@@ -1,5 +1,5 @@
 use crate::{Engine, Model, Vertex};
-use engine_sdk::{self, glam::{Vec3, Vec2}, DrawRectParams, image::DynamicImage};
+use engine_sdk::{self, glam::{Vec3, Vec2}, DrawRectParams, image::DynamicImage, TextureInfo};
 use lyon::{path::{Path}, geom::point, lyon_tessellation::{StrokeTessellator, StrokeOptions, BuffersBuilder, VertexBuffers, StrokeVertexConstructor}};
 
 impl engine_sdk::Engine for Engine {
@@ -73,6 +73,17 @@ impl engine_sdk::Engine for Engine {
 
     fn draw_text(&mut self, params:engine_sdk::DrawTextParams) {
         self.canvas.draw_text(params);
+    }
+
+    fn texture_info(&self, id:&u32) -> Option<engine_sdk::TextureInfo> {
+        if let Some(texture) = self.graphics.textures.get(id) {
+            return Some(TextureInfo {
+                width:texture.width as f32,
+                height:texture.height as f32
+            })
+        }
+
+        None
     }
 }
 

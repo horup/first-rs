@@ -1,6 +1,6 @@
 use std::{mem::size_of, ops::Range};
 
-use wgpu::{self};
+use wgpu::{self, BindGroup};
 
 use crate::{Vertex, GraphicsContext};
 
@@ -68,11 +68,11 @@ impl Model {
         graphics.queue.write_buffer(&self.index_buffer, 0, slice);
     }
 
-    pub fn draw<'a>(&'a self, graphics:&mut GraphicsContext) {
-        self.draw_indexed(graphics, 0..self.indicies.len() as u32);
+    pub fn draw<'a>(&'a self, graphics:&mut GraphicsContext, diffuse_texture:&crate::Texture) {
+        self.draw_indexed(graphics, 0..self.indicies.len() as u32, diffuse_texture);
     }
 
-    pub fn draw_indexed<'a>(&'a self, graphics:&mut GraphicsContext, indicies:Range<u32>) {
+    pub fn draw_indexed<'a>(&'a self, graphics:&mut GraphicsContext, indicies:Range<u32>, diffuse_texture:&crate::Texture) {
         if self.index_buffer.size() == 0 || self.indicies.len() == 0 {
             return;
         }
@@ -92,7 +92,7 @@ impl Model {
             });
             render_pass.set_pipeline(&graphics.render_pipeline);
             render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
-            render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
+            render_pass.set_bind_group(1, &diffuse_texture.texture_bind_group, &[]);
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.draw_indexed(indicies, 0, 0..1);
