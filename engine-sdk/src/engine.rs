@@ -10,15 +10,7 @@ pub trait Engine {
     fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn frame_time(&self) -> Duration;
-
-    /**
-    On the screen with y axis pointing downards
-    */
     fn draw_rect(&mut self, params:DrawRectParams);
-
-    /**
-    On the screen with y axis pointing downards
-    */
     fn draw_line(&mut self, params:DrawLineParams);
     fn screen_size(&self) -> Vec2;
 
@@ -35,13 +27,6 @@ pub trait Engine {
 
     //fn draw_texture(&mut self, params:DrawTextureParams)
 }
-/*
-#[derive(Clone, Debug, Default)]
-pub struct DrawTextureParams {
-    pub pos:Vec2,
-    pub size:Vec2,
-    pub 
-}*/
 
 #[derive(Clone, Debug, Default)]
 pub struct TextureInfo {

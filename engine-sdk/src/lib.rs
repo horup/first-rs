@@ -16,5 +16,8 @@ pub use camera::*;
 mod color;
 pub use color::*;
 
+mod rect;
+pub use rect::*;
+
 pub use glam;
 pub use image;
