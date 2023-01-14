@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use engine_sdk::image::{DynamicImage, RgbaImage, GenericImage};
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline, BindGroupLayout};
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline, BindGroupLayout, TextureFormat};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Vertex, CameraUniform};
 
@@ -21,7 +21,8 @@ pub struct Graphics {
     pub textures:HashMap<u32, crate::Texture>,
     pub texture_bind_group_layout:BindGroupLayout,
     pub texture_missing:crate::Texture,
-    pub texture_white:crate::Texture
+    pub texture_white:crate::Texture,
+    pub render_format:TextureFormat
 }
 
 impl Graphics {
@@ -49,9 +50,10 @@ impl Graphics {
             None, // Trace path
         ).await.unwrap();
 
+        let render_format =  surface.get_supported_formats(&adapter)[0];
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format: surface.get_supported_formats(&adapter)[0],
+            format: render_format,
             width: screen_size.width,
             height: screen_size.height,
             present_mode: wgpu::PresentMode::Fifo,
@@ -199,7 +201,8 @@ impl Graphics {
             textures:HashMap::new(),
             texture_missing: texture_missing,
             texture_white: texture_white,
-            texture_bind_group_layout
+            texture_bind_group_layout,
+            render_format
         }
 
     }

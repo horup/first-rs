@@ -18,7 +18,7 @@ impl Canvas {
         let staging_belt = wgpu::util::StagingBelt::new(1024);
         let inconsolata = ab_glyph::FontArc::try_from_slice(include_bytes!("../fonts/joystix_monospace.ttf")).unwrap();
         let glyph_brush = GlyphBrushBuilder::using_font(inconsolata)
-            .build(&graphics.device, wgpu::TextureFormat::Rgba8UnormSrgb);
+            .build(&graphics.device, graphics.render_format);
         Self {
             geometry:Model::new(&graphics.device),
             glyph_brush,

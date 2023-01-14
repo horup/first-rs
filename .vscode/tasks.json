@@ -17,7 +17,7 @@
 			"type": "process",
 			"command": "trunk",
 			"options": {
-				"cwd": "./main-web"
+				"cwd": "./main"
 			},
 			"args": [
 				"serve"
