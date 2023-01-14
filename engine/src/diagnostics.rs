@@ -1,4 +1,4 @@
-use std::time::*;
+use instant::{Instant, Duration};
 
 pub struct Diagnostics {
     last_tick:Instant,

@@ -551,6 +551,7 @@ dependencies = [
  "bytemuck",
  "egui-wgpu",
  "engine-sdk",
+ "instant",
  "log",
  "lyon",
  "wasm-bindgen",
