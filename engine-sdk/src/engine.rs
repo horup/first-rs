@@ -22,7 +22,7 @@ pub trait Engine {
     fn keys_just_pressed(&self) -> &[u32];
 
     fn key_just_pressed(&self, key_code:u32) -> bool {
-        self.keys_just_pressed().iter().position(|kc| kc == &key_code).is_some()
+        self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
 
     //fn draw_texture(&mut self, params:DrawTextureParams)
