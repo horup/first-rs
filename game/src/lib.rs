@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image, DrawTextParams};
 
 const BRICK_WALL:u32 = 1;
 const PLANT:u32 = 2;
@@ -144,6 +144,13 @@ impl Game for MyGame {
             size:vec2(24.0,48.0),
             color: Color::WHITE,
             texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
+        });
+
+        engine.draw_text(DrawTextParams {
+            screen_pos: mouse_pos,
+            text: mouse_pos.to_string(),
+            scale:16.0,
+            color: Color::WHITE,
         });
 
 

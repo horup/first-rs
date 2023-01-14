@@ -4,11 +4,26 @@
 		{
 			"type": "cargo",
 			"command": "run",
-			"args": ["--bin", "main"],
+			"args": [
+				"--bin",
+				"main"
+			],
 			"problemMatcher": [
 				"$rustc"
 			],
 			"label": "rust: cargo run"
+		},
+		{
+			"type": "process",
+			"command": "trunk",
+			"options": {
+				"cwd": "./main-web"
+			},
+			"args": [
+				"serve"
+			],
+			"label": "trunk serve",
+			"problemMatcher": []
 		}
 	]
 }
