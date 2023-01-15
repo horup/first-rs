@@ -1,5 +1,4 @@
 use engine::{Engine};
-use game::MyGame;
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
@@ -21,7 +20,7 @@ fn main() {
         console_log::init_with_level(log::Level::Info).expect("Couldn't initialize logger");
         wasm_bindgen_futures::spawn_local(async {
             let mut engine = Engine::new().await;
-            engine.set_game(Box::new(MyGame::default()));
+            engine.set_game(Box::new(game::MyGame::default()));
             engine.run().await;  
         });
     }
