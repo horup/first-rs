@@ -1,18 +1,18 @@
 use engine::{Engine};
 use game::MyGame;
 
-async fn run() {
-    let mut engine = Engine::new().await;
-    engine.set_game(Box::new(MyGame::default()));
-    engine.run().await;  
-}
-
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
         env_logger::init();
+        let current_exe_path = std::env::current_exe().unwrap();
+        let mut lib_path = current_exe_path.parent().unwrap().to_path_buf();
+        lib_path.push("game.dll");
+
         pollster::block_on(async {
-            run().await;
+            let mut engine = Engine::new().await;
+            engine.set_dynamic_game(lib_path);
+            engine.run().await;  
         }); 
     }   
     #[cfg(target_arch = "wasm32")]
@@ -20,7 +20,9 @@ fn main() {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
         console_log::init_with_level(log::Level::Info).expect("Couldn't initialize logger");
         wasm_bindgen_futures::spawn_local(async {
-            run().await;
+            let mut engine = Engine::new().await;
+            engine.set_game(Box::new(MyGame::default()));
+            engine.run().await;  
         });
     }
 } 

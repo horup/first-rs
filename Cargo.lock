@@ -561,6 +561,7 @@ dependencies = [
  "egui-wgpu",
  "engine-sdk",
  "instant",
+ "libloading",
  "log",
  "lyon",
  "wasm-bindgen",

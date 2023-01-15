@@ -22,6 +22,8 @@ pub struct Engine {
     pub(crate) canvas: Canvas,
     pub diagnostics: Diagnostics,
     pub input: Input,
+    #[cfg(not(target_arch = "wasm32"))]
+    pub hot_reloader:crate::hot_reloader::HotReloader
 }
 
 impl Engine {
@@ -61,6 +63,8 @@ impl Engine {
             models: HashMap::default(),
             canvas,
             input:Input::default(),
+            #[cfg(not(target_arch = "wasm32"))]
+            hot_reloader:crate::hot_reloader::HotReloader::new()
         }
     }
 
@@ -68,7 +72,17 @@ impl Engine {
         self.game = Some(game);
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn set_dynamic_game(&mut self, path:std::path::PathBuf) {
+        dbg!(path);
+    }
+
     pub fn update(&mut self) {
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            self.hot_reloader.update(&mut self.game);
+
+        }
         self.canvas.prepare();
 
         // do game update
