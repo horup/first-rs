@@ -2,8 +2,8 @@ use engine::{Engine};
 use game::MyGame;
 
 async fn run() {
-    let g = MyGame::default();
-    let engine = Engine::new(Box::new(g)).await;
+    let mut engine = Engine::new().await;
+    engine.set_game(Box::new(MyGame::default()));
     engine.run().await;  
 }
 

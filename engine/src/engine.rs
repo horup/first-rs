@@ -25,7 +25,7 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub async fn new(game: Box<dyn Game>) -> Self {
+    pub async fn new() -> Self {
         let event_loop = EventLoop::new();
         let window = WindowBuilder::new()
             .with_title("First-RS")
@@ -55,13 +55,17 @@ impl Engine {
         Engine {
             window: Some(window),
             event_loop: Some(event_loop),
-            game: Some(game),
+            game: None,
             graphics,
             diagnostics: Default::default(),
             models: HashMap::default(),
             canvas,
             input:Input::default(),
         }
+    }
+
+    pub fn set_game(&mut self, game:Box<dyn Game>) {
+        self.game = Some(game);
     }
 
     pub fn update(&mut self) {
