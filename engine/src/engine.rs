@@ -11,7 +11,7 @@ use winit::{
     window::WindowBuilder,
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input, hot_reloader};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input};
 
 pub struct Engine {
     pub(crate) game: Option<Box<dyn Game>>,

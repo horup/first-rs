@@ -1,16 +1,22 @@
+use std::{path::PathBuf, str::FromStr};
+
 use engine::{Engine};
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
         env_logger::init();
-        let current_exe_path = std::env::current_exe().unwrap();
-        let mut lib_path = current_exe_path.parent().unwrap().to_path_buf();
-        lib_path.push("game.dll");
+       
 
         pollster::block_on(async {
             let mut engine = Engine::new().await;
-            engine.set_game_hotreload(lib_path);
+            let g = game::create();
+            engine.set_game(g);
+            #[cfg(debug_assertions)]
+            {
+                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("game.dll").unwrap());
+                engine.set_game_hotreload(lib_path);
+            }
             engine.run().await;  
         }); 
     }   
