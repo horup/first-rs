@@ -1,11 +1,12 @@
 use std::collections::HashMap;
-
+use egui::Context;
 use engine_sdk::image::{DynamicImage, RgbaImage, GenericImage};
-use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline, BindGroupLayout, TextureFormat};
+use wgpu::{Device, TextureView, CommandEncoder, SurfaceTexture, util::DeviceExt, Buffer, BindGroup, Texture, Queue, RenderPipeline, BindGroupLayout, TextureFormat, Color};
 use winit::{dpi::PhysicalSize, window::Window};
 use crate::{Vertex, CameraUniform};
 
 pub struct Graphics {
+    pub pixels_per_point:f32,
     pub surface: wgpu::Surface,
     pub surface_view: Option<TextureView>,
     pub surface_texture: Option<SurfaceTexture>,
@@ -22,12 +23,14 @@ pub struct Graphics {
     pub texture_bind_group_layout:BindGroupLayout,
     pub texture_missing:crate::Texture,
     pub texture_white:crate::Texture,
-    pub render_format:TextureFormat
+    pub render_format:TextureFormat,
+    pub egui_painter:egui_wgpu::renderer::Renderer
 }
 
 impl Graphics {
     pub async fn new<'a>(window:&'a Window) -> Self {
         let screen_size = window.inner_size();
+        let pixels_per_point = window.scale_factor();
         let instance = wgpu::Instance::new(wgpu::Backends::all());
         let surface = unsafe { instance.create_surface(&window) };
         let adapter = instance.request_adapter(
@@ -184,7 +187,7 @@ impl Graphics {
         
         let texture_missing = crate::Texture::new(&device, &queue, &texture_bind_group_layout, &texture_missing);
 
-
+        let egui_painter = egui_wgpu::Renderer::new(&device, render_format, None, 1);
         Self {
             camera_uniform,
             surface,
@@ -202,7 +205,9 @@ impl Graphics {
             texture_missing: texture_missing,
             texture_white: texture_white,
             texture_bind_group_layout,
-            render_format
+            render_format,
+            egui_painter:egui_painter,
+            pixels_per_point:pixels_per_point as f32
         }
 
     }
@@ -224,7 +229,7 @@ impl Graphics {
         self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));
     }
 
-    fn clear(&mut self) {
+    fn clear_screen(&mut self) {
         self.encoder.as_mut().unwrap().begin_render_pass(&wgpu::RenderPassDescriptor {
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                 view: self.surface_view.as_ref().unwrap(),
@@ -243,6 +248,32 @@ impl Graphics {
         });
     }
 
+    pub fn draw_ui(&mut self, egui:&Context, full_output:egui::FullOutput) {
+        let clipped_primitives = egui.tessellate(full_output.shapes);
+       
+        let sd = egui_wgpu::renderer::ScreenDescriptor { 
+            size_in_pixels: [self.screen_size.width, self.screen_size.height], 
+            pixels_per_point: 
+            self.pixels_per_point 
+        };
+
+        self.egui_painter.update_buffers(&self.device, &self.queue, self.encoder.as_mut().unwrap(), clipped_primitives.as_slice(), &sd);
+        let mut render_pass = self.encoder.as_mut().unwrap().begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("Render Pass"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &self.surface_view.as_ref().unwrap(),
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(Color::BLACK),
+                    store: true,
+                },
+            })],
+            depth_stencil_attachment: None,
+        });
+        self.egui_painter.render(&mut render_pass, clipped_primitives.as_slice(), &sd);
+
+    }
+
     pub fn prepare(&mut self) {
         let surface_texture = self.surface.get_current_texture().unwrap();
         let surface_view = surface_texture.texture.create_view(&wgpu::TextureViewDescriptor::default()); 
@@ -254,7 +285,7 @@ impl Graphics {
         self.encoder = Some(encoder);
 
         self.update_camera();
-        self.clear();
+        self.clear_screen();
         //run.set_pipeline(&self.render_pipeline);
     }
 

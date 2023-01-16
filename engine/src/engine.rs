@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use egui::{FontDefinitions, RawInput};
 use engine_sdk::{
     glam::{vec2},
     Game,
@@ -14,6 +14,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input};
 
 pub struct Engine {
+    pub(crate) egui_ctx: egui::Context,
     pub(crate) game: Option<Box<dyn Game>>,
     pub(crate) window: Option<winit::window::Window>,
     pub(crate) event_loop: Option<winit::event_loop::EventLoop<()>>,
@@ -55,6 +56,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            egui_ctx:egui::Context::default(),
             window: Some(window),
             event_loop: Some(event_loop),
             game: None,
@@ -95,10 +97,29 @@ impl Engine {
             self.game = Some(game);
         }
 
-        // render results:
+        // generate ui for rendering
+        let full_output = self.egui_ctx.run(RawInput::default(), |egui_ctx| {
+            //my_app.ui(egui_ctx); // add panels, windows and widgets to `egui_ctx` here
+            egui::CentralPanel::default().show(egui_ctx, |ui| {
+                ui.heading("My egui Application");
+                ui.horizontal(|ui| {
+                    let name_label = ui.label("Your name: ");
+                });
+               
+                ui.label(format!("Hello '{}', age {}", 1, 2));
+            });
+           // egui_ctx.
+        });
+
+        // render canvas
         self.graphics.prepare();
         let mut context = GraphicsContext::new(&mut self.graphics);
         self.canvas.draw(&mut context);
+
+        // draw ui always on top
+        self.graphics.draw_ui(&self.egui_ctx, full_output);
+
+        // present and measure time
         self.graphics.present();
         self.diagnostics.measure_frame_time();
     }
@@ -116,6 +137,19 @@ impl Engine {
         let event_loop = self.event_loop.take().unwrap();
         let window = self.window.take().unwrap();
         self.init();
+
+        // let egui_platform = egui_winit_platform::Platform::new(egui_winit_platform::PlatformDescriptor {
+        //     physical_width: window.inner_size().width as u32,
+        //     physical_height: window.inner_size().width as u32,
+        //     scale_factor: window.scale_factor(),
+        //     font_definitions: FontDefinitions::default(),
+        //     style: Default::default(),
+        // });
+
+        // let mut egui_rpass = RenderPass::new(&self.graphics.device, self.graphics.render_format, 1);
+
+       
+
 
         event_loop.run(move |event, _, control_flow| match event {
             Event::WindowEvent {
