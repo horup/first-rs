@@ -10,7 +10,7 @@ fn main() {
 
         pollster::block_on(async {
             let mut engine = Engine::new().await;
-            engine.set_dynamic_game(lib_path);
+            engine.set_game_hotreload(lib_path);
             engine.run().await;  
         }); 
     }   

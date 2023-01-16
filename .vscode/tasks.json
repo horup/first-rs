@@ -24,6 +24,16 @@
 			],
 			"label": "trunk serve",
 			"problemMatcher": []
-		}
+		},
+		{
+			"type": "cargo",
+			"command": "watch",
+			"args": ["-x", "build", "-d", ".5"],
+			"options": {
+				"cwd":"game"
+			},
+			"group": "build",
+			"label": "watch game"
+		},
 	]
 }

@@ -11,7 +11,7 @@ use winit::{
     window::WindowBuilder,
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input, hot_reloader};
 
 pub struct Engine {
     pub(crate) game: Option<Box<dyn Game>>,
@@ -23,7 +23,7 @@ pub struct Engine {
     pub diagnostics: Diagnostics,
     pub input: Input,
     #[cfg(not(target_arch = "wasm32"))]
-    pub hot_reloader:crate::hot_reloader::HotReloader
+    pub hot_reloader:Option<crate::hot_reloader::HotReloader>
 }
 
 impl Engine {
@@ -64,7 +64,7 @@ impl Engine {
             canvas,
             input:Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
-            hot_reloader:crate::hot_reloader::HotReloader::new()
+            hot_reloader:None
         }
     }
 
@@ -73,15 +73,18 @@ impl Engine {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn set_dynamic_game(&mut self, path:std::path::PathBuf) {
-        dbg!(path);
+    pub fn set_game_hotreload(&mut self, lib_path:std::path::PathBuf) {
+        self.hot_reloader = Some(crate::hot_reloader::HotReloader::new(lib_path));
     }
 
     pub fn update(&mut self) {
         #[cfg(not(target_arch = "wasm32"))]
         {
-            self.hot_reloader.update(&mut self.game);
-
+            let hot_reloader = self.hot_reloader.take();
+            if let Some(mut hot_reloader) = hot_reloader {
+                hot_reloader.update(self);
+                self.hot_reloader = Some(hot_reloader);
+            }
         }
         self.canvas.prepare();
 
