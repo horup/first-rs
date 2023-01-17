@@ -63,7 +63,7 @@ impl Graphics {
             format: render_format,
             width: screen_size.width,
             height: screen_size.height,
-            present_mode: wgpu::PresentMode::Immediate,
+            present_mode: wgpu::PresentMode::Fifo,
             alpha_mode: wgpu::CompositeAlphaMode::Auto,
         };
         surface.configure(&device, &config);
