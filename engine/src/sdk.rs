@@ -63,7 +63,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn screen_size(&self) -> engine_sdk::glam::Vec2 {
-        Vec2::new(self.graphics.screen_size.width as f32, self.graphics.screen_size.height as f32)
+        Vec2::new(self.graphics.config.width as f32, self.graphics.config.height as f32)
     }
 
     fn draw_line(&mut self, mut params:engine_sdk::DrawLineParams) {

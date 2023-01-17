@@ -18,7 +18,6 @@ pub struct Graphics {
     pub camera_uniform: CameraUniform,
     pub camera_buffer: Buffer,
     pub camera_bind_group: BindGroup,
-    pub screen_size: PhysicalSize<u32>,
     pub textures: HashMap<u32, crate::Texture>,
     pub texture_bind_group_layout: BindGroupLayout,
     pub texture_missing: crate::Texture,
@@ -204,7 +203,6 @@ impl Graphics {
             render_pipeline,
             camera_buffer,
             camera_bind_group,
-            screen_size,
             textures: HashMap::new(),
             texture_missing: texture_missing,
             texture_white: texture_white,
@@ -225,22 +223,15 @@ impl Graphics {
         self.textures.insert(id, texture);
     }
 
-    pub fn resize(&mut self, new_size: PhysicalSize<u32>) {
-        if new_size.width != 0 && new_size.height != 0 {
-            self.screen_size = new_size;
-            self.config.width = new_size.width;
-            self.config.height = new_size.height;
-            self.surface.configure(&self.device, &self.config);
-            dbg!("resize");
-        }
-
+    pub fn configure(&mut self) {
+        self.surface.configure(&self.device, &self.config);
         self.update_camera();
     }
 
     fn update_camera(&mut self) {
         let camera_uniform = CameraUniform::new_orth_screen(
-            self.screen_size.width as f32,
-            self.screen_size.height as f32,
+            self.config.width as f32,
+            self.config.height as f32,
         );
         self.queue.write_buffer(
             &self.camera_buffer,
@@ -253,7 +244,7 @@ impl Graphics {
         let clipped_primitives = egui.tessellate(full_output.shapes);
 
         let sd = egui_wgpu::renderer::ScreenDescriptor {
-            size_in_pixels: [self.screen_size.width, self.screen_size.height],
+            size_in_pixels: [self.config.width, self.config.height],
             pixels_per_point: self.pixels_per_point,
         };
 
@@ -296,7 +287,7 @@ impl Graphics {
                 label: Some("Render Encoder"),
             });
 
-        if let Ok(surface_texture) = self.surface.get_current_texture() {
+        /*if let Ok(surface_texture) = self.surface.get_current_texture() {
             let surface_view = surface_texture
                 .texture
                 .create_view(&wgpu::TextureViewDescriptor::default());
@@ -319,9 +310,21 @@ impl Graphics {
             });
 
             return (encoder, Some(surface_texture), Some(surface_view));
-        }
+        }*/
 
-        return (encoder, None, None);
+        let surface_texture = match self.surface.get_current_texture() {
+            Ok(surface_texture) => surface_texture,
+            Err(_) => {
+                self.configure();
+                self.surface.get_current_texture().unwrap()
+            },
+        };
+
+        let surface_view = surface_texture
+                .texture
+                .create_view(&wgpu::TextureViewDescriptor::default());
+
+        return (encoder, Some(surface_texture), Some(surface_view));
     }
 
     pub fn submit(&mut self, encoder: CommandEncoder, surface_texture: Option<SurfaceTexture>) {
@@ -354,7 +357,7 @@ impl<'a> GraphicsContext<'a> {
         Self {
             device: &graphics.device,
             queue: &graphics.queue,
-            screen_size: graphics.screen_size,
+            screen_size: PhysicalSize::new(graphics.config.width, graphics.config.height),
             encoder,
             surface_view,
             render_pipeline: &graphics.render_pipeline,
