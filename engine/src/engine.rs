@@ -96,7 +96,6 @@ impl Engine {
 
         // generate ui for rendering
         let full_output = self.egui_ctx.run(egui_raw_input, |egui_ctx| {
-            //my_app.ui(egui_ctx); // add panels, windows and widgets to `egui_ctx` here
             egui::CentralPanel::default().show(egui_ctx, |ui| {
                 ui.heading("My egui Application");
                 ui.horizontal(|ui| {
@@ -109,7 +108,6 @@ impl Engine {
 
                 ui.label(format!("Hello '{}', age {}", 1, 2));
             });
-            // egui_ctx.
         });
 
         // render canvas
