@@ -257,21 +257,38 @@ impl Graphics {
             self.pixels_per_point 
         };
 
-        self.egui_painter.update_buffers(&self.device, &self.queue, self.encoder.as_mut().unwrap(), clipped_primitives.as_slice(), &sd);
-        let mut render_pass = self.encoder.as_mut().unwrap().begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("Render Pass"),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: &self.surface_view.as_ref().unwrap(),
-                resolve_target: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(Color::BLACK),
-                    store: true,
-                },
-            })],
-            depth_stencil_attachment: None,
-        });
-        self.egui_painter.render(&mut render_pass, clipped_primitives.as_slice(), &sd);
 
+        for (id, delta) in full_output.textures_delta.set.iter() {
+            self.egui_painter.update_texture(&self.device, &self.queue, *id, delta);
+        }
+
+        self.egui_painter.update_buffers(&self.device, &self.queue, self.encoder.as_mut().unwrap(), clipped_primitives.as_slice(), &sd);
+       
+        {
+            let mut render_pass = self.encoder.as_mut().unwrap().begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Render Pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.surface_view.as_ref().unwrap(),
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(Color::BLACK),
+                        store: true,
+                    },
+                })],
+                depth_stencil_attachment: None,
+            });
+
+            self.egui_painter.render(&mut render_pass, clipped_primitives.as_slice(), &sd);
+        }
+        
+        for id in full_output.textures_delta.free.iter() {
+            self.egui_painter.free_texture(id);
+            dbg!("freeing texture");
+        }
+
+    }
+
+    pub fn cleanup_ui(&mut self, egui:&Context) {
     }
 
     pub fn prepare(&mut self) {
