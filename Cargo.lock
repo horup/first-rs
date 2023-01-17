@@ -664,6 +664,7 @@ dependencies = [
 name = "engine-sdk"
 version = "0.1.0"
 dependencies = [
+ "egui",
  "glam",
  "image",
  "serde",

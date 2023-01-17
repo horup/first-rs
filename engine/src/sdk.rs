@@ -106,6 +106,10 @@ impl engine_sdk::Engine for Engine {
         &self.input.keys_just_pressed
     }
 
+    fn egui(&self) -> &egui::Context {
+        &self.egui_ctx
+    }
+
     
 }
 

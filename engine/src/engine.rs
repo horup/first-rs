@@ -87,6 +87,8 @@ impl Engine {
         }
         self.canvas.prepare();
 
+        self.egui_ctx.begin_frame(egui_raw_input);
+
         // do game update
         let game = self.game.take();
         if let Some(mut game) = game {
@@ -94,8 +96,11 @@ impl Engine {
             self.game = Some(game);
         }
 
+        let full_output = self.egui_ctx.end_frame();
+
         // generate ui for rendering
-        let full_output = self.egui_ctx.run(egui_raw_input, |egui_ctx| {
+      /*  let full_output = self.egui_ctx.run(egui_raw_input, |egui_ctx| {
+            
             egui::CentralPanel::default().show(egui_ctx, |ui| {
                 ui.heading("My egui Application");
                 ui.horizontal(|ui| {
@@ -108,7 +113,7 @@ impl Engine {
 
                 ui.label(format!("Hello '{}', age {}", 1, 2));
             });
-        });
+        });*/
 
         // render canvas
         self.graphics.prepare();

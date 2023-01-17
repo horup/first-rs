@@ -6,6 +6,7 @@ use image::DynamicImage;
 use crate::{Camera, Scene, Color};
 
 pub trait Engine {
+    fn egui(&self) -> &egui::Context;
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
     fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);

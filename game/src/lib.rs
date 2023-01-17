@@ -164,6 +164,11 @@ impl Game for MyGame {
         if self.iterations % 60 == 0 {
             dbg!(engine.frame_time());
         }
+
+        engine_sdk::egui::Window::new("Hello world").show(engine.egui(), |ui|{
+
+        });
+        
     }
 } 
 
