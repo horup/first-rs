@@ -100,14 +100,12 @@ impl Engine {
 
         let full_output = self.egui_ctx.end_frame();
 
-        if let Some(surface_view) = surface_view {
-            let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
-            self.canvas.draw(&mut context);
+        let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
+        self.canvas.draw(&mut context);
 
-            // draw ui always on top
-            self.graphics
-                .draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
-        }
+        // draw ui always on top
+        self.graphics
+            .draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
 
         self.graphics.submit(encoder, surface_texture);
         self.diagnostics.measure_frame_time();

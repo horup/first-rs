@@ -280,37 +280,13 @@ impl Graphics {
 
     pub fn cleanup_ui(&mut self, egui: &Context) {}
 
-    pub fn prepare(&mut self) -> (CommandEncoder, Option<SurfaceTexture>, Option<TextureView>) {
+    pub fn prepare(&mut self) -> (CommandEncoder, SurfaceTexture, TextureView) {
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("Render Encoder"),
             });
 
-        /*if let Ok(surface_texture) = self.surface.get_current_texture() {
-            let surface_view = surface_texture
-                .texture
-                .create_view(&wgpu::TextureViewDescriptor::default());
-
-            encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &surface_view,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.2,
-                            b: 0.3,
-                            a: 1.0,
-                        }),
-                        store: true,
-                    },
-                })],
-                ..Default::default()
-            });
-
-            return (encoder, Some(surface_texture), Some(surface_view));
-        }*/
 
         let surface_texture = match self.surface.get_current_texture() {
             Ok(surface_texture) => surface_texture,
@@ -324,14 +300,29 @@ impl Graphics {
                 .texture
                 .create_view(&wgpu::TextureViewDescriptor::default());
 
-        return (encoder, Some(surface_texture), Some(surface_view));
+        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: &surface_view,
+                        resolve_target: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(wgpu::Color {
+                                r: 0.1,
+                                g: 0.2,
+                                b: 0.3,
+                                a: 1.0,
+                            }),
+                            store: true,
+                        },
+                    })],
+                    ..Default::default()
+                });
+
+        return (encoder, surface_texture, surface_view);
     }
 
-    pub fn submit(&mut self, encoder: CommandEncoder, surface_texture: Option<SurfaceTexture>) {
+    pub fn submit(&mut self, encoder: CommandEncoder, surface_texture: SurfaceTexture) {
         self.queue.submit(std::iter::once(encoder.finish()));
-        if let Some(surface_texture) = surface_texture {
-            surface_texture.present();
-        }
+        surface_texture.present();
     }
 }
 
