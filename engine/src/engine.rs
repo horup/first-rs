@@ -1,17 +1,14 @@
-use std::collections::HashMap;
 use egui::{FontDefinitions, RawInput};
-use engine_sdk::{
-    glam::{vec2},
-    Game,
-};
+use engine_sdk::{glam::vec2, Game};
+use std::collections::HashMap;
 
 use winit::{
-    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent, DeviceEvent},
+    event::{DeviceEvent, ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Model, Input};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
     pub(crate) egui_ctx: egui::Context,
@@ -24,7 +21,7 @@ pub struct Engine {
     pub diagnostics: Diagnostics,
     pub input: Input,
     #[cfg(not(target_arch = "wasm32"))]
-    pub hot_reloader:Option<crate::hot_reloader::HotReloader>
+    pub hot_reloader: Option<crate::hot_reloader::HotReloader>,
 }
 
 impl Engine {
@@ -56,7 +53,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
-            egui_ctx:egui::Context::default(),
+            egui_ctx: egui::Context::default(),
             window: Some(window),
             event_loop: Some(event_loop),
             game: None,
@@ -64,22 +61,22 @@ impl Engine {
             diagnostics: Default::default(),
             models: HashMap::default(),
             canvas,
-            input:Input::default(),
+            input: Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
-            hot_reloader:None
+            hot_reloader: None,
         }
     }
 
-    pub fn set_game(&mut self, game:Box<dyn Game>) {
+    pub fn set_game(&mut self, game: Box<dyn Game>) {
         self.game = Some(game);
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn set_game_hotreload(&mut self, lib_path:std::path::PathBuf) {
+    pub fn set_game_hotreload(&mut self, lib_path: std::path::PathBuf) {
         self.hot_reloader = Some(crate::hot_reloader::HotReloader::new(lib_path));
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, egui_raw_input: RawInput) {
         #[cfg(not(target_arch = "wasm32"))]
         {
             let hot_reloader = self.hot_reloader.take();
@@ -98,17 +95,21 @@ impl Engine {
         }
 
         // generate ui for rendering
-        let full_output = self.egui_ctx.run(RawInput::default(), |egui_ctx| {
+        let full_output = self.egui_ctx.run(egui_raw_input, |egui_ctx| {
             //my_app.ui(egui_ctx); // add panels, windows and widgets to `egui_ctx` here
             egui::CentralPanel::default().show(egui_ctx, |ui| {
                 ui.heading("My egui Application");
                 ui.horizontal(|ui| {
                     let name_label = ui.label("Your name: ");
                 });
-               
+
+                if ui.button("Some button").clicked() {
+                    dbg!("clicked");
+                }
+
                 ui.label(format!("Hello '{}', age {}", 1, 2));
             });
-           // egui_ctx.
+            // egui_ctx.
         });
 
         // render canvas
@@ -117,7 +118,7 @@ impl Engine {
         self.canvas.draw(&mut context);
 
         // draw ui always on top
-        self.graphics.draw_ui(&self.egui_ctx, full_output);
+        self.graphics.draw_egui(&self.egui_ctx, full_output);
 
         // present and measure time
         self.graphics.present();
@@ -138,71 +139,69 @@ impl Engine {
         let window = self.window.take().unwrap();
         self.init();
 
-        // let egui_platform = egui_winit_platform::Platform::new(egui_winit_platform::PlatformDescriptor {
-        //     physical_width: window.inner_size().width as u32,
-        //     physical_height: window.inner_size().width as u32,
-        //     scale_factor: window.scale_factor(),
-        //     font_definitions: FontDefinitions::default(),
-        //     style: Default::default(),
-        // });
+        let mut egui_winit_state = egui_winit::State::new(&event_loop);
 
-        // let mut egui_rpass = RenderPass::new(&self.graphics.device, self.graphics.render_format, 1);
+        event_loop.run(move |event, _, control_flow| {
+            match event {
+                Event::WindowEvent {
+                    ref event,
+                    window_id,
+                } if window_id == window.id() => {
+                    let res = egui_winit_state.on_event(&self.egui_ctx, &event);
+                    if res.consumed == true {
+                        // egui consumed the event
+                        return;
+                    }
 
-       
-
-
-        event_loop.run(move |event, _, control_flow| match event {
-            Event::WindowEvent {
-                ref event,
-                window_id,
-            } if window_id == window.id() => match event {
-                WindowEvent::CloseRequested
-                | WindowEvent::KeyboardInput {
-                    input:
-                        KeyboardInput {
-                            state: ElementState::Pressed,
-                            virtual_keycode: Some(VirtualKeyCode::Escape),
+                    match event {
+                        WindowEvent::CloseRequested
+                        | WindowEvent::KeyboardInput {
+                            input:
+                                KeyboardInput {
+                                    state: ElementState::Pressed,
+                                    virtual_keycode: Some(VirtualKeyCode::Escape),
+                                    ..
+                                },
                             ..
-                        },
-                    ..
-                } => *control_flow = ControlFlow::Exit,
-                WindowEvent::Resized(new_size) => {
-                    self.graphics.resize(*new_size);
-                }
-                WindowEvent::CursorMoved { position, ..} =>{
-                    self.input.mouse_pos = vec2(position.x as f32, position.y as f32);
-                }
-                WindowEvent::MouseInput { button, state, .. } => {
-                    let button = match button {
-                        winit::event::MouseButton::Left => 0,
-                        winit::event::MouseButton::Right => 1,
-                        winit::event::MouseButton::Middle => 2,
-                        winit::event::MouseButton::Other(_) => 3
-                    };
-                    match state {
-                        ElementState::Pressed => self.input.mouse_pressed[button] = true,
-                        ElementState::Released => self.input.mouse_pressed[button] = false,
+                        } => *control_flow = ControlFlow::Exit,
+                        WindowEvent::Resized(new_size) => {
+                            self.graphics.resize(*new_size);
+                        }
+                        WindowEvent::CursorMoved { position, .. } => {
+                            self.input.mouse_pos = vec2(position.x as f32, position.y as f32);
+                        }
+                        WindowEvent::MouseInput { button, state, .. } => {
+                            let button = match button {
+                                winit::event::MouseButton::Left => 0,
+                                winit::event::MouseButton::Right => 1,
+                                winit::event::MouseButton::Middle => 2,
+                                winit::event::MouseButton::Other(_) => 3,
+                            };
+                            match state {
+                                ElementState::Pressed => self.input.mouse_pressed[button] = true,
+                                ElementState::Released => self.input.mouse_pressed[button] = false,
+                            }
+                        }
+                        _ => {}
                     }
                 }
-                _ => {}
-            },
-            Event::DeviceEvent { event, .. } => {
-                match event {
-                    DeviceEvent::Key(input) =>{
+                Event::DeviceEvent { event, .. } => match event {
+                    DeviceEvent::Key(input) => {
                         self.input.keys_pressed.insert(input.scancode, true);
                         self.input.keys_just_pressed.push(input.scancode);
                     }
-                    _=>{}
+                    _ => {}
+                },
+                Event::RedrawRequested(_window_id) => {
+                    let egui_raw_inputs = egui_winit_state.take_egui_input(&window);
+                    self.update(egui_raw_inputs);
+                    self.input.clear();
                 }
+                Event::MainEventsCleared => {
+                    window.request_redraw();
+                }
+                _ => {}
             }
-            Event::RedrawRequested(_window_id) => {
-                self.update();
-                self.input.clear();
-            }
-            Event::MainEventsCleared => {
-                window.request_redraw();
-            }
-            _ => {}
         });
     }
 }

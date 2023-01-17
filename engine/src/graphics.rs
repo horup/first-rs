@@ -248,7 +248,7 @@ impl Graphics {
         });
     }
 
-    pub fn draw_ui(&mut self, egui:&Context, full_output:egui::FullOutput) {
+    pub fn draw_egui(&mut self, egui:&Context, full_output:egui::FullOutput) {
         let clipped_primitives = egui.tessellate(full_output.shapes);
        
         let sd = egui_wgpu::renderer::ScreenDescriptor { 
@@ -271,7 +271,7 @@ impl Graphics {
                     view: &self.surface_view.as_ref().unwrap(),
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(Color::BLACK),
+                        load: wgpu::LoadOp::Load,
                         store: true,
                     },
                 })],

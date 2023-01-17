@@ -9,8 +9,7 @@ resolver = "2"
 [dependencies]
 egui = {version = "0.20.1"}
 egui-wgpu = {version = "0.20.0"}
-#egui_winit_platform = "0.16.0"
-#egui-winit = "0.20.1"
+egui-winit = "0.20.1"
 winit = "0.27.5"
 engine-sdk = { path = "../engine-sdk" }
 bytemuck = {version = "1.12.3", features = ["derive"]}
