@@ -63,7 +63,7 @@ impl Graphics {
             format: render_format,
             width: screen_size.width,
             height: screen_size.height,
-            present_mode: wgpu::PresentMode::Fifo,
+            present_mode: wgpu::PresentMode::Immediate,
             alpha_mode: wgpu::CompositeAlphaMode::Auto,
         };
         surface.configure(&device, &config);
@@ -231,7 +231,10 @@ impl Graphics {
             self.config.width = new_size.width;
             self.config.height = new_size.height;
             self.surface.configure(&self.device, &self.config);
+            dbg!("resize");
         }
+
+        self.update_camera();
     }
 
     fn update_camera(&mut self) {

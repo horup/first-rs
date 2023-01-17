@@ -124,7 +124,7 @@ impl Game for MyGame {
             x += size.x;
         }
 
-        let s = 32;
+        let s = 1;
         for y in 0..s {
             for x in 0..s {
                 let spacing = 24.0;
