@@ -85,6 +85,8 @@ impl Engine {
                 self.hot_reloader = Some(hot_reloader);
             }
         }
+
+        let (mut encoder, surface_texture, surface_view) = self.graphics.prepare();
         self.canvas.prepare();
 
         self.egui_ctx.begin_frame(egui_raw_input);
@@ -98,16 +100,15 @@ impl Engine {
 
         let full_output = self.egui_ctx.end_frame();
 
-        self.graphics.prepare();
-        if let Ok(mut context) = GraphicsContext::try_new(&mut self.graphics) {
+        if let Some(surface_view) = surface_view {
+            let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
             self.canvas.draw(&mut context);
-
-            // draw ui always on top
-            self.graphics.draw_egui(&self.egui_ctx, full_output);
     
-            self.graphics.present();
+            // draw ui always on top
+            self.graphics.draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
         }
         
+        self.graphics.submit(encoder, surface_texture);
         self.diagnostics.measure_frame_time();
     }
 
