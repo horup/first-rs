@@ -218,10 +218,12 @@ impl Graphics {
     }
 
     pub fn resize(&mut self, new_size:PhysicalSize<u32>) {
-        self.screen_size = new_size;
-        self.config.width = new_size.width;
-        self.config.height = new_size.height;
-        self.surface.configure(&self.device, &self.config);
+        if (new_size.width != 0 && new_size.height != 0) {
+            self.screen_size = new_size;
+            self.config.width = new_size.width;
+            self.config.height = new_size.height;
+            self.surface.configure(&self.device, &self.config);
+        }
     }
 
     fn update_camera(&mut self) {
@@ -292,17 +294,24 @@ impl Graphics {
     }
 
     pub fn prepare(&mut self) {
-        let surface_texture = self.surface.get_current_texture().unwrap();
-        let surface_view = surface_texture.texture.create_view(&wgpu::TextureViewDescriptor::default()); 
-        self.surface_view = Some(surface_view);
-        self.surface_texture = Some(surface_texture);
         let encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("Render Encoder"),
         });
         self.encoder = Some(encoder);
+        self.surface_texture = None;
+        self.surface_view = None;
 
-        self.update_camera();
-        self.clear_screen();
+        if let Ok(surface_texture) = self.surface.get_current_texture() {
+            let surface_view = surface_texture.texture.create_view(&wgpu::TextureViewDescriptor::default()); 
+            self.surface_view = Some(surface_view);
+            self.surface_texture = Some(surface_texture);
+            
+    
+            self.update_camera();
+            self.clear_screen();
+        }
+
+       
         //run.set_pipeline(&self.render_pipeline);
     }
 
@@ -315,6 +324,7 @@ impl Graphics {
     }
 }
 
+use anyhow::{Result, anyhow};
 
 pub struct GraphicsContext<'a> {
     pub device:&'a Device,
@@ -331,19 +341,23 @@ pub struct GraphicsContext<'a> {
 }
 
 impl<'a> GraphicsContext<'a> {
-    pub fn new(graphics:&'a mut Graphics) -> Self {
-        Self {
+    pub fn try_new(graphics:&'a mut Graphics) -> Result<Self> {
+        let encoder = graphics.encoder.as_mut().ok_or_else(|| anyhow!("no encoder"))?;
+        let surface_texture = graphics.surface_texture.as_ref().ok_or_else(|| anyhow!("no surface texture"))?;
+        let surface_view = graphics.surface_view.as_ref().ok_or_else(|| anyhow!("no surface view"))?;
+
+        Ok(Self {
             device:&graphics.device,
             queue:&graphics.queue,
             screen_size:graphics.screen_size,
-            encoder:graphics.encoder.as_mut().unwrap(),
-            surface_texture:graphics.surface_texture.as_ref().unwrap(),
-            surface_view:graphics.surface_view.as_ref().unwrap(),
+            encoder,
+            surface_texture,
+            surface_view,
             render_pipeline:&graphics.render_pipeline,
             camera_bind_group:&graphics.camera_bind_group,
             texture_white:&graphics.texture_white,
             texture_missing:&graphics.texture_missing,
             textures:&graphics.textures
-        }
+        })
     }
 }

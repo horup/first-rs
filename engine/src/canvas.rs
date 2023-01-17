@@ -30,6 +30,7 @@ impl Canvas {
     pub fn prepare(&mut self) {
         self.geometry.clear();
         self.staging_belt.recall();
+        self.draw_calls.clear();
     }
 
     pub fn draw_lines(&mut self, mut lines:Vec<DrawLineParams>) {
@@ -156,7 +157,6 @@ impl Canvas {
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         // write geometry to buffer
         self.geometry.write(graphics);
-        let size = graphics.screen_size;
 
         // schedule draw calls
         let draw_calls = self.draw_calls.drain(..);
@@ -200,10 +200,6 @@ impl Canvas {
             }
         }
 
-    }
-
-    pub fn finish(&mut self) {
-        self.staging_belt.finish();
     }
 }
 

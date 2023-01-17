@@ -98,33 +98,16 @@ impl Engine {
 
         let full_output = self.egui_ctx.end_frame();
 
-        // generate ui for rendering
-      /*  let full_output = self.egui_ctx.run(egui_raw_input, |egui_ctx| {
-            
-            egui::CentralPanel::default().show(egui_ctx, |ui| {
-                ui.heading("My egui Application");
-                ui.horizontal(|ui| {
-                    let name_label = ui.label("Your name: ");
-                });
-
-                if ui.button("Some button").clicked() {
-                    dbg!("clicked");
-                }
-
-                ui.label(format!("Hello '{}', age {}", 1, 2));
-            });
-        });*/
-
-        // render canvas
         self.graphics.prepare();
-        let mut context = GraphicsContext::new(&mut self.graphics);
-        self.canvas.draw(&mut context);
+        if let Ok(mut context) = GraphicsContext::try_new(&mut self.graphics) {
+            self.canvas.draw(&mut context);
 
-        // draw ui always on top
-        self.graphics.draw_egui(&self.egui_ctx, full_output);
-
-        // present and measure time
-        self.graphics.present();
+            // draw ui always on top
+            self.graphics.draw_egui(&self.egui_ctx, full_output);
+    
+            self.graphics.present();
+        }
+        
         self.diagnostics.measure_frame_time();
     }
 
