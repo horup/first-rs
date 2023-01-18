@@ -1,5 +1,6 @@
 use std::{cell::UnsafeCell, fs::Metadata, path::PathBuf};
 
+use egui::Context;
 use engine_sdk::Game;
 use instant::Duration;
 use libloading::Library;
@@ -53,9 +54,12 @@ impl HotReloader {
 
             let mut state: Vec<u8> = Vec::new();
             if unload {
+                {
+                    engine.game.take();
+                    engine.egui_ctx = Context::default();
+                }
                 //state = self.serialize();
                 // self.game = UnsafeCell::default();
-                engine.game = None;
                 if let Some(lib) = self.game_lib.take() {
                     lib.close().unwrap();
                 }
@@ -74,7 +78,6 @@ impl HotReloader {
                             Ok(lib) => {
                                 self.game_lib_metadata = Some(metadata);
                                 self.game_lib = Some(lib);
-                                println!("Game lib loaded");
                                 let mut g = self.call_game_create().unwrap();
                                 //  self.game = UnsafeCell::new(Some(s));
                                 g.init(engine);
@@ -83,6 +86,8 @@ impl HotReloader {
                                 }
 
                                 engine.game = Some(g);
+
+                                dbg!("game is some");
 
                                 break;
                             }

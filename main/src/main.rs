@@ -6,8 +6,6 @@ fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
         env_logger::init();
-       
-
         pollster::block_on(async {
             let mut engine = Engine::new().await;
             let g = game::create();
@@ -26,7 +24,7 @@ fn main() {
         console_log::init_with_level(log::Level::Info).expect("Couldn't initialize logger");
         wasm_bindgen_futures::spawn_local(async {
             let mut engine = Engine::new().await;
-            engine.set_game(Box::new(game::MyGame::default()));
+            engine.set_game(Box::new(game::Editor::default()));
             engine.run().await;  
         });
     }

@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image, DrawTextParams};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image, DrawTextParams, egui};
 
 const BRICK_WALL:u32 = 1;
 const PLANT:u32 = 2;
@@ -8,31 +8,37 @@ const VIKTOR:u32 = 3;
 const WILLIAM:u32 = 4;
 
 #[derive(Default)]
-pub struct MyGame {
+pub struct Editor {
     pub scene:Scene,
     pub iterations:u64
 }
 
-impl MyGame {
-    pub fn start(&mut self, _engine:&mut dyn Engine) {
-        let size = 16;
-            for y in 0..size {
-                for x in 0..size {
-                    let s = 1.0 / size as f32;
-                    let sprite = Sprite {
-                        pos:Vec2::new(x as f32 * s,  y as f32 * s).extend(0.0),
-                        size:s * 0.8,
-                        tex:VIKTOR
-                    };
-                    self.scene.sprites.push(sprite);
+impl Editor {
+    pub fn update(&mut self, engine:&mut dyn Engine) {
+        let ctx = engine.egui().clone();
+        egui::TopBottomPanel::top("top_pane").show(&ctx, |ui|{
+            ui.menu_button("File", |ui|{
+                if ui.button("New").clicked() {
                 }
-            }
+                if ui.button("Save").clicked() {
 
-            dbg!(self.scene.sprites.len());
+                }
+                if ui.button("Load").clicked() {
+                    
+                } 
+            });
+        });
+        egui::SidePanel::left("side_panel").show(&ctx, |ui| {
+            egui::ScrollArea::both().min_scrolled_width(256.0).show(ui, |ui|{
+                for i in 0..1000 {
+                    ui.heading("Editor");
+                }
+            });
+        });
     }
 }
 
-impl Game for MyGame {
+impl Game for Editor {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
         macro_rules! load_texture {
             ($id:expr, $path:expr) => {
@@ -47,13 +53,23 @@ impl Game for MyGame {
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
-        if self.scene.sprites.is_empty() {
-            self.start(engine);
-        }
+        self.update(engine);  
+      
+/*
+        engine.draw_rect(DrawRectParams {
+            pos: vec2(5.0, 5.0),
+            size: vec2(screen_size.x, screen_size.y),
+            color: Color::RED,
+            texture: None,
+        }); 
 
-        let _camera = Camera::default();
-        let _cell_size = 128;
-        let screen_size = engine.screen_size();
+        let mouse_pos = engine.mouse_pos();
+        engine.draw_rect(DrawRectParams {
+            pos: mouse_pos,
+            size:vec2(24.0,48.0),
+            color: Color::WHITE,
+            texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
+        });*/
 
      /*   fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
             let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
@@ -100,7 +116,7 @@ impl Game for MyGame {
             draw_pos(engine, begin, cell_size as f32);
         }
 */
-        engine.draw_rect(DrawRectParams {
+        /*engine.draw_rect(DrawRectParams {
             pos: vec2(0.0, 0.0),
             size: vec2(screen_size.x, screen_size.y),
             color: Color::RED,
@@ -124,34 +140,12 @@ impl Game for MyGame {
             x += size.x;
         }
 
-        let s = 1;
-        for y in 0..s {
-            for x in 0..s {
-                let spacing = 24.0;
-                let x = x as f32;
-                let y = y as f32;
-                engine.draw_rect(DrawRectParams {
-                    pos: vec2(x * spacing, y * spacing),
-                    size:vec2(spacing,spacing),
-                    color: Color::WHITE,
-                    texture: Some(WILLIAM),
-                });
-            }
-        }
-
         let mouse_pos = engine.mouse_pos();
         engine.draw_rect(DrawRectParams {
             pos: mouse_pos,
             size:vec2(24.0,48.0),
             color: Color::WHITE,
             texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
-        });
-
-        engine.draw_text(DrawTextParams {
-            screen_pos: mouse_pos,
-            text: mouse_pos.to_string(),
-            scale:16.0,
-            color: Color::WHITE,
         });
 
 
@@ -167,7 +161,7 @@ impl Game for MyGame {
 
         engine_sdk::egui::Window::new("Hello world").show(engine.egui(), |ui|{
 
-        });
+        });*/
         
     }
 } 
@@ -175,5 +169,5 @@ impl Game for MyGame {
 
 #[no_mangle]
 pub fn create() -> Box<dyn Game> {
-    Box::new(MyGame::default())
+    Box::new(Editor::default())
 }
