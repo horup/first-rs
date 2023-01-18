@@ -1,6 +1,6 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Color, DrawRectParams, image, DrawTextParams, egui};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Color, DrawRectParams, image, DrawTextParams, egui, Map, DrawLineParams};
 
 const BRICK_WALL:u32 = 1;
 const PLANT:u32 = 2;
@@ -9,12 +9,23 @@ const WILLIAM:u32 = 4;
 
 pub struct EditorCamera {
     pub pos:Vec2,
-    pub zoom:f32
+    pub zoom:f32,
+    pub screen_size:Vec2
+}
+
+impl EditorCamera {
+    pub fn to_screen(&self, p:Vec2) -> Vec2 {
+        p * self.zoom + self.pos * self.zoom + self.screen_size / 2.0
+    }
+    pub fn update(&mut self, screen_size:Vec2) {
+        self.screen_size = screen_size;
+    }
+
 }
 
 impl Default for EditorCamera {
     fn default() -> Self {
-        Self { pos: Default::default(), zoom: 64.0 }
+        Self { pos: Default::default(), zoom: 64.0, screen_size:vec2(0.0, 0.0) }
     }
 }
 
@@ -22,13 +33,15 @@ impl Default for EditorCamera {
 pub struct Editor {
     pub scene:Scene,
     pub iterations:u64,
-    pub camera:EditorCamera
+    pub camera:EditorCamera,
+    pub map:Map
 }
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
+        self.camera.update(engine.screen_size());
         self.draw_grid(engine);
-        self.ui(engine);
+       // self.ui(engine);
     }
 
     fn ui(&mut self, engine:&mut dyn Engine) {
@@ -48,13 +61,29 @@ impl Editor {
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {
-        
-        engine.draw_rect(DrawRectParams {
-            pos: (0.0, 0.0).into(),
-            size: (128.0, 128.0).into(),
-            color: Color::WHITE,
-            texture: None,
-        });
+        let size = self.map.grid.size();
+        for x in 0..(size+1) {
+            let x = x as f32;
+            let start = vec2(x, 0.0);
+            let end = vec2(x, size as f32);
+            engine.draw_line(DrawLineParams {
+                begin: self.camera.to_screen(start),
+                end: self.camera.to_screen(end),
+                line_width: 1.0,
+                color: Color::WHITE,
+            });
+        }
+        for y in 0..(size+1) {
+            let y = y as f32;
+            let start = vec2(0.0, y);
+            let end = vec2(size as f32, y);
+            engine.draw_line(DrawLineParams {
+                begin: self.camera.to_screen(start),
+                end: self.camera.to_screen(end),
+                line_width: 1.0,
+                color: Color::WHITE,
+            });
+        }
     }
 }
 
@@ -190,6 +219,7 @@ impl Game for Editor {
 #[no_mangle]
 pub fn create() -> Box<dyn Game> {
     Box::new(Editor {
+        map:Map::new(16),
         ..Default::default()
     })
 }

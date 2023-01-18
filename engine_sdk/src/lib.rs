@@ -19,6 +19,12 @@ pub use color::*;
 mod rect;
 pub use rect::*;
 
+mod grid;
+pub use grid::*;
+
+mod map;
+pub use map::*;
+
 pub use glam;
 pub use image;
 pub use egui;
