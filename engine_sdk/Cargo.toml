@@ -1,5 +1,5 @@
 [package]
-name = "engine-sdk"
+name = "engine_sdk"
 version = "0.1.0"
 edition = "2021"
 

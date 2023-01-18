@@ -9,4 +9,4 @@ edition = "2021"
 crate_type = ["cdylib", "rlib"]
 
 [dependencies]
-engine-sdk = { path = "../engine-sdk" }
+engine_sdk = { path = "../engine_sdk" }

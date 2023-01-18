@@ -11,7 +11,7 @@ egui = {version = "0.20.1", features = [], default-features = false}
 egui-wgpu = {version = "0.20.0"}
 egui-winit = {version = "0.20.1", default-features = false}
 winit = "0.27.5"
-engine-sdk = { path = "../engine-sdk" }
+engine_sdk = { path = "../engine_sdk" }
 bytemuck = {version = "1.12.3", features = ["derive"]}
 lyon = "1.0.1"
 wgpu_glyph = "0.18.0"

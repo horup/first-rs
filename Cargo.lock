@@ -581,7 +581,7 @@ dependencies = [
  "egui",
  "egui-wgpu",
  "egui-winit",
- "engine-sdk",
+ "engine_sdk",
  "instant",
  "libloading",
  "log",
@@ -594,7 +594,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "engine-sdk"
+name = "engine_sdk"
 version = "0.1.0"
 dependencies = [
  "egui",
@@ -814,7 +814,7 @@ dependencies = [
 name = "game"
 version = "0.1.0"
 dependencies = [
- "engine-sdk",
+ "engine_sdk",
 ]
 
 [[package]]
