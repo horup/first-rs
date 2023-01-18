@@ -1,20 +1,37 @@
 
 
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Camera, Color, DrawRectParams, image, DrawTextParams, egui};
+use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2}, Engine, Color, DrawRectParams, image, DrawTextParams, egui};
 
 const BRICK_WALL:u32 = 1;
 const PLANT:u32 = 2;
 const VIKTOR:u32 = 3;
 const WILLIAM:u32 = 4;
 
+pub struct EditorCamera {
+    pub pos:Vec2,
+    pub zoom:f32
+}
+
+impl Default for EditorCamera {
+    fn default() -> Self {
+        Self { pos: Default::default(), zoom: 64.0 }
+    }
+}
+
 #[derive(Default)]
 pub struct Editor {
     pub scene:Scene,
-    pub iterations:u64
+    pub iterations:u64,
+    pub camera:EditorCamera
 }
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
+        self.draw_grid(engine);
+        self.ui(engine);
+    }
+
+    fn ui(&mut self, engine:&mut dyn Engine) {
         let ctx = engine.egui().clone();
         egui::TopBottomPanel::top("top_pane").show(&ctx, |ui|{
             ui.menu_button("File", |ui|{
@@ -28,12 +45,15 @@ impl Editor {
                 } 
             });
         });
-        egui::SidePanel::left("side_panel").show(&ctx, |ui| {
-            egui::ScrollArea::both().min_scrolled_width(256.0).show(ui, |ui|{
-                for i in 0..1000 {
-                    ui.heading("Editor");
-                }
-            });
+    }
+
+    fn draw_grid(&mut self, engine:&mut dyn Engine) {
+        
+        engine.draw_rect(DrawRectParams {
+            pos: (0.0, 0.0).into(),
+            size: (128.0, 128.0).into(),
+            color: Color::WHITE,
+            texture: None,
         });
     }
 }
@@ -169,5 +189,7 @@ impl Game for Editor {
 
 #[no_mangle]
 pub fn create() -> Box<dyn Game> {
-    Box::new(Editor::default())
+    Box::new(Editor {
+        ..Default::default()
+    })
 }
