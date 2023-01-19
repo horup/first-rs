@@ -1,0 +1,26 @@
+use engine_sdk::glam::{Vec2, vec2};
+
+pub struct EditorCamera {
+    pub pos:Vec2,
+    pub zoom:f32,
+    pub screen_size:Vec2
+}
+
+impl EditorCamera {
+    pub fn to_screen(&self, p:Vec2) -> Vec2 {
+        p * self.zoom + self.pos * self.zoom + self.screen_size / 2.0
+    }
+    pub fn to_world(&self, p:Vec2) -> Vec2 {
+        Vec2::default()
+    }
+    pub fn update(&mut self, screen_size:Vec2) {
+        self.screen_size = screen_size;
+    }
+
+}
+
+impl Default for EditorCamera {
+    fn default() -> Self {
+        Self { pos: Default::default(), zoom: 64.0, screen_size:vec2(0.0, 0.0) }
+    }
+}

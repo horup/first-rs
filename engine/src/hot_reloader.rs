@@ -87,8 +87,6 @@ impl HotReloader {
 
                                 engine.game = Some(g);
 
-                                dbg!("game is some");
-
                                 break;
                             }
                             Err(err) => {
