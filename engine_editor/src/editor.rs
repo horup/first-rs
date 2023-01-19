@@ -47,8 +47,8 @@ impl Editor {
             let start = vec2(x, 0.0);
             let end = vec2(x, size as f32);
             engine.draw_line(DrawLineParams {
-                begin: self.camera.to_screen(start),
-                end: self.camera.to_screen(end),
+                begin: self.camera.to_screen(&start),
+                end: self.camera.to_screen(&end),
                 line_width: 1.0,
                 color: Color::WHITE,
             });
@@ -58,22 +58,21 @@ impl Editor {
             let start = vec2(0.0, y);
             let end = vec2(size as f32, y);
             engine.draw_line(DrawLineParams {
-                begin: self.camera.to_screen(start),
-                end: self.camera.to_screen(end),
+                begin: self.camera.to_screen(&start),
+                end: self.camera.to_screen(&end),
                 line_width: 1.0,
                 color: Color::WHITE,
             });
         }
-
-
     }
 
     fn draw_grid_cursor(&mut self, engine:&mut dyn Engine) {
-        let grid_cursor = vec2(1.0, 1.0);
+        let mouse_pos = engine.mouse_pos();
+        let grid_cursor = self.camera.to_world(&mouse_pos).floor();
         engine.draw_rect(DrawRectParams {
-            pos: self.camera.to_screen(grid_cursor),
+            pos: self.camera.to_screen(&grid_cursor),
             size: (self.camera.zoom, self.camera.zoom).into(),
-            color: Color::RED,
+            color: Color { r: 1.0, g: 1.0, b: 1.0, a: 0.25 },
             texture: None
         });
     }

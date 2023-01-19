@@ -7,10 +7,17 @@ pub struct EditorCamera {
 }
 
 impl EditorCamera {
-    pub fn to_screen(&self, p:Vec2) -> Vec2 {
-        p * self.zoom + self.pos * self.zoom + self.screen_size / 2.0
+    pub fn to_screen(&self, p:&Vec2) -> Vec2 {
+        *p * self.zoom + self.pos * self.zoom + self.screen_size / 2.0
     }
-    pub fn to_world(&self, p:Vec2) -> Vec2 {
+    pub fn to_world(&self, p:&Vec2) -> Vec2 {
+        if self.zoom > 0.0 {
+            let mut p = *p - self.screen_size / 2.0;
+            p = p / self.zoom;
+            p = p - self.pos;
+            return p;
+        }
+
         Vec2::default()
     }
     pub fn update(&mut self, screen_size:Vec2) {
