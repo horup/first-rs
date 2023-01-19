@@ -10,7 +10,7 @@ pub trait Engine {
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
     fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
-    fn frame_time(&self) -> Duration;
+    fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);
     fn screen_size(&self) -> Vec2;

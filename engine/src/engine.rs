@@ -174,8 +174,15 @@ impl Engine {
                 }
                 Event::DeviceEvent { event, .. } => match event {
                     DeviceEvent::Key(input) => {
-                        self.input.keys_pressed.insert(input.scancode, true);
-                        self.input.keys_just_pressed.push(input.scancode);
+                        match input.state {
+                            ElementState::Pressed => {
+                                self.input.keys_pressed.insert(input.scancode, true);
+                                self.input.keys_just_pressed.push(input.scancode);
+                            },
+                            ElementState::Released => {
+                                self.input.keys_pressed.remove(&input.scancode);
+                            },
+                        }
                     }
                     _ => {}
                 },

@@ -17,7 +17,8 @@ pub struct Editor {
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
-        self.camera.update(engine.screen_size());
+        self.update_controls(engine);
+        self.camera.update(engine.screen_size(), engine.dt());
         self.draw_grid(engine);
         self.draw_grid_cursor(engine);
 
@@ -38,6 +39,27 @@ impl Editor {
                 } 
             });
         });
+    }
+
+    fn update_controls(&mut self, engine:&mut dyn Engine) {
+        if engine.keys_just_pressed().len() != 0 {
+        }
+
+        self.camera.dir = Default::default();
+        
+        if engine.key_down(17) {
+            self.camera.dir.y = -1.0;
+
+        } 
+        if engine.key_down(31) {
+            self.camera.dir.y = 1.0;
+        } 
+        if engine.key_down(30) {
+            self.camera.dir.x = -1.0;
+        } 
+        if engine.key_down(32) {
+            self.camera.dir.x = 1.0;
+        } 
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {

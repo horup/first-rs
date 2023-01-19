@@ -54,10 +54,6 @@ impl engine_sdk::Engine for Engine {
         }
     }
 
-    fn frame_time(&self) -> std::time::Duration {
-        self.diagnostics.frame_time
-    }
-
     fn draw_rect(&mut self, params:DrawRectParams) {
         self.canvas.draw_rect(params);
     }
@@ -108,6 +104,10 @@ impl engine_sdk::Engine for Engine {
 
     fn egui(&self) -> &egui::Context {
         &self.egui_ctx
+    }
+
+    fn dt(&self) -> f32 {
+        return self.diagnostics.frame_time.as_millis() as f32 / 1000.0;
     }
 
     
