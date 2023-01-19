@@ -122,7 +122,6 @@ impl Engine {
 
     pub async fn run(mut self) {
         let event_loop = self.event_loop.take().unwrap();
-        //let window = self.window.take().unwrap();
         self.init();
 
         let mut egui_winit_state = egui_winit::State::new(&event_loop);
