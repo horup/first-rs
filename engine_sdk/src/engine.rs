@@ -1,5 +1,3 @@
-use std::time::{Duration};
-
 use glam::Vec2;
 use image::DynamicImage;
 
@@ -14,19 +12,15 @@ pub trait Engine {
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);
     fn screen_size(&self) -> Vec2;
-
     fn draw_text(&mut self, params:DrawTextParams);
-
     fn mouse_pos(&self) -> Vec2;
     fn mouse_down(&self, button:u8) -> bool;
+    fn mouse_wheel_delta(&self) -> Vec2;
     fn key_down(&self, key_code:u32) -> bool;
     fn keys_just_pressed(&self) -> &[u32];
-
     fn key_just_pressed(&self, key_code:u32) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
-
-    //fn draw_texture(&mut self, params:DrawTextureParams)
 }
 
 #[derive(Clone, Debug, Default)]

@@ -110,6 +110,10 @@ impl engine_sdk::Engine for Engine {
         return self.diagnostics.frame_time.as_millis() as f32 / 1000.0;
     }
 
+    fn mouse_wheel_delta(&self) -> Vec2 {
+        self.input.mouse_wheel_delta
+    }
+
     
 }
 

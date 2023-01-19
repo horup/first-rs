@@ -18,7 +18,7 @@ pub struct Editor {
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
         self.update_controls(engine);
-        self.camera.update(engine.screen_size(), engine.dt());
+        self.camera.update(engine.screen_size(), engine);
         self.draw_grid(engine);
         self.draw_grid_cursor(engine);
 

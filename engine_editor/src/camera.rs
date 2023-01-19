@@ -1,4 +1,4 @@
-use engine_sdk::glam::{Vec2, vec2};
+use engine_sdk::{glam::{Vec2, vec2}, Engine};
 
 pub struct EditorCamera {
     pub pos:Vec2,
@@ -21,9 +21,24 @@ impl EditorCamera {
 
         Vec2::default()
     }
-    pub fn update(&mut self, screen_size:Vec2, dt:f32) {
+    pub fn update(&mut self, screen_size:Vec2, engine:&dyn Engine) {
         self.screen_size = screen_size;
-        self.pos = self.pos +  self.dir * dt;
+
+        let my = engine.mouse_wheel_delta().y;
+        let zoom_speed = 1.1;
+        if my > 0.0 {
+            self.zoom *=  zoom_speed;
+        } else if my < 0.0 {
+            self.zoom /=  zoom_speed;
+        }
+
+        if self.zoom < 1.0 {
+            self.zoom = 1.0;
+        }
+
+        let move_speed = 1000.0 / self.zoom;
+        self.pos += self.dir * engine.dt() * move_speed;
+       
     }
 
 }

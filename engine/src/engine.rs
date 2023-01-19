@@ -169,6 +169,18 @@ impl Engine {
                                 ElementState::Released => self.input.mouse_pressed[button] = false,
                             }
                         }
+                        WindowEvent::MouseWheel { delta, .. } =>{
+                            match delta {
+                                winit::event::MouseScrollDelta::LineDelta(x, y) => {
+                                    self.input.mouse_wheel_delta.x = *x;
+                                    self.input.mouse_wheel_delta.y = *y;
+
+                                },
+                                winit::event::MouseScrollDelta::PixelDelta(_) => {
+                                    // not supported
+                                },
+                            }
+                        }
                         _ => {}
                     }
                 }
