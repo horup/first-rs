@@ -1,11 +1,11 @@
 use egui::{FontDefinitions, RawInput};
 use engine_sdk::{glam::vec2, Game};
-use std::collections::HashMap;
+use std::{collections::HashMap, cell::{RefCell, RefMut}};
 
 use winit::{
     event::{DeviceEvent, ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
+    window::{WindowBuilder, Window},
 };
 
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
@@ -13,7 +13,7 @@ use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 pub struct Engine {
     pub(crate) egui_ctx: egui::Context,
     pub(crate) game: Option<Box<dyn Game>>,
-    pub(crate) window: Option<winit::window::Window>,
+    pub window: RefCell<winit::window::Window>,
     pub(crate) event_loop: Option<winit::event_loop::EventLoop<()>>,
     pub(crate) graphics: Graphics,
     pub(crate) models: HashMap<u32, Model>,
@@ -54,7 +54,7 @@ impl Engine {
 
         Engine {
             egui_ctx: egui::Context::default(),
-            window: Some(window),
+            window: RefCell::new(window),
             event_loop: Some(event_loop),
             game: None,
             graphics,
@@ -122,7 +122,7 @@ impl Engine {
 
     pub async fn run(mut self) {
         let event_loop = self.event_loop.take().unwrap();
-        let window = self.window.take().unwrap();
+        //let window = self.window.take().unwrap();
         self.init();
 
         let mut egui_winit_state = egui_winit::State::new(&event_loop);
@@ -132,7 +132,7 @@ impl Engine {
                 Event::WindowEvent {
                     ref event,
                     window_id,
-                } if window_id == window.id() => {
+                } if window_id == self.window.borrow().id() => {
                     let res = egui_winit_state.on_event(&self.egui_ctx, &event);
                     if res.consumed == true {
                         // egui consumed the event
@@ -181,12 +181,12 @@ impl Engine {
                     _ => {}
                 },
                 Event::RedrawRequested(_window_id) => {
-                    let egui_raw_inputs = egui_winit_state.take_egui_input(&window);
+                    let egui_raw_inputs = egui_winit_state.take_egui_input(&self.window.borrow());
                     self.update(egui_raw_inputs);
                     self.input.clear();
                 }
                 Event::MainEventsCleared => {
-                    window.request_redraw();
+                    self.window.borrow().request_redraw();
                 }
                 _ => {}
             }

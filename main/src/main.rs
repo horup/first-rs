@@ -8,6 +8,7 @@ fn main() {
         env_logger::init();
         pollster::block_on(async {
             let mut engine = Engine::new().await;
+            engine.window.borrow_mut().set_title("First-RS Editor");
             engine.set_game(engine_editor::create());
             #[cfg(debug_assertions)]
             {
