@@ -30,10 +30,10 @@
 			"command": "watch",
 			"args": ["-x", "build", "-d", ".5"],
 			"options": {
-				"cwd":"game"
+				"cwd":"engine_editor"
 			},
 			"group": "build",
-			"label": "watch game"
+			"label": "watch engine_editor"
 		},
 	]
 }

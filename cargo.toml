@@ -3,6 +3,6 @@ resolver = "2"
 members = [
     "./engine",
     "./engine_sdk",
-    "./game",
+    "./engine_editor",
     "./main",
 ]

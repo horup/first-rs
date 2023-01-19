@@ -8,8 +8,7 @@ fn main() {
         env_logger::init();
         pollster::block_on(async {
             let mut engine = Engine::new().await;
-            let g = game::create();
-            engine.set_game(g);
+            engine.set_game(engine_editor::create());
             #[cfg(debug_assertions)]
             {
                 let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("game.dll").unwrap());

@@ -6,7 +6,7 @@ resolver = "2"
 
 [dependencies]
 engine = {path = "../engine"}
-game = {path = "../game"}
+engine_editor = {path = "../engine_editor"}
 log = "0.4.17"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
