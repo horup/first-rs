@@ -12,6 +12,7 @@ use lyon::{
     },
     path::Path,
 };
+use winit::event::VirtualKeyCode;
 
 impl engine_sdk::Engine for Engine {
     fn load_texture(&mut self, id: u32, image: &DynamicImage) {
@@ -108,7 +109,7 @@ impl engine_sdk::Engine for Engine {
         self.input.mouse_pressed[button as usize % 4]
     }
 
-    fn key_down(&self, key_code: u32) -> bool {
+    fn key_down(&self, key_code: VirtualKeyCode) -> bool {
         if let Some(k) = self.input.keys_pressed.get(&key_code) {
             return *k;
         }
@@ -116,7 +117,7 @@ impl engine_sdk::Engine for Engine {
         return false;
     }
 
-    fn keys_just_pressed(&self) -> &[u32] {
+    fn keys_just_pressed(&self) -> &[VirtualKeyCode] {
         &self.input.keys_just_pressed
     }
 

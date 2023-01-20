@@ -1,4 +1,4 @@
-use engine_sdk::{glam::{Vec2, vec2, IVec2}, Engine};
+use engine_sdk::{glam::{Vec2, vec2, IVec2}, Engine, VirtualKeyCode};
 
 pub struct EditorCamera {
     pub pos:Vec2,
@@ -25,17 +25,17 @@ impl EditorCamera {
     pub fn update(&mut self, engine:&dyn Engine) {
         let screen_size = engine.screen_size();
         self.dir = Default::default();
-        if engine.key_down(17) {
+        if engine.key_down(VirtualKeyCode::W) {
             self.dir.y = -1.0;
 
         } 
-        if engine.key_down(31) {
+        if engine.key_down(VirtualKeyCode::S) {
             self.dir.y = 1.0;
         } 
-        if engine.key_down(30) {
+        if engine.key_down(VirtualKeyCode::A) {
             self.dir.x = -1.0;
         } 
-        if engine.key_down(32) {
+        if engine.key_down(VirtualKeyCode::D) {
             self.dir.x = 1.0;
         } 
 

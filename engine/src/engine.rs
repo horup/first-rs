@@ -8,7 +8,7 @@ use winit::{
     window::{WindowBuilder, Window},
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, input};
 
 pub struct Engine {
     pub(crate) textures:HashMap<u32, TextureInfo>,
@@ -188,14 +188,16 @@ impl Engine {
                 }
                 Event::DeviceEvent { event, .. } => match event {
                     DeviceEvent::Key(input) => {
-                        match input.state {
-                            ElementState::Pressed => {
-                                self.input.keys_pressed.insert(input.scancode, true);
-                                self.input.keys_just_pressed.push(input.scancode);
-                            },
-                            ElementState::Released => {
-                                self.input.keys_pressed.remove(&input.scancode);
-                            },
+                        if let Some(key_code) = input.virtual_keycode {
+                            match input.state {
+                                ElementState::Pressed => {
+                                        self.input.keys_pressed.insert(key_code, true);
+                                        self.input.keys_just_pressed.push(key_code);
+                                },
+                                ElementState::Released => {
+                                    self.input.keys_pressed.remove(&key_code);
+                                },
+                            }
                         }
                     }
                     _ => {}

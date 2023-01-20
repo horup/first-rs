@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams};
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, VirtualKeyCode};
 
 use crate::EditorCamera;
 
@@ -37,9 +37,9 @@ impl Editor {
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
         let _keys = engine.keys_just_pressed();
-        if engine.key_down(2) {
+        if engine.key_down(VirtualKeyCode::Key1) {
             self.wall_texture = 1;
-        } else if engine.key_down(3) {
+        } else if engine.key_down(VirtualKeyCode::Key2) {
             self.wall_texture = 2;
         }
         if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {

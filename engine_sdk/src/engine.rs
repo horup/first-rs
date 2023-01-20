@@ -1,5 +1,6 @@
 use glam::Vec2;
 use image::DynamicImage;
+use winit::event::VirtualKeyCode;
 
 use crate::{Camera, Scene, Color};
 
@@ -17,9 +18,9 @@ pub trait Engine {
     fn mouse_pos(&self) -> Vec2;
     fn mouse_down(&self, button:u8) -> bool;
     fn mouse_wheel_delta(&self) -> Vec2;
-    fn key_down(&self, key_code:u32) -> bool;
-    fn keys_just_pressed(&self) -> &[u32];
-    fn key_just_pressed(&self, key_code:u32) -> bool {
+    fn key_down(&self, key_code:VirtualKeyCode) -> bool;
+    fn keys_just_pressed(&self) -> &[VirtualKeyCode];
+    fn key_just_pressed(&self, key_code:VirtualKeyCode) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
 }
