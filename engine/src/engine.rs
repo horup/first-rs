@@ -178,15 +178,29 @@ impl Engine {
                                     self.input.mouse_wheel_delta.y = *y;
 
                                 },
-                                winit::event::MouseScrollDelta::PixelDelta(_) => {
-                                    // not supported
+                                winit::event::MouseScrollDelta::PixelDelta(loc) => {
+                                    self.input.mouse_wheel_delta.x = loc.x as f32;
+                                    self.input.mouse_wheel_delta.y = loc.y as f32;
                                 },
+                            }
+                        }
+                        WindowEvent::KeyboardInput { input, .. } => {
+                            if let Some(key_code) = input.virtual_keycode {
+                                match input.state {
+                                    ElementState::Pressed => {
+                                            self.input.keys_pressed.insert(key_code, true);
+                                            self.input.keys_just_pressed.push(key_code);
+                                    },
+                                    ElementState::Released => {
+                                        self.input.keys_pressed.remove(&key_code);
+                                    },
+                                }
                             }
                         }
                         _ => {}
                     }
                 }
-                Event::DeviceEvent { event, .. } => match event {
+               /* Event::DeviceEvent { event, .. } => match event {
                     DeviceEvent::Key(input) => {
                         if let Some(key_code) = input.virtual_keycode {
                             match input.state {
@@ -201,7 +215,7 @@ impl Engine {
                         }
                     }
                     _ => {}
-                },
+                },*/
                 Event::RedrawRequested(_window_id) => {
                     let egui_raw_inputs = egui_winit_state.take_egui_input(&self.window.borrow());
                     self.update(egui_raw_inputs);
