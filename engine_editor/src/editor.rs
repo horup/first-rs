@@ -8,6 +8,7 @@ pub struct Editor {
     pub iterations:u64,
     pub camera:EditorCamera,
     pub map:Map,
+    pub wall_texture:u32
 }
 
 impl Editor {
@@ -35,9 +36,15 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
+        let keys = engine.keys_just_pressed();
+        if engine.key_down(2) {
+            self.wall_texture = 1;
+        } else if engine.key_down(3) {
+            self.wall_texture = 2;
+        }
         if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
             if engine.mouse_down(0) {
-                cell.wall = Some(1);
+                cell.wall = Some(self.wall_texture);
             } else if engine.mouse_down(1) {
                 cell.wall = None;
             }
