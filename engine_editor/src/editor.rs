@@ -2,11 +2,6 @@ use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2, ivec2}, Engine, Color, 
 
 use crate::EditorCamera;
 
-const BRICK_WALL:u32 = 1;
-const PLANT:u32 = 2;
-const VIKTOR:u32 = 3;
-const WILLIAM:u32 = 4;
-
 #[derive(Default)]
 pub struct Editor {
     pub scene:Scene,
@@ -104,16 +99,16 @@ impl Editor {
 
 impl Game for Editor {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        macro_rules! load_texture {
+     /*   macro_rules! load_texture {
             ($id:expr, $path:expr) => {
                 engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
             };
         }
         
-        load_texture!(BRICK_WALL, "../assets/textures/brick_wall_red.png");
-        load_texture!(PLANT, "../assets/textures/plant.png");
-        load_texture!(VIKTOR, "../assets/textures/viktor.png");
-        load_texture!(WILLIAM, "../assets/textures/william.png");
+        load_texture!(1, "../assets/textures/brick_wall_red.png");
+        load_texture!(2, "../assets/textures/plant.png");
+        load_texture!(3, "../assets/textures/viktor.png");
+        load_texture!(4, "../assets/textures/william.png");*/
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
