@@ -608,6 +608,7 @@ dependencies = [
  "glam",
  "image",
  "serde",
+ "winit",
 ]
 
 [[package]]
