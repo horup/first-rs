@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, Sprite, glam::{Vec2, vec2, ivec2}, Engine, Color, DrawRectParams, image, DrawTextParams, egui, Map, DrawLineParams};
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams};
 
 use crate::EditorCamera;
 
@@ -36,7 +36,7 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
-        let keys = engine.keys_just_pressed();
+        let _keys = engine.keys_just_pressed();
         if engine.key_down(2) {
             self.wall_texture = 1;
         } else if engine.key_down(3) {
@@ -105,7 +105,7 @@ impl Editor {
 }
 
 impl Game for Editor {
-    fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
+    fn init(&mut self, _engine:&mut dyn engine_sdk::Engine) {
      /*   macro_rules! load_texture {
             ($id:expr, $path:expr) => {
                 engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
