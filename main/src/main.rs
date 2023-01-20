@@ -1,10 +1,13 @@
 use std::{path::PathBuf, str::FromStr};
 use engine::{Engine, engine_sdk::Engine as EngineTrait, engine_sdk::image};
 use engine_editor::Editor;
+use winit::dpi::PhysicalSize;
+
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
+    engine.window.borrow_mut().set_inner_size(PhysicalSize::new(400, 200));
     engine.set_game(Box::new(Editor::default()));
     macro_rules! load_texture {
         ($id:expr, $path:expr) => {
@@ -19,6 +22,15 @@ async fn init() -> Engine {
     return engine;
 }
 
+
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+extern {
+    fn snippetTest();
+}
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
@@ -40,6 +52,9 @@ fn main() {
         console_log::init_with_level(log::Level::Info).expect("Couldn't initialize logger");
         wasm_bindgen_futures::spawn_local(async {
             let mut engine = init().await;
+
+            unsafe { snippetTest(); };
+
             
             engine.run().await;  
         });
