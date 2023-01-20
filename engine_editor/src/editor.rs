@@ -17,12 +17,36 @@ pub struct Editor {
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
-        self.update_controls(engine);
-        self.camera.update(engine.screen_size(), engine);
+        self.camera.update(engine);
+        self.edit_map(engine);
+        self.draw_map(engine);
         self.draw_grid(engine);
         self.draw_grid_cursor(engine);
+    }
 
-       // self.ui(engine);
+    fn draw_map(&mut self, engine:&mut dyn Engine) {
+        self.map.grid.for_each(|cell, (x,y)| {
+            let p = self.camera.to_screen(&vec2(x as f32, y as f32));
+            if cell.wall.is_some() {
+                engine.draw_rect(DrawRectParams {
+                    pos: p,
+                    size: (self.camera.zoom, self.camera.zoom).into(),
+                    color: Color::WHITE,
+                    texture: cell.wall,
+                });
+            }
+        });
+       
+    }
+
+    fn edit_map(&mut self, engine:&mut dyn Engine) {
+        if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+            if engine.mouse_down(0) {
+                cell.wall = Some(1);
+            } else if engine.mouse_down(1) {
+                cell.wall = None;
+            }
+        }
     }
 
     fn ui(&mut self, engine:&mut dyn Engine) {
@@ -39,27 +63,6 @@ impl Editor {
                 } 
             });
         });
-    }
-
-    fn update_controls(&mut self, engine:&mut dyn Engine) {
-        if engine.keys_just_pressed().len() != 0 {
-        }
-
-        self.camera.dir = Default::default();
-        
-        if engine.key_down(17) {
-            self.camera.dir.y = -1.0;
-
-        } 
-        if engine.key_down(31) {
-            self.camera.dir.y = 1.0;
-        } 
-        if engine.key_down(30) {
-            self.camera.dir.x = -1.0;
-        } 
-        if engine.key_down(32) {
-            self.camera.dir.x = 1.0;
-        } 
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {
@@ -89,8 +92,7 @@ impl Editor {
     }
 
     fn draw_grid_cursor(&mut self, engine:&mut dyn Engine) {
-        let mouse_pos = engine.mouse_pos();
-        let grid_cursor = self.camera.to_world(&mouse_pos).floor();
+        let grid_cursor = self.camera.grid_cursor.as_vec2();
         engine.draw_rect(DrawRectParams {
             pos: self.camera.to_screen(&grid_cursor),
             size: (self.camera.zoom, self.camera.zoom).into(),
