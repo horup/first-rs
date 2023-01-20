@@ -7,6 +7,7 @@ pub trait Engine {
     fn egui(&self) -> &egui::Context;
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
     fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
+    fn textures(&self) -> Vec<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);
@@ -25,6 +26,7 @@ pub trait Engine {
 
 #[derive(Clone, Debug, Default)]
 pub struct TextureInfo {
+    pub id:u32,
     pub width:f32,
     pub height:f32
 }

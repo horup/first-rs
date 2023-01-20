@@ -1,5 +1,5 @@
 use egui::{FontDefinitions, RawInput};
-use engine_sdk::{glam::vec2, Game};
+use engine_sdk::{glam::vec2, Game, TextureInfo};
 use std::{collections::HashMap, cell::{RefCell, RefMut}};
 
 use winit::{
@@ -11,6 +11,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
+    pub(crate) textures:HashMap<u32, TextureInfo>,
     pub(crate) egui_ctx: egui::Context,
     pub(crate) game: Option<Box<dyn Game>>,
     pub window: RefCell<winit::window::Window>,
@@ -53,6 +54,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            textures:HashMap::default(),
             egui_ctx: egui::Context::default(),
             window: RefCell::new(window),
             event_loop: Some(event_loop),

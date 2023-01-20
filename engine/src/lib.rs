@@ -30,3 +30,5 @@ pub use input::*;
 
 #[cfg(not(target_arch = "wasm32"))]
 pub mod hot_reloader;
+
+pub use engine_sdk;
