@@ -1,13 +1,11 @@
 use std::{path::PathBuf, str::FromStr};
 use engine::{Engine, engine_sdk::Engine as EngineTrait, engine_sdk::image};
 use engine_editor::Editor;
-use winit::dpi::PhysicalSize;
 
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
-    engine.window.borrow_mut().set_inner_size(PhysicalSize::new(400, 200));
     engine.set_game(Box::new(Editor::default()));
     macro_rules! load_texture {
         ($id:expr, $path:expr) => {
