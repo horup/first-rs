@@ -15,8 +15,8 @@ impl EditorCamera {
     pub fn to_world(&self, p:&Vec2) -> Vec2 {
         if self.zoom > 0.0 {
             let mut p = *p - self.screen_size / 2.0;
-            p = p / self.zoom;
-            p = p + self.pos;
+            p /= self.zoom;
+            p += self.pos;
             return p;
         }
 

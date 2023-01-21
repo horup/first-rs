@@ -1,12 +1,12 @@
 use std::{path::PathBuf, str::FromStr};
 use engine::{Engine, engine_sdk::Engine as EngineTrait, engine_sdk::image};
-use engine_editor::Editor;
+
 
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
-    engine.set_game(Box::new(Editor::default()));
+    engine.set_game(Box::<engine_editor::Editor>::default());
     macro_rules! load_texture {
         ($id:expr, $path:expr) => {
             engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
@@ -17,7 +17,7 @@ async fn init() -> Engine {
     load_texture!(2, "../assets/textures/bush_wall.png");
     load_texture!(3, "../assets/textures/white_wall.png");
 
-    return engine;
+    engine
 }
 
 fn main() {
