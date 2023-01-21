@@ -1,12 +1,19 @@
 <html>
   <head>
     <script>
-      function snippetTest() {
-        console.log("hello from snippet");
+      function width() {
+        return window.innerWidth;
       }
-
-      window.snippetTest = snippetTest;
+      function height() {
+        return window.innerHeight;
+      }
     </script>
+    <style>
+      body {
+        padding: 0%;
+        margin: 0%;
+      }
+    </style>
   </head>
   <body>
     <div id="main"></div>

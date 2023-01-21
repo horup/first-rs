@@ -22,16 +22,6 @@ async fn init() -> Engine {
     return engine;
 }
 
-
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
-
-#[cfg(target_arch = "wasm32")]
-#[wasm_bindgen]
-extern {
-    fn snippetTest();
-}
-
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
@@ -53,7 +43,6 @@ fn main() {
         wasm_bindgen_futures::spawn_local(async {
             let mut engine = init().await;
 
-            unsafe { snippetTest(); };
 
             
             engine.run().await;  

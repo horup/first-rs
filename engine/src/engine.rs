@@ -1,11 +1,12 @@
 use egui::{FontDefinitions, RawInput};
 use engine_sdk::{glam::vec2, Game, TextureInfo};
+use log::info;
 use std::{collections::HashMap, cell::{RefCell, RefMut}};
 
 use winit::{
     event::{DeviceEvent, ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
-    window::{WindowBuilder, Window},
+    window::{WindowBuilder, Window}, dpi::PhysicalSize,
 };
 
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, input};
@@ -223,9 +224,28 @@ impl Engine {
                 }
                 Event::MainEventsCleared => {
                     self.window.borrow().request_redraw();
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        let size = self.window.borrow().inner_size();
+                        let new_size = PhysicalSize::new(width() as u32, height() as u32);
+                        if new_size != size {
+                            self.window.borrow_mut().set_inner_size(new_size);
+                        }
+                    }
                 }
                 _ => {}
             }
         });
     }
+}
+
+
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+extern {
+    fn width() -> f32;
+    fn height() -> f32;
 }
