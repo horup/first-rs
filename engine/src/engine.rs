@@ -1,15 +1,14 @@
-use egui::{FontDefinitions, RawInput};
+use egui::{RawInput};
 use engine_sdk::{glam::vec2, Game, TextureInfo};
-use log::info;
-use std::{collections::HashMap, cell::{RefCell, RefMut}};
+use std::{collections::HashMap, cell::{RefCell}};
 
 use winit::{
-    event::{DeviceEvent, ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
+    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
-    window::{WindowBuilder, Window}, dpi::PhysicalSize,
+    window::{WindowBuilder}
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, input};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
     pub(crate) textures:HashMap<u32, TextureInfo>,

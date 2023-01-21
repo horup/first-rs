@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams};
-use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point, Box2D, euclid::Point2D}};
+use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point}};
 use wgpu::util::StagingBelt;
 use crate::{Model, Graphics, Vertex, GraphicsContext};
 use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush};
@@ -63,7 +63,6 @@ impl Canvas {
                 v.color = p.color.into();
                 self.geometry.vertices.push(v);
             }
-            let end = self.geometry.vertices.len() as u32;
         }
         let end = self.geometry.indicies.len() as u32;
         self.push_draw_call(DrawCall::Geometry {

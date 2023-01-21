@@ -1,10 +1,10 @@
 use crate::{CameraUniform, Vertex};
 use egui::Context;
-use engine_sdk::image::{DynamicImage, GenericImage, RgbaImage};
+use engine_sdk::image::{DynamicImage, GenericImage};
 use std::collections::HashMap;
 use wgpu::{
-    util::DeviceExt, BindGroup, BindGroupLayout, Buffer, Color, CommandEncoder, Device, Queue,
-    RenderPipeline, SurfaceTexture, Texture, TextureFormat, TextureView,
+    util::DeviceExt, BindGroup, BindGroupLayout, Buffer, CommandEncoder, Device, Queue,
+    RenderPipeline, SurfaceTexture, TextureFormat, TextureView,
 };
 use winit::{dpi::PhysicalSize, window::Window};
 
