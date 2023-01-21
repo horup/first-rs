@@ -278,8 +278,6 @@ impl Graphics {
         }
     }
 
-    pub fn cleanup_ui(&mut self, egui: &Context) {}
-
     pub fn prepare(&mut self) -> (CommandEncoder, SurfaceTexture, TextureView) {
         let mut encoder = self
             .device

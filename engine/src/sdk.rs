@@ -1,19 +1,11 @@
 use std::rc::Rc;
 
-use crate::{texture, Engine, Model, Vertex};
-use egui::epaint::text;
+use crate::{Engine, Vertex};
 use engine_sdk::{
     self,
     glam::{Vec2, Vec3},
     image::DynamicImage,
     DrawRectParams, TextureInfo,
-};
-use lyon::{
-    geom::point,
-    lyon_tessellation::{
-        BuffersBuilder, StrokeOptions, StrokeTessellator, StrokeVertexConstructor, VertexBuffers,
-    },
-    path::Path,
 };
 use winit::event::VirtualKeyCode;
 

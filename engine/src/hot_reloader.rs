@@ -1,4 +1,4 @@
-use std::{cell::UnsafeCell, fs::Metadata, path::PathBuf};
+use std::{fs::Metadata, path::PathBuf};
 
 use egui::Context;
 use engine_sdk::Game;

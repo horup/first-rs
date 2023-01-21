@@ -4,8 +4,6 @@ use wgpu::BindGroupLayout;
 use wgpu::Device;
 use wgpu::Queue;
 
-use crate::Graphics;
-
 pub struct Texture {
     pub width:u32,
     pub height:u32,

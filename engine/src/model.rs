@@ -1,6 +1,6 @@
 use std::{mem::size_of, ops::Range};
 
-use wgpu::{self, BindGroup};
+use wgpu::{self};
 
 use crate::{Vertex, GraphicsContext};
 
