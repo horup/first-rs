@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use engine_sdk::{glam::Vec2, DrawTextParams, DrawLineParams, DrawRectParams};
+use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point, Box2D, euclid::Point2D}};
 use wgpu::util::StagingBelt;
 use crate::{Model, Graphics, Vertex, GraphicsContext};

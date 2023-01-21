@@ -1,4 +1,7 @@
+use std::rc::Rc;
+
 use crate::{texture, Engine, Model, Vertex};
+use egui::epaint::text;
 use engine_sdk::{
     self,
     glam::{Vec2, Vec3},
@@ -23,6 +26,7 @@ impl engine_sdk::Engine for Engine {
                 id,
                 width: image.width() as f32,
                 height: image.height() as f32,
+                image: Rc::new(image.clone())
             },
         );
     }
@@ -142,5 +146,22 @@ impl engine_sdk::Engine for Engine {
             })
             .collect();
         textures
+    }
+
+    fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle> {
+        if let Some(texture) = self.egui_textures.get(id) {
+            return Some(texture.clone());
+        }
+        if let Some(texture) = self.textures.get(id) {
+            let w = texture.image.width() as usize;
+            let h = texture.image.height() as usize;
+            let bytes = texture.image.to_rgba8().to_vec();
+            let texture = self.egui_ctx.load_texture(format!("{}", id), egui::ColorImage::from_rgba_unmultiplied([w,h], &bytes), Default::default());
+            self.egui_textures.insert(*id, texture.clone());
+
+            return Some(texture);
+        }
+
+        return None;
     }
 }

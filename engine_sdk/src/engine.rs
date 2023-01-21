@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use glam::Vec2;
 use image::DynamicImage;
 use winit::event::VirtualKeyCode;
@@ -6,6 +8,7 @@ use crate::{Camera, Scene, Color};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
+    fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
     fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
     fn textures(&self) -> Vec<TextureInfo>;
@@ -29,7 +32,8 @@ pub trait Engine {
 pub struct TextureInfo {
     pub id:u32,
     pub width:f32,
-    pub height:f32
+    pub height:f32,
+    pub image:Rc<DynamicImage>
 }
 
 #[derive(Clone, Debug, Default)]

@@ -18,6 +18,7 @@ impl Editor {
         self.draw_map(engine);
         self.draw_grid(engine);
         self.draw_grid_cursor(engine);
+        self.update_ui(engine);
     }
 
     fn draw_map(&mut self, engine:&mut dyn Engine) {
@@ -51,7 +52,7 @@ impl Editor {
         }
     }
 
-    fn ui(&mut self, engine:&mut dyn Engine) {
+    fn update_ui(&mut self, engine:&mut dyn Engine) {
         let ctx = engine.egui().clone();
         egui::TopBottomPanel::top("top_pane").show(&ctx, |ui|{
             ui.menu_button("File", |ui|{
@@ -64,6 +65,11 @@ impl Editor {
                     
                 } 
             });
+        });
+
+        egui::SidePanel::left("left_panel").show(&ctx, |ui| {
+            let handle = engine.egui_texture(&1).unwrap();
+            ui.image(handle.id(), [16.0,16.0]);
         });
     }
 

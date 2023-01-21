@@ -14,6 +14,7 @@ use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, input}
 pub struct Engine {
     pub(crate) textures:HashMap<u32, TextureInfo>,
     pub(crate) egui_ctx: egui::Context,
+    pub(crate) egui_textures: HashMap<u32, egui::TextureHandle>,
     pub(crate) game: Option<Box<dyn Game>>,
     pub window: RefCell<winit::window::Window>,
     pub(crate) event_loop: Option<winit::event_loop::EventLoop<()>>,
@@ -57,6 +58,7 @@ impl Engine {
         Engine {
             textures:HashMap::default(),
             egui_ctx: egui::Context::default(),
+            egui_textures: HashMap::default(),
             window: RefCell::new(window),
             event_loop: Some(event_loop),
             game: None,
