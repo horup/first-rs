@@ -67,12 +67,47 @@ impl Editor {
             });
         });
 
-        egui::Window::new("Toolbox").show(&ctx, |ui|{
+        let size = 64.0;
 
-            ui.label("Chosen Texture");
-            if let Some(handle) = engine.egui_texture(&self.wall_texture) {
-                ui.image(handle.id(), [32.0,32.0]);
-            }
+        egui::Window::new("Toolbox").show(&ctx, |ui|{
+            match engine.egui_texture(&self.wall_texture) {
+                Some(handle) => {
+                    ui.image(handle.id(), [size, size]);
+                }
+                None => {
+                    ui.add_space(size + 3.0);
+                }
+            };
+        });
+
+        egui::Window::new("Textures").show(&ctx, |ui|{
+            egui::containers::ScrollArea::vertical().show(ui, |ui|{
+
+                let line_length = 3;
+                let mut count= 0;
+                let mut texture_line = Vec::new();
+
+                for texture in engine.textures().iter() { 
+                    if count % line_length == 0 {
+                        texture_line.push(Vec::new());
+                    }
+                    texture_line.last_mut().unwrap().push(texture.clone());
+                    count+=1;
+                }
+
+                for line in texture_line {
+                    ui.horizontal(|ui|{
+                        for texture in line.iter() {
+                            let aspect = texture.height / texture.width;
+                            if let Some(handle) = engine.egui_texture(&texture.id) {
+                                if ui.add(egui::ImageButton::new(handle.id(), [size, size * aspect])).clicked() {
+                                    self.wall_texture = texture.id;
+                                }
+                            }
+                        }
+                    });
+                } 
+            });
         });
 
         /*egui::SidePanel::left("left_panel").show(&ctx, |ui| {

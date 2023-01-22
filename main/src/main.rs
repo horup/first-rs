@@ -16,6 +16,9 @@ async fn init() -> Engine {
     load_texture!(1, "../assets/textures/brick_wall.png");
     load_texture!(2, "../assets/textures/bush_wall.png");
     load_texture!(3, "../assets/textures/white_wall.png");
+    load_texture!(4, "../assets/textures/player.png");
+    load_texture!(5, "../assets/textures/viktor.png");
+    load_texture!(6, "../assets/textures/william.png");
 
     engine
 }
