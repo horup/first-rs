@@ -67,10 +67,18 @@ impl Editor {
             });
         });
 
-        egui::SidePanel::left("left_panel").show(&ctx, |ui| {
+        egui::Window::new("Toolbox").show(&ctx, |ui|{
+
+            ui.label("Chosen Texture");
+            if let Some(handle) = engine.egui_texture(&self.wall_texture) {
+                ui.image(handle.id(), [32.0,32.0]);
+            }
+        });
+
+        /*egui::SidePanel::left("left_panel").show(&ctx, |ui| {
             let handle = engine.egui_texture(&1).unwrap();
             ui.image(handle.id(), [16.0,16.0]);
-        });
+        });*/
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {

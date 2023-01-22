@@ -57,6 +57,7 @@ impl HotReloader {
                 {
                     engine.game.take();
                     engine.egui_ctx = Context::default();
+                    engine.egui_textures.clear();
                 }
                 //state = self.serialize();
                 // self.game = UnsafeCell::default();
