@@ -81,8 +81,7 @@ impl engine_sdk::Engine for Engine {
         )
     }
 
-    fn draw_line(&mut self, mut params: engine_sdk::DrawLineParams) {
-        //self.canvas.draw_line(params.begin, params.end, params.color.into(), params.line_width);
+    fn draw_line(&mut self, params: engine_sdk::DrawLineParams) {
         self.canvas.draw_lines([params].into());
     }
 
@@ -133,7 +132,7 @@ impl engine_sdk::Engine for Engine {
         let textures: Vec<TextureInfo> = self
             .textures
             .iter()
-            .map(|(k, v)| {
+            .map(|(_, v)| {
                 return v.clone();
             })
             .collect();
