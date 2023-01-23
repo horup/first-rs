@@ -1,4 +1,5 @@
 use egui::{RawInput};
+use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureInfo};
 use std::{collections::HashMap, cell::{RefCell}};
 
@@ -11,6 +12,8 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
+    pub show_editor:bool,
+    pub editor: Option<Editor>,
     pub(crate) textures:HashMap<u32, TextureInfo>,
     pub(crate) egui_ctx: egui::Context,
     pub(crate) egui_textures: HashMap<u32, egui::TextureHandle>,
@@ -55,6 +58,8 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            show_editor: true,
+            editor:Some(Editor::default()),
             textures:HashMap::default(),
             egui_ctx: egui::Context::default(),
             egui_textures: HashMap::default(),
@@ -96,11 +101,19 @@ impl Engine {
         self.egui_ctx.begin_frame(egui_raw_input);
 
         // do game update
-        let game = self.game.take();
-        if let Some(mut game) = game {
-            game.update(self);
-            self.game = Some(game);
+        if self.show_editor {
+            if let Some(mut editor) = self.editor.take() {
+                editor.update(self);
+                self.editor = Some(editor);
+            }
+        } else {
+            let game = self.game.take();
+            if let Some(mut game) = game {
+                game.update(self);
+                self.game = Some(game);
+            }
         }
+        
 
         let full_output = self.egui_ctx.end_frame();
 

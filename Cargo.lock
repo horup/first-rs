@@ -611,6 +611,7 @@ dependencies = [
  "egui",
  "egui-wgpu",
  "egui-winit",
+ "engine_editor",
  "engine_sdk",
  "instant",
  "libloading",
