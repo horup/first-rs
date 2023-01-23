@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, VirtualKeyCode};
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, VirtualKeyCode, DrawTextParams};
 
 use crate::{EditorCamera, Tool};
 
@@ -37,19 +37,29 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
-        let _keys = engine.keys_just_pressed();
-        if engine.key_down(VirtualKeyCode::Key1) {
-            self.selected_texture = 1;
-        } else if engine.key_down(VirtualKeyCode::Key2) {
-            self.selected_texture = 2;
+
+        match self.tool {
+            Tool::PlaceWall => {
+                if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+                    if engine.mouse_down(0) {
+                        cell.wall = Some(self.selected_texture);
+                    } else if engine.mouse_down(1) {
+                        cell.wall = None;
+                    }
+                }
+            },
+            Tool::PlaceThing => {
+                if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+                    if engine.mouse_down(0) {
+                        cell.thing = Some(self.selected_texture);
+                    } else if engine.mouse_down(1) {
+                        cell.thing = None;
+                    }
+                }
+            },
         }
-        if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-            if engine.mouse_down(0) {
-                cell.wall = Some(self.selected_texture);
-            } else if engine.mouse_down(1) {
-                cell.wall = None;
-            }
-        }
+        
+       
     }
 
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
@@ -57,6 +67,15 @@ impl Editor {
 
         if let Some(tex) = engine.texture(&self.selected_texture) {
             let s = 32.0;
+            engine.draw_text(DrawTextParams {
+                screen_pos: cursor_pos - vec2(0.0, 12.0),
+                text: match self.tool {
+                    Tool::PlaceWall => "Wall",
+                    Tool::PlaceThing => "Thing",
+                }.to_string(),
+                scale: 12.0,
+                color: Color::WHITE,
+            });
             engine.draw_rect(DrawRectParams {
                 pos: cursor_pos,
                 size: (s, s * tex.aspect()).into(),
