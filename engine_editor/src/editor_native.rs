@@ -1,6 +1,13 @@
 use engine_sdk::{Engine, egui};
+use native_dialog::FileDialog;
 
 use crate::Editor;
+
+fn file_dialog<'a>() -> FileDialog<'a> {
+    FileDialog::new()
+    .set_location("~/Desktop")
+    .add_filter("Map", &["map"])
+}
 
 impl Editor {
     pub fn native_update_ui(&mut self, engine:&mut dyn Engine) {
@@ -10,10 +17,18 @@ impl Editor {
                 if ui.button("New").clicked() {
                 }
                 if ui.button("Save").clicked() {
-
+                    let path = file_dialog().show_save_single_file().unwrap();
+                    if let Some(path) = path {
+                        let json = serde_json::to_string(&self.map).unwrap();
+                        std::fs::write(path, json).unwrap();
+                    }
                 }
                 if ui.button("Load").clicked() {
-                    
+                    let path = file_dialog().show_open_single_file().unwrap();
+                    if let Some(path) = path {
+                        let json = std::fs::read_to_string(path).unwrap();
+                        self.map = serde_json::from_str(&json).unwrap();
+                    }
                 } 
             });
         });

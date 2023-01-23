@@ -6,7 +6,7 @@ pub trait Game : 'static {
     fn serialize(&self) -> Vec<u8> {
         Vec::new()
     }
-    fn deserialize(&mut self, bytes:&Vec<u8>) {
+    fn deserialize(&mut self, _bytes:&Vec<u8>) {
         
     }
 }
