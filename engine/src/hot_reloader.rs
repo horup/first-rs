@@ -55,11 +55,13 @@ impl HotReloader {
             let mut state: Vec<u8> = Vec::new();
             if unload {
                 {
-                    engine.game.take();
+                    let g = engine.game.take();
+                    if let Some(g) = g {
+                        state = g.serialize();
+                    }
                     engine.egui_ctx = Context::default();
                     engine.egui_textures.clear();
                 }
-                //state = self.serialize();
                 // self.game = UnsafeCell::default();
                 if let Some(lib) = self.game_lib.take() {
                     lib.close().unwrap();
@@ -80,10 +82,9 @@ impl HotReloader {
                                 self.game_lib_metadata = Some(metadata);
                                 self.game_lib = Some(lib);
                                 let mut g = self.call_game_create().unwrap();
-                                //  self.game = UnsafeCell::new(Some(s));
                                 g.init(engine);
                                 if unload {
-                                    //    self.deserialize(&state);
+                                    g.deserialize(&state);
                                 }
 
                                 engine.game = Some(g);

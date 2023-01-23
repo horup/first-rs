@@ -1,8 +1,9 @@
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, VirtualKeyCode, DrawTextParams};
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams};
+use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
 
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct Editor {
     pub camera:EditorCamera,
     pub map:Map,
@@ -133,16 +134,8 @@ impl Editor {
         let size = 64.0;
 
         egui::Window::new("Toolbox").show(&ctx, |ui|{
-            ui.radio_value(&mut self.tool, Tool::PlaceWall, "Wall");
-            ui.radio_value(&mut self.tool, Tool::PlaceThing, "Thing");
-          /*  match engine.egui_texture(&self.selected_texture) {
-                Some(handle) => {
-                    ui.image(handle.id(), [size, size]);
-                }
-                None => {
-                    ui.add_space(size + 3.0);
-                }
-            };*/
+            ui.radio_value(&mut self.tool, Tool::PlaceWall, Tool::PlaceWall.to_string());
+            ui.radio_value(&mut self.tool, Tool::PlaceThing, Tool::PlaceThing.to_string()); 
         });
 
         egui::Window::new("Textures").show(&ctx, |ui|{
@@ -174,11 +167,6 @@ impl Editor {
                 } 
             });
         });
-
-        /*egui::SidePanel::left("left_panel").show(&ctx, |ui| {
-            let handle = engine.egui_texture(&1).unwrap();
-            ui.image(handle.id(), [16.0,16.0]);
-        });*/
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {
@@ -219,6 +207,13 @@ impl Editor {
 }
 
 impl Game for Editor {
+    fn deserialize(&mut self, bytes:&Vec<u8>) {
+        *self = bincode::deserialize(bytes).unwrap()
+    }
+
+    fn serialize(&self) -> Vec<u8> {
+        bincode::serialize(self).unwrap()
+    }
     fn init(&mut self, _engine:&mut dyn engine_sdk::Engine) {
      /*   macro_rules! load_texture {
             ($id:expr, $path:expr) => {
@@ -233,116 +228,7 @@ impl Game for Editor {
     }
 
     fn update(&mut self, engine:&mut dyn Engine) {
-        self.update(engine);  
-      
-/*
-        engine.draw_rect(DrawRectParams {
-            pos: vec2(5.0, 5.0),
-            size: vec2(screen_size.x, screen_size.y),
-            color: Color::RED,
-            texture: None,
-        }); 
-
-        let mouse_pos = engine.mouse_pos();
-        engine.draw_rect(DrawRectParams {
-            pos: mouse_pos,
-            size:vec2(24.0,48.0),
-            color: Color::WHITE,
-            texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
-        });*/
-
-     /*   fn draw_pos(engine:&mut dyn Engine, begin:Vec2, cell_size:f32) {
-            let mid = begin + vec2(cell_size / 2.0, cell_size / 2.0);
-            engine.draw_text(DrawTextParams {
-                screen_pos: mid,
-                text: begin.to_string(),
-                scale: 16.0,
-                color: Color::RED,
-            })
-        }
-        
-        for i in (0..screen_size.y as i32).step_by(cell_size) {
-            let begin = vec2(0.0, i as f32);
-            let end = vec2(screen_size.x, i as f32);
-            engine.draw_line(DrawLineParams {
-                begin,
-                end,
-                line_width: 1.0,
-                color: Color::WHITE,
-            });
-
-        }
-
-        for i in (0..screen_size.x as i32).step_by(cell_size) {
-            let begin = vec2(i as f32, 0.0);
-            let end = vec2(i as f32, screen_size.y);
-            engine.draw_line(DrawLineParams {
-                begin,
-                end,
-                line_width: 1.0,
-                color: Color::WHITE,
-            });
-        }
-
-        for i in (0..screen_size.y as i32).step_by(cell_size) {
-            let begin = vec2(0.0, i as f32);
-            let _end = vec2(screen_size.x, i as f32);
-            draw_pos(engine, begin, cell_size as f32);
-        }
-
-        for i in (0..screen_size.x as i32).step_by(cell_size) {
-            let begin = vec2(i as f32, 0.0);
-            let _end = vec2(i as f32, screen_size.y);
-            draw_pos(engine, begin, cell_size as f32);
-        }
-*/
-        /*engine.draw_rect(DrawRectParams {
-            pos: vec2(0.0, 0.0),
-            size: vec2(screen_size.x, screen_size.y),
-            color: Color::RED,
-            texture: None,
-        });
-
-        let textures = [WILLIAM, VIKTOR, PLANT, BRICK_WALL];
-        let mut x = 16.0;
-        let y = 16.0;
-        let scale = 3.0;
-        for id in textures {
-            let tex = engine.texture_info(&id).unwrap();
-            let size = vec2(tex.width, tex.height) * scale;
-            engine.draw_rect(DrawRectParams {
-                pos: vec2(x, y),
-                size,
-                color: Color::WHITE,
-                texture: Some(id),
-            });
-
-            x += size.x;
-        }
-
-        let mouse_pos = engine.mouse_pos();
-        engine.draw_rect(DrawRectParams {
-            pos: mouse_pos,
-            size:vec2(24.0,48.0),
-            color: Color::WHITE,
-            texture: if engine.mouse_down(0) { Some(WILLIAM) } else { Some(VIKTOR)},
-        });
-
-
-        if engine.key_just_pressed(32) {
-            dbg!("pressed");
-        }
-
-        self.iterations += 1;
-
-        if self.iterations % 60 == 0 {
-            dbg!(engine.frame_time());
-        }
-
-        engine_sdk::egui::Window::new("Hello world").show(engine.egui(), |ui|{
-
-        });*/
-        
+        self.update(engine);          
     }
 } 
 

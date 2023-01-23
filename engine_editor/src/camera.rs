@@ -1,5 +1,7 @@
 use engine_sdk::{glam::{Vec2, vec2, IVec2}, Engine, VirtualKeyCode};
+use serde::{Deserialize, Serialize};
 
+#[derive(Deserialize, Serialize)]
 pub struct EditorCamera {
     pub pos:Vec2,
     pub dir:Vec2,
