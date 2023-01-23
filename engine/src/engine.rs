@@ -228,7 +228,7 @@ impl Engine {
                     #[cfg(target_arch = "wasm32")]
                     {
                         let size = self.window.borrow().inner_size();
-                        let new_size = PhysicalSize::new(width() as u32, height() as u32);
+                        let new_size = winit::dpi::PhysicalSize::new(width() as u32, height() as u32);
                         if new_size != size {
                             self.window.borrow_mut().set_inner_size(new_size);
                         }

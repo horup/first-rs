@@ -117,21 +117,13 @@ impl Editor {
     }
 
     fn update_ui(&mut self, engine:&mut dyn Engine) {
-        let ctx = engine.egui().clone();
-        egui::TopBottomPanel::top("top_pane").show(&ctx, |ui|{
-            ui.menu_button("File", |ui|{
-                if ui.button("New").clicked() {
-                }
-                if ui.button("Save").clicked() {
-
-                }
-                if ui.button("Load").clicked() {
-                    
-                } 
-            });
-        });
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            self.native_update_ui(engine);
+        }
 
         let size = 64.0;
+        let ctx = engine.egui().clone();
 
         egui::Window::new("Toolbox").show(&ctx, |ui|{
             ui.radio_value(&mut self.tool, Tool::PlaceWall, Tool::PlaceWall.to_string());

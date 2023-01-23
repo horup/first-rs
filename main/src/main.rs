@@ -43,9 +43,6 @@ fn main() {
         console_log::init_with_level(log::Level::Info).expect("Couldn't initialize logger");
         wasm_bindgen_futures::spawn_local(async {
             let mut engine = init().await;
-
-
-            
             engine.run().await;  
         });
     }
