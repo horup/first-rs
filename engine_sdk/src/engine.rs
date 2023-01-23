@@ -10,7 +10,7 @@ pub trait Engine {
     fn egui(&self) -> &egui::Context;
     fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
     fn load_texture(&mut self, id:u32, image:&DynamicImage);
-    fn texture_info(&self, id:&u32) -> Option<TextureInfo>;
+    fn texture(&self, id:&u32) -> Option<TextureInfo>;
     fn textures(&self) -> Vec<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn dt(&self) -> f32;
@@ -34,6 +34,12 @@ pub struct TextureInfo {
     pub width:f32,
     pub height:f32,
     pub image:Rc<DynamicImage>
+}
+
+impl TextureInfo {
+    pub fn aspect(&self) -> f32 {
+        self.height / self.width
+    } 
 }
 
 #[derive(Clone, Debug, Default)]

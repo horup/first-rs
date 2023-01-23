@@ -89,7 +89,7 @@ impl engine_sdk::Engine for Engine {
         self.canvas.draw_text(params);
     }
 
-    fn texture_info(&self, id: &u32) -> Option<engine_sdk::TextureInfo> {
+    fn texture(&self, id: &u32) -> Option<engine_sdk::TextureInfo> {
         match self.textures.get(id) {
             Some(v) => Some(v.clone()),
             None => None,
@@ -147,7 +147,7 @@ impl engine_sdk::Engine for Engine {
             let w = texture.image.width() as usize;
             let h = texture.image.height() as usize;
             let bytes = texture.image.to_rgba8().to_vec();
-            let texture = self.egui_ctx.load_texture(format!("{}", id), egui::ColorImage::from_rgba_unmultiplied([w,h], &bytes), Default::default());
+            let texture = self.egui_ctx.load_texture(format!("{}", id), egui::ColorImage::from_rgba_unmultiplied([w,h], &bytes), egui::TextureOptions::NEAREST);
             self.egui_textures.insert(*id, texture.clone());
 
             return Some(texture);

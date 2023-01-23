@@ -1,14 +1,13 @@
 use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, VirtualKeyCode};
 
-use crate::EditorCamera;
+use crate::{EditorCamera, Tool};
 
 #[derive(Default)]
 pub struct Editor {
-    pub scene:Scene,
-    pub iterations:u64,
     pub camera:EditorCamera,
     pub map:Map,
-    pub wall_texture:u32
+    pub selected_texture:u32,
+    pub tool:Tool
 }
 
 impl Editor {
@@ -18,6 +17,7 @@ impl Editor {
         self.draw_map(engine);
         self.draw_grid(engine);
         self.draw_grid_cursor(engine);
+        self.draw_cursor(engine);
         self.update_ui(engine);
     }
 
@@ -39,17 +39,32 @@ impl Editor {
     fn edit_map(&mut self, engine:&mut dyn Engine) {
         let _keys = engine.keys_just_pressed();
         if engine.key_down(VirtualKeyCode::Key1) {
-            self.wall_texture = 1;
+            self.selected_texture = 1;
         } else if engine.key_down(VirtualKeyCode::Key2) {
-            self.wall_texture = 2;
+            self.selected_texture = 2;
         }
         if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
             if engine.mouse_down(0) {
-                cell.wall = Some(self.wall_texture);
+                cell.wall = Some(self.selected_texture);
             } else if engine.mouse_down(1) {
                 cell.wall = None;
             }
         }
+    }
+
+    fn draw_cursor(&mut self, engine:&mut dyn Engine) {
+        let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
+
+        if let Some(tex) = engine.texture(&self.selected_texture) {
+            let s = 32.0;
+            engine.draw_rect(DrawRectParams {
+                pos: cursor_pos,
+                size: (s, s * tex.aspect()).into(),
+                color: Color::WHITE,
+                texture: Some(self.selected_texture),
+            });
+        }
+       
     }
 
     fn update_ui(&mut self, engine:&mut dyn Engine) {
@@ -70,14 +85,16 @@ impl Editor {
         let size = 64.0;
 
         egui::Window::new("Toolbox").show(&ctx, |ui|{
-            match engine.egui_texture(&self.wall_texture) {
+            ui.radio_value(&mut self.tool, Tool::PlaceWall, "Wall");
+            ui.radio_value(&mut self.tool, Tool::PlaceThing, "Thing");
+          /*  match engine.egui_texture(&self.selected_texture) {
                 Some(handle) => {
                     ui.image(handle.id(), [size, size]);
                 }
                 None => {
                     ui.add_space(size + 3.0);
                 }
-            };
+            };*/
         });
 
         egui::Window::new("Textures").show(&ctx, |ui|{
@@ -101,7 +118,7 @@ impl Editor {
                             let aspect = texture.height / texture.width;
                             if let Some(handle) = engine.egui_texture(&texture.id) {
                                 if ui.add(egui::ImageButton::new(handle.id(), [size, size * aspect])).clicked() {
-                                    self.wall_texture = texture.id;
+                                    self.selected_texture = texture.id;
                                 }
                             }
                         }
