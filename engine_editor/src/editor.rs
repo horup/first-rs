@@ -22,6 +22,7 @@ impl Editor {
     }
 
     fn draw_map(&mut self, engine:&mut dyn Engine) {
+        // draw walls
         self.map.grid.for_each(|cell, (x,y)| {
             let p = self.camera.to_screen(&vec2(x as f32, y as f32));
             if cell.wall.is_some() {
@@ -30,6 +31,34 @@ impl Editor {
                     size: (self.camera.zoom, self.camera.zoom).into(),
                     color: Color::WHITE,
                     texture: cell.wall,
+                });
+            }
+        });
+
+        // draw things
+        self.map.grid.for_each(|cell, (x,y)| {
+            let center = self.camera.to_screen(&vec2(x as f32 + 0.5, y as f32 + 0.5));
+            let size = vec2(self.camera.zoom, self.camera.zoom) / 2.0;
+            let p = center - size/2.0;
+            if cell.thing.is_some() {
+                let ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
+
+                for i in 0..ps.len() {
+                    let p1 = ps[i];
+                    let p2 = ps[(i+1)% ps.len()];
+                    engine.draw_line(DrawLineParams {
+                        begin: p1,
+                        end: p2,
+                        line_width: 1.0,
+                        color: Color::RED,
+                    });
+                }
+                
+                engine.draw_rect(DrawRectParams {
+                    pos: p,
+                    size: size,
+                    color: Color::WHITE,
+                    texture: cell.thing,
                 });
             }
         });
