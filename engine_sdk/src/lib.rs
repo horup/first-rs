@@ -25,6 +25,9 @@ pub use grid::*;
 mod map;
 pub use map::*;
 
+mod event;
+pub use event::*;
+
 pub use glam;
 pub use image;
 pub use egui;

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{rc::Rc, mem::replace};
 
 use crate::{Engine, Vertex};
 use engine_sdk::{
@@ -154,5 +154,9 @@ impl engine_sdk::Engine for Engine {
         }
 
         return None;
+    }
+
+    fn pop_events(&mut self) -> Vec<engine_sdk::Event> {
+        replace(&mut self.events, Vec::new())
     }
 }

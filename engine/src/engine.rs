@@ -12,6 +12,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
+    pub events:Vec<engine_sdk::Event>,
     pub show_editor:bool,
     pub editor: Option<Editor>,
     pub(crate) textures:HashMap<u32, TextureInfo>,
@@ -58,6 +59,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            events:Vec::new(),
             show_editor: true,
             editor:Some(Editor::default()),
             textures:HashMap::default(),
@@ -126,6 +128,7 @@ impl Engine {
 
         self.graphics.submit(encoder, surface_texture);
         self.diagnostics.measure_frame_time();
+        self.input.clear();
     }
 
     pub fn init(&mut self) {
@@ -234,7 +237,6 @@ impl Engine {
                 Event::RedrawRequested(_window_id) => {
                     let egui_raw_inputs = egui_winit_state.take_egui_input(&self.window.borrow());
                     self.update(egui_raw_inputs);
-                    self.input.clear();
                 }
                 Event::MainEventsCleared => {
                     self.window.borrow().request_redraw();
