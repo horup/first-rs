@@ -157,7 +157,9 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn pop_events(&mut self) -> Vec<engine_sdk::Event> {
-        replace(&mut self.events, Vec::new())
+        let events = self.events.clone();
+        self.events.clear();
+        return events;
     }
 
     fn push_event(&mut self, event:Event) {

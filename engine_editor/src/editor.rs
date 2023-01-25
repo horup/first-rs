@@ -223,12 +223,3 @@ impl Game for Editor {
         self.update(engine);          
     }
 } 
-
-
-#[no_mangle]
-pub fn create() -> Box<dyn Game> {
-    Box::new(Editor {
-        map:Map::new(16),
-        ..Default::default()
-    })
-}

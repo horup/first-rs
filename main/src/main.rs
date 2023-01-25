@@ -30,7 +30,7 @@ fn main() {
             let mut engine = init().await;
             #[cfg(debug_assertions)]
             {
-                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("game.dll").unwrap());
+                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
                 engine.set_game_hotreload(lib_path);
             }
             engine.run().await;  
