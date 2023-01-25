@@ -24,6 +24,7 @@ pub trait Engine {
     fn key_down(&self, key_code:VirtualKeyCode) -> bool;
     fn keys_just_pressed(&self) -> &[VirtualKeyCode];
     fn pop_events(&mut self) -> Vec<Event>;
+    fn push_event(&mut self, event:Event);
     fn key_just_pressed(&self, key_code:VirtualKeyCode) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }

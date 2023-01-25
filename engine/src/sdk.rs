@@ -5,7 +5,7 @@ use engine_sdk::{
     self,
     glam::{Vec2, Vec3},
     image::DynamicImage,
-    DrawRectParams, TextureInfo,
+    DrawRectParams, TextureInfo, Event,
 };
 use winit::event::VirtualKeyCode;
 
@@ -158,5 +158,9 @@ impl engine_sdk::Engine for Engine {
 
     fn pop_events(&mut self) -> Vec<engine_sdk::Event> {
         replace(&mut self.events, Vec::new())
+    }
+
+    fn push_event(&mut self, event:Event) {
+        self.events.push(event);
     }
 }

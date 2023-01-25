@@ -4,7 +4,7 @@ use engine_sdk::{glam::vec2, Game, TextureInfo};
 use std::{collections::HashMap, cell::{RefCell}, mem::replace};
 
 use winit::{
-    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
+    event::{ElementState, KeyboardInput, VirtualKeyCode, WindowEvent, Event},
     event_loop::{ControlFlow, EventLoop},
     window::{WindowBuilder}
 };
@@ -87,6 +87,7 @@ impl Engine {
         self.hot_reloader = Some(crate::hot_reloader::HotReloader::new(lib_path));
     }
 
+
     pub fn update(&mut self, egui_raw_input: RawInput) {
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -102,6 +103,11 @@ impl Engine {
 
         self.egui_ctx.begin_frame(egui_raw_input);
 
+        use engine_sdk::Engine as EngineTrait;
+        if self.key_just_pressed(VirtualKeyCode::F1) {
+            self.show_editor = !self.show_editor;
+        }
+
         // do game update
         if self.show_editor {
             if let Some(mut editor) = self.editor.take() {
@@ -115,6 +121,7 @@ impl Engine {
                 self.game = Some(game);
             }
         }
+
 
         // send events to game
         let events = replace(&mut self.events, Vec::new());

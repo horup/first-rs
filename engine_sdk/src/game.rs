@@ -13,4 +13,12 @@ pub trait Game : 'static {
     fn on_events(&mut self, engine:&mut dyn Engine, _events:Vec<Event>) {
         
     }
+
+    fn deactivate(&mut self, engine:&mut dyn Engine) {
+
+    }
+
+    fn activate(&mut self, engine:&mut dyn Engine) {
+        
+    }
 }
