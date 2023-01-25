@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
+    test:u32
 }
 
 impl Game for Piggy {
