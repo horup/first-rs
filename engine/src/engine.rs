@@ -105,6 +105,14 @@ impl Engine {
 
         use engine_sdk::Engine as EngineTrait;
         if self.key_just_pressed(VirtualKeyCode::F1) {
+            if self.show_editor {
+                if let Some(editor) = self.editor.take() {
+                    let map = editor.map.clone();
+                    self.editor = Some(editor);
+                    self.push_event(engine_sdk::Event::LoadMap { map: map });
+                }
+            }
+
             self.show_editor = !self.show_editor;
         }
 
@@ -122,13 +130,9 @@ impl Engine {
             }
         }
 
-
-        // send events to game
-        let events = replace(&mut self.events, Vec::new());
         let game = self.game.take();
         if let Some(mut game) = game {
             game.update(self);
-            game.on_events(self, events);
             self.game = Some(game);
         }
 
