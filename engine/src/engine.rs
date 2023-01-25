@@ -1,7 +1,7 @@
 use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureInfo};
-use std::{collections::HashMap, cell::{RefCell}};
+use std::{collections::HashMap, cell::{RefCell}, mem::replace};
 
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
@@ -115,7 +115,15 @@ impl Engine {
                 self.game = Some(game);
             }
         }
-        
+
+        // send events to game
+        let events = replace(&mut self.events, Vec::new());
+        let game = self.game.take();
+        if let Some(mut game) = game {
+            game.update(self);
+            game.on_events(self, events);
+            self.game = Some(game);
+        }
 
         let full_output = self.egui_ctx.end_frame();
 
