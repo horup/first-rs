@@ -9,6 +9,7 @@ engine = {path = "../engine"}
 engine_editor = {path = "../engine_editor"}
 log = "0.4.17"
 winit = "0.27.5"
+piggy = { path = "../piggy" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 pollster = "0.2.5"

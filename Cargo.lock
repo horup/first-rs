@@ -1251,6 +1251,7 @@ dependencies = [
  "engine_editor",
  "env_logger",
  "log",
+ "piggy",
  "pollster",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -1641,6 +1642,15 @@ name = "percent-encoding"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
+
+[[package]]
+name = "piggy"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "engine_sdk",
+ "serde",
+]
 
 [[package]]
 name = "pin-project"

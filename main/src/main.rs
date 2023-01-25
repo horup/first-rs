@@ -1,12 +1,11 @@
 use std::{path::PathBuf, str::FromStr};
 use engine::{Engine, engine_sdk::Engine as EngineTrait, engine_sdk::image};
-
-
+use piggy::Piggy;
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
-   // engine.set_game(Box::<engine_editor::Editor>::default());
+    engine.set_game(Box::<Piggy>::default());
     macro_rules! load_texture {
         ($id:expr, $path:expr) => {
             engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
@@ -31,8 +30,8 @@ fn main() {
             let mut engine = init().await;
             #[cfg(debug_assertions)]
             {
-                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("engine_editor.dll").unwrap());
-                //engine.set_game_hotreload(lib_path);
+                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("game.dll").unwrap());
+                engine.set_game_hotreload(lib_path);
             }
             engine.run().await;  
         }); 

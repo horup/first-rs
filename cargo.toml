@@ -4,5 +4,6 @@ members = [
     "./engine",
     "./engine_sdk",
     "./engine_editor",
+    "./piggy",
     "./main",
 ]
