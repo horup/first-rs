@@ -24,7 +24,7 @@ jobs:
     - name: Install trunk
       run: cargo install trunk
     - name: Trunk Build
-      run: trunk build --release ./main/index.html
+      run: trunk build --release ./main/index.html --public-url first-rs
     - name: Upload GitHub Pages artifact
       uses: actions/upload-pages-artifact@v1.0.7
       with:
