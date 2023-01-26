@@ -1,4 +1,4 @@
-use engine_sdk::Game;
+use engine_sdk::{Game, image};
 use serde::{Serialize, Deserialize};
 
 #[derive(Default, Serialize, Deserialize)]
@@ -8,6 +8,18 @@ pub struct Piggy {
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
+        macro_rules! load_texture {
+            ($id:expr, $path:expr) => {
+                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
+            };
+        }
+        
+        load_texture!(1, "../assets/textures/brick_wall.png");
+        load_texture!(2, "../assets/textures/bush_wall.png");
+        load_texture!(3, "../assets/textures/white_wall.png");
+        load_texture!(4, "../assets/textures/player.png");
+        load_texture!(5, "../assets/textures/viktor.png");
+        load_texture!(6, "../assets/textures/william.png");
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {

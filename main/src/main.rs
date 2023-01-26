@@ -6,18 +6,6 @@ async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
     engine.set_game(Box::<Piggy>::default());
-    macro_rules! load_texture {
-        ($id:expr, $path:expr) => {
-            engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap());
-        };
-    }
-    
-    load_texture!(1, "../assets/textures/brick_wall.png");
-    load_texture!(2, "../assets/textures/bush_wall.png");
-    load_texture!(3, "../assets/textures/white_wall.png");
-    load_texture!(4, "../assets/textures/player.png");
-    load_texture!(5, "../assets/textures/viktor.png");
-    load_texture!(6, "../assets/textures/william.png");
 
     engine
 }
@@ -31,7 +19,7 @@ fn main() {
             #[cfg(debug_assertions)]
             {
                 let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
-                engine.set_game_hotreload(lib_path);
+                // engine.set_game_hotreload(lib_path);
             }
             engine.run().await;  
         }); 
