@@ -1,4 +1,4 @@
-use engine_sdk::{Game, image};
+use engine_sdk::{Game, image, Event, Map};
 use serde::{Serialize, Deserialize};
 
 #[derive(Default, Serialize, Deserialize)]
@@ -20,14 +20,25 @@ impl Game for Piggy {
         load_texture!(4, "../assets/textures/player.png");
         load_texture!(5, "../assets/textures/viktor.png");
         load_texture!(6, "../assets/textures/william.png");
+
+        let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
+        engine.push_event(Event::LoadMap { map });
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        let events = engine.pop_events();
-        if events.len() > 0 {
-            dbg!("events");
+        
+    }
+
+    fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
+        match event {
+            Event::LoadMap { map } => {
+                dbg!("load map");
+            },
+            _=>{}
         }
     }
+
+    
 }
 
 

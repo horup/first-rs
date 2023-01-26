@@ -4,7 +4,7 @@ use glam::Vec2;
 use image::DynamicImage;
 use winit::event::VirtualKeyCode;
 
-use crate::{Camera, Scene, Color, Event};
+use crate::{Camera, Scene, Color, Event, Map};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
@@ -23,7 +23,7 @@ pub trait Engine {
     fn mouse_wheel_delta(&self) -> Vec2;
     fn key_down(&self, key_code:VirtualKeyCode) -> bool;
     fn keys_just_pressed(&self) -> &[VirtualKeyCode];
-    fn pop_events(&mut self) -> Vec<Event>;
+    //fn events(&self) -> &[Event];
     fn push_event(&mut self, event:Event);
     fn key_just_pressed(&self, key_code:VirtualKeyCode) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)

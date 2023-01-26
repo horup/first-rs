@@ -1650,6 +1650,7 @@ dependencies = [
  "bincode",
  "engine_sdk",
  "serde",
+ "serde_json",
 ]
 
 [[package]]

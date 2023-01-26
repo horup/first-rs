@@ -12,7 +12,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
 
 pub struct Engine {
-    pub events:Vec<engine_sdk::Event>,
+    pub new_events:Vec<engine_sdk::Event>,
     pub show_editor:bool,
     pub editor: Option<Editor>,
     pub(crate) textures:HashMap<u32, TextureInfo>,
@@ -59,7 +59,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
-            events:Vec::new(),
+            new_events:Vec::new(),
             show_editor: true,
             editor:Some(Editor::default()),
             textures:HashMap::default(),
@@ -89,6 +89,8 @@ impl Engine {
 
 
     pub fn update(&mut self, egui_raw_input: RawInput) {
+        
+
         #[cfg(not(target_arch = "wasm32"))]
         {
             let hot_reloader = self.hot_reloader.take();
@@ -116,6 +118,19 @@ impl Engine {
             self.show_editor = !self.show_editor;
         }
 
+        // process events
+        let events = replace(&mut self.new_events, Vec::new());
+        for e in events {
+            if let Some(mut editor) = self.editor.take() {
+                editor.on_event(self, &e);
+                self.editor = Some(editor);
+            }
+            if let Some(mut game) = self.game.take() {
+                game.on_event(self, &e);
+                self.game = Some(game);
+            }
+        }
+        
         // do game update
         if self.show_editor {
             if let Some(mut editor) = self.editor.take() {
@@ -128,12 +143,6 @@ impl Engine {
                 game.update(self);
                 self.game = Some(game);
             }
-        }
-
-        let game = self.game.take();
-        if let Some(mut game) = game {
-            game.update(self);
-            self.game = Some(game);
         }
 
         let full_output = self.egui_ctx.end_frame();
