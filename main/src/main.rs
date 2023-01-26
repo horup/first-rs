@@ -1,12 +1,11 @@
 use std::{path::PathBuf, str::FromStr};
-use engine::{Engine, engine_sdk::Engine as EngineTrait, engine_sdk::image};
+use engine::{Engine};
 use piggy::Piggy;
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
     engine.window.borrow_mut().set_title("First-RS Editor");
     engine.set_game(Box::<Piggy>::default());
-
     engine
 }
 

@@ -9,6 +9,6 @@ pub trait Game : 'static {
     fn deserialize(&mut self, _bytes:&Vec<u8>) {
     }
 
-    fn on_event(&mut self, engine:&mut dyn Engine, event:&Event) {
+    fn on_event(&mut self, _engine:&mut dyn Engine, _event:&Event) {
     }
 }

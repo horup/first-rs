@@ -1,4 +1,4 @@
-use std::{rc::Rc, mem::replace};
+use std::{rc::Rc};
 
 use crate::{Engine, Vertex};
 use engine_sdk::{
