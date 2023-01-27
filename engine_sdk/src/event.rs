@@ -2,7 +2,7 @@ use crate::Map;
 
 #[derive(Clone)]
 pub enum Event {
-    LoadMap {
+    Map {
         map:Map
     }
 }

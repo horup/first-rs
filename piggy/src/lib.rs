@@ -22,7 +22,7 @@ impl Game for Piggy {
         load_texture!(6, "../assets/textures/william.png");
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
-        engine.push_event(Event::LoadMap { map });
+        engine.push_event(Event::Map { map });
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -31,7 +31,7 @@ impl Game for Piggy {
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
-            Event::LoadMap { map } => {
+            Event::Map { map } => {
                 dbg!("load map");
             },
             _=>{}

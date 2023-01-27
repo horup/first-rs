@@ -225,7 +225,7 @@ impl Game for Editor {
 
     fn on_event(&mut self, engine:&mut dyn Engine, event:&engine_sdk::Event) {
         match event {
-            engine_sdk::Event::LoadMap { map } => {
+            engine_sdk::Event::Map { map } => {
                 self.map = map.clone();
             },
         }

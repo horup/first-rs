@@ -111,7 +111,7 @@ impl Engine {
                 if let Some(editor) = self.editor.take() {
                     let map = editor.map.clone();
                     self.editor = Some(editor);
-                    self.push_event(engine_sdk::Event::LoadMap { map: map });
+                    self.push_event(engine_sdk::Event::Map { map: map });
                 }
             }
 
