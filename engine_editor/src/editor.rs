@@ -222,4 +222,12 @@ impl Game for Editor {
     fn update(&mut self, engine:&mut dyn Engine) {
         self.update(engine);          
     }
+
+    fn on_event(&mut self, engine:&mut dyn Engine, event:&engine_sdk::Event) {
+        match event {
+            engine_sdk::Event::LoadMap { map } => {
+                self.map = map.clone();
+            },
+        }
+    }
 } 
