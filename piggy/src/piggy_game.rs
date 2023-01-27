@@ -23,7 +23,7 @@ impl Game for Piggy {
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        
+        self.update_ui(engine);
     }
 
     fn on_event(&mut self, _engine:&mut dyn engine_sdk::Engine, event:&Event) {
