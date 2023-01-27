@@ -31,6 +31,6 @@ impl Piggy {
             end: center + vec2(0.0,l),
             line_width: w,
             color: Color::WHITE
-        })
+        });
     }
 }
