@@ -23,7 +23,6 @@ pub struct Engine {
     pub window: RefCell<winit::window::Window>,
     pub(crate) event_loop: Option<winit::event_loop::EventLoop<()>>,
     pub(crate) graphics: Graphics,
-    pub(crate) models: HashMap<u32, Model>,
     pub(crate) canvas: Canvas,
     pub diagnostics: Diagnostics,
     pub input: Input,
@@ -72,7 +71,6 @@ impl Engine {
             game: None,
             graphics,
             diagnostics: Default::default(),
-            models: HashMap::default(),
             canvas,
             input: Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
@@ -91,8 +89,6 @@ impl Engine {
 
 
     pub fn update(&mut self, egui_raw_input: RawInput) {
-        
-
         #[cfg(not(target_arch = "wasm32"))]
         {
             let hot_reloader = self.hot_reloader.take();
@@ -150,6 +146,7 @@ impl Engine {
         let full_output = self.egui_ctx.end_frame();
 
         let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
+        self.scene_renderer.draw(&mut context);
         self.canvas.draw(&mut context);
 
         // draw ui always on top
