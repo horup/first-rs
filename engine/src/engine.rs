@@ -9,9 +9,10 @@ use winit::{
     window::{WindowBuilder}
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, SceneRenderer};
 
 pub struct Engine {
+    pub scene_renderer:SceneRenderer,
     pub new_events:Vec<engine_sdk::Event>,
     pub show_editor:bool,
     pub editor: Option<Editor>,
@@ -59,6 +60,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            scene_renderer:SceneRenderer::new(&graphics),
             new_events:Vec::new(),
             show_editor: true,
             editor:Some(Editor::default()),

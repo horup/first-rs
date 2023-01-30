@@ -24,6 +24,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_scene(&mut self, _camera: &engine_sdk::Camera, scene: &engine_sdk::Scene) {
+        self.scene_renderer.draw();
         return;
         let tex = 0;
         if let Some(model) = self.models.get_mut(&tex) {

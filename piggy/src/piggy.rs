@@ -1,4 +1,4 @@
-use engine_sdk::{Game, image, Event, Map, Engine, DrawTextParams, glam::vec2, Color, DrawLineParams};
+use engine_sdk::{Game, image, Event, Map, Engine, DrawTextParams, glam::{vec2, vec3}, Color, DrawLineParams, Scene, Camera};
 use serde::{Serialize, Deserialize};
 
 #[derive(Default, Serialize, Deserialize)]
@@ -7,7 +7,18 @@ pub struct Piggy {
 }
 
 impl Piggy {
+    pub fn update_scene(&mut self, engine:&mut dyn Engine) {
+
+        // draw scene
+        engine.draw_scene(&Camera {
+            pos: vec3(0.0, 0.0, 0.0),
+        }, &Scene {
+            sprites: Vec::new(),
+        })
+    }
     pub fn update_ui(&mut self, engine:&mut dyn Engine) {
+
+        // draw ui
         let margin = vec2(16.0, 16.0);
         let center = engine.screen_size() / 2.0;
         engine.draw_text(DrawTextParams {

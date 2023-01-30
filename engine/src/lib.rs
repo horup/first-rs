@@ -28,6 +28,9 @@ pub use texture::*;
 mod input;
 pub use input::*;
 
+mod scene_renderer;
+pub use scene_renderer::*;
+
 #[cfg(not(target_arch = "wasm32"))]
 pub mod hot_reloader;
 
