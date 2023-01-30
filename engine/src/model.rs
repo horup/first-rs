@@ -5,8 +5,8 @@ use wgpu::{self};
 use crate::{Vertex, GraphicsContext};
 
 pub struct Model {
-    vertex_buffer:wgpu::Buffer,
-    index_buffer:wgpu::Buffer,
+    pub vertex_buffer:wgpu::Buffer,
+    pub index_buffer:wgpu::Buffer,
     pub vertices:Vec<Vertex>,
     pub indicies:Vec<u32>
 }
