@@ -1,4 +1,4 @@
-use std::{mem::size_of, ops::Range};
+use std::{mem::{size_of, replace}, ops::Range};
 
 use engine_sdk::{Camera, Scene};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline};
@@ -137,32 +137,32 @@ impl SceneRenderer {
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
 
-        // update camera
-      /*   let camera_uniform = CameraUniform::new_orth_screen(graphics.screen_size.width as f32, graphics.screen_size.height as f32);
-        graphics.queue.write_buffer(
-            &self.camera_buffer,
-            0,
-            bytemuck::cast_slice(&[camera_uniform]),
-        );*/
-        
-        let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("Render Pass"),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: &graphics.surface_view,
-                resolve_target: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Load,
-                    store: true,
+        let draw_calls = replace(&mut self.draw_calls, Vec::new());
+        for draw_call in draw_calls {
+            match draw_call {
+                DrawCall::DrawWalls { texture, range } => {
+                    let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                        label: Some("Render Pass"),
+                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                            view: &graphics.surface_view,
+                            resolve_target: None,
+                            ops: wgpu::Operations {
+                                load: wgpu::LoadOp::Load,
+                                store: true,
+                            },
+                        })],
+                        depth_stencil_attachment: None,
+                    });
+                    render_pass.set_pipeline(&self.render_pipeline);
+                    render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                    render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
+                    render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+                    render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
+                    render_pass.draw_indexed(0..0, 0, 0..1);
                 },
-            })],
-            depth_stencil_attachment: None,
-        });
-        render_pass.set_pipeline(&self.render_pipeline);
-        render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
-        render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
-        render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
-        render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
-        render_pass.draw_indexed(0..0, 0, 0..1);
+            }
+        }
+       
 
 
         self.draw_calls.clear();
