@@ -15,8 +15,8 @@ impl CameraUniform {
     }
 
     pub fn new_fps(eye:Vec3, at:Vec3) -> Self {
-        let eye = Vec3::new(0.0, 0.0, -1.0);
-        let matrix = Mat4::perspective_rh(2.0, 1.0, 0.0, 10.0) * Mat4::from_translation(eye);
+        let eye = -Vec3::new(0.0, 2.0, 20.0);
+        let matrix = Mat4::perspective_rh(2.0, 1.0, 0.0, 100.0) * Mat4::from_translation(eye);
         Self {
             view_proj:matrix.to_cols_array()
         }

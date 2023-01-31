@@ -125,31 +125,44 @@ impl SceneRenderer {
 
     fn wall(&mut self, cell:&Cell, pos:IVec2, normal:IVec2) {
         if let Some(texture) = cell.wall {
-            let color = [1.0, 0.0, 0.0, 1.0];
+            let color = [1.0, 1.0, 1.0, 1.0];
             let start_vertex = self.geometry.vertices.len() as u32;
             let start_index = self.geometry.indicies.len() as u32;
 
             let wall = [Vertex {
-                position: [0.0, 0.0, -10.0],
+                position: [0.0, 0.0, 0.0],
                 color: color,
-                uv: [0.0, 0.0],
+                uv: [0.0, 1.0],
             }, Vertex {
                 position: [1.0, 0.0, 0.0],
                 color: color,
-                uv: [0.0, 0.0],
+                uv: [1.0, 1.0],
             }, Vertex {
                 position: [1.0, 1.0, 0.0],
+                color: color,
+                uv: [1.0, 0.0],
+            },  Vertex {
+                position: [0.0, 1.0, 0.0],
                 color: color,
                 uv: [0.0, 0.0],
             }];
 
-            for v in wall {
+            for mut v in wall {
+                v.position[0] += pos.x as f32;
+                v.position[2] += pos.y as f32;
                 self.geometry.vertices.push(v);
             }
 
             self.geometry.indicies.push(start_vertex + 0);
             self.geometry.indicies.push(start_vertex + 1);
             self.geometry.indicies.push(start_vertex + 2);
+
+            self.geometry.indicies.push(start_vertex + 0);
+            self.geometry.indicies.push(start_vertex + 2);
+            self.geometry.indicies.push(start_vertex + 3);
+
+
+
 
             let end_index = self.geometry.indicies.len() as u32;
             self.draw_calls.push(DrawCall::DrawWalls { texture, range: start_index..end_index });
