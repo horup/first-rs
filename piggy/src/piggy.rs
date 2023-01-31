@@ -9,12 +9,20 @@ pub struct Piggy {
 impl Piggy {
     pub fn update_scene(&mut self, engine:&mut dyn Engine) {
 
+        let mut scene = Scene::default();
+        for i in 0..scene.grid.size() {
+            scene.grid.get_mut((i as i32, 0)).unwrap().wall = Some(1);
+            scene.grid.get_mut((i as i32, scene.grid.size() as i32 - 1)).unwrap().wall = Some(1);
+            scene.grid.get_mut((0, i as i32)).unwrap().wall = Some(1);
+            scene.grid.get_mut((scene.grid.size() as i32 - 1, i as i32)).unwrap().wall = Some(1);
+        }
+
+        scene.grid.get_mut((2, 2)).unwrap().wall = Some(1);
+       
         // draw scene
         engine.draw_scene(&Camera {
-            pos: vec3(0.0, 0.0, 0.0),
-        }, &Scene {
-            sprites: Vec::new(),
-        })
+            pos: vec3(2.0, 2.0, 0.0),
+        }, &scene);
     }
     pub fn update_ui(&mut self, engine:&mut dyn Engine) {
 

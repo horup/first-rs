@@ -1,6 +1,6 @@
 use std::{mem::{size_of, replace}, ops::Range};
 
-use engine_sdk::{Camera, Scene};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -99,7 +99,7 @@ impl SceneRenderer {
                 topology: wgpu::PrimitiveTopology::TriangleList,
                 strip_index_format: None,
                 front_face: wgpu::FrontFace::Ccw,
-                cull_mode: Some(wgpu::Face::Back),
+                cull_mode: None,//Some(wgpu::Face::Back),
                 polygon_mode: wgpu::PolygonMode::Fill,
                 unclipped_depth: false,
                 conservative: false,
@@ -122,21 +122,75 @@ impl SceneRenderer {
         }
     }
 
+
+    fn wall(&mut self, cell:&Cell, pos:IVec2, normal:IVec2) {
+        if let Some(texture) = cell.wall {
+            let color = [1.0, 0.0, 0.0, 1.0];
+            let start_vertex = self.geometry.vertices.len() as u32;
+            let start_index = self.geometry.indicies.len() as u32;
+
+            let wall = [Vertex {
+                position: [0.0, 0.0, -10.0],
+                color: color,
+                uv: [0.0, 0.0],
+            }, Vertex {
+                position: [1.0, 0.0, 0.0],
+                color: color,
+                uv: [0.0, 0.0],
+            }, Vertex {
+                position: [1.0, 1.0, 0.0],
+                color: color,
+                uv: [0.0, 0.0],
+            }];
+
+            for v in wall {
+                self.geometry.vertices.push(v);
+            }
+
+            self.geometry.indicies.push(start_vertex + 0);
+            self.geometry.indicies.push(start_vertex + 1);
+            self.geometry.indicies.push(start_vertex + 2);
+
+            let end_index = self.geometry.indicies.len() as u32;
+            self.draw_calls.push(DrawCall::DrawWalls { texture, range: start_index..end_index });
+        }
+    }
+
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
 
         // update camera
-        let camera_uniform = CameraUniform::new_orth_screen(graphics.config.width as f32, graphics.config.height as f32);
+        let camera_uniform = CameraUniform::new_fps(vec3(0.0, 0.0, -1.0), vec3(0.0, 0.0, 0.0));//CameraUniform::new_orth_screen(10.0, 10.0);
         graphics.queue.write_buffer(
             &self.camera_buffer,
             0,
             bytemuck::cast_slice(&[camera_uniform]),
         );
 
+        // update grid
+        let size = scene.grid.size();
+        for y in 0..size {
+            for x in 0..size {
+                let x = x as i32;
+                let y = y as i32;
+                if let Some(tile) = scene.grid.get((x, y)) {
+                    if tile.wall.is_none() {
+                        let normals = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
+                        for n in normals.iter() {
+                            let p = ivec2(x, y) - *n;
+                            if let Some(cell) = scene.grid.get((p.x, p.y)) {
+                                self.wall(cell, p, *n);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
-
+        self.geometry.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
         for draw_call in draw_calls {
             match draw_call {
@@ -158,13 +212,10 @@ impl SceneRenderer {
                     render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
                     render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
                     render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
-                    render_pass.draw_indexed(0..0, 0, 0..1);
+                    render_pass.draw_indexed(range, 0, 0..1);
                 },
             }
         }
-       
 
-
-        self.draw_calls.clear();
     }
 }

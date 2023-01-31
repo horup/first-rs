@@ -53,12 +53,11 @@ impl Model {
         let vertices_size = self.vertices.len() as wgpu::BufferAddress * Vertex::size();
         if self.vertex_buffer.size() < vertices_size {
             self.vertex_buffer = Self::create_vertex_buffer(graphics.device, vertices_size);
-            
         }
 
         let indicies_size = self.indicies.len() as wgpu::BufferAddress * size_of::<u32>() as wgpu::BufferAddress;
         if self.index_buffer.size() < indicies_size {
-            self.index_buffer = Self::create_index_buffer(graphics.device, vertices_size);
+            self.index_buffer = Self::create_index_buffer(graphics.device, indicies_size);
         }
 
         let slice:&[u8] = bytemuck::cast_slice(&self.vertices);
