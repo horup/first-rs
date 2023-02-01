@@ -1,4 +1,6 @@
-use engine_sdk::{Game, Map, Event};
+use std::f32::consts::PI;
+use engine_sdk::glam::vec3;
+use engine_sdk::{Game, Map, Event, Scene, Camera};
 use engine_sdk::image;
 use crate::Piggy;
 
@@ -23,6 +25,7 @@ impl Game for Piggy {
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
+        self.update_controls(engine);
         self.update_scene(engine);
         self.update_ui(engine);
     }
@@ -32,6 +35,24 @@ impl Game for Piggy {
             Event::Map { map } => {
                 self.current_map = map.clone();
                 dbg!("new map loaded");
+
+                let mut scene = Scene::default();
+                for i in 0..scene.grid.size() {
+                    scene.grid.get_mut((i as i32, 0)).unwrap().wall = Some(1);
+                    scene.grid.get_mut((i as i32, scene.grid.size() as i32 - 1)).unwrap().wall = Some(1);
+                    scene.grid.get_mut((0, i as i32)).unwrap().wall = Some(1);
+                    scene.grid.get_mut((scene.grid.size() as i32 - 1, i as i32)).unwrap().wall = Some(1);
+                }
+
+                scene.grid.get_mut((2, 2)).unwrap().wall = Some(1);
+
+                let camera = Camera {
+                    pos: vec3(8.0, 8.0, 0.5),
+                    yaw: PI + PI / 4.0
+                };
+
+                self.scene = scene;
+                self.camera = camera;
             },
             _=>{}
         }
