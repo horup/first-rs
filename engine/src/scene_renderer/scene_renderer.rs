@@ -138,18 +138,18 @@ impl SceneRenderer {
                 color: color,
                 uv: [1.0, 1.0],
             }, Vertex {
-                position: [1.0, 1.0, 0.0],
+                position: [1.0, 0.0, 1.0],
                 color: color,
                 uv: [1.0, 0.0],
             },  Vertex {
-                position: [0.0, 1.0, 0.0],
+                position: [0.0, 0.0, 1.0],
                 color: color,
                 uv: [0.0, 0.0],
             }];
 
             for mut v in wall {
                 v.position[0] += pos.x as f32;
-                v.position[2] += pos.y as f32;
+                v.position[1] += pos.y as f32;
                 self.geometry.vertices.push(v);
             }
 
@@ -173,7 +173,7 @@ impl SceneRenderer {
         self.geometry.clear();
 
         // update camera
-        let camera_uniform = CameraUniform::new_fps(vec3(0.0, 0.0, -1.0), vec3(0.0, 0.0, 0.0));//CameraUniform::new_orth_screen(10.0, 10.0);
+        let camera_uniform = CameraUniform::new_scene_camera(camera, graphics.config.width as f32, graphics.config.height as f32);
         graphics.queue.write_buffer(
             &self.camera_buffer,
             0,
