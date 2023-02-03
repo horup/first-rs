@@ -356,4 +356,12 @@ impl<'a> GraphicsContext<'a> {
             textures: &graphics.textures,
         }
     }
+
+    pub fn texture(&self, texture:u32) -> &'a crate::Texture {
+        if let Some(texture) = self.textures.get(&texture) {
+            return texture;
+        }
+
+        return self.texture_missing;
+    }
 }

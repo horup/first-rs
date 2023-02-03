@@ -161,9 +161,6 @@ impl SceneRenderer {
             self.geometry.indicies.push(start_vertex + 2);
             self.geometry.indicies.push(start_vertex + 3);
 
-
-
-
             let end_index = self.geometry.indicies.len() as u32;
             self.draw_calls.push(DrawCall::DrawWalls { texture, range: start_index..end_index });
         }
@@ -208,6 +205,7 @@ impl SceneRenderer {
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawWalls { texture, range } => {
+                    let texture = &graphics.texture(texture).clone().texture_bind_group;
                     let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -220,9 +218,10 @@ impl SceneRenderer {
                         })],
                         depth_stencil_attachment: None,
                     });
+
                     render_pass.set_pipeline(&self.render_pipeline);
                     render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
-                    render_pass.set_bind_group(1, &graphics.texture_missing.texture_bind_group, &[]);
+                    render_pass.set_bind_group(1, texture, &[]);
                     render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
                     render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
                     render_pass.draw_indexed(range, 0, 0..1);
