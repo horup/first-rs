@@ -130,4 +130,8 @@ impl engine_sdk::Engine for Engine {
         }
         
     }
+
+    fn mouse_motion(&self) -> Vec2 {
+        self.input.mouse_motion
+    }
 }

@@ -21,6 +21,7 @@ pub trait Engine {
     fn mouse_pos(&self) -> Vec2;
     fn mouse_down(&self, button:u8) -> bool;
     fn mouse_wheel_delta(&self) -> Vec2;
+    fn mouse_motion(&self) -> Vec2;
     fn key_down(&self, key_code:VirtualKeyCode) -> bool;
     fn keys_just_pressed(&self) -> &[VirtualKeyCode];
     fn push_event(&mut self, event:Event);

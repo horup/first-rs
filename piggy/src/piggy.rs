@@ -29,12 +29,8 @@ impl Piggy {
             self.camera.pos -= speed * dt * forward;
         }
 
-        if engine.mouse_down(0) {
-            self.camera.yaw -= speed * dt;
-        } 
-        if engine.mouse_down(1) {
-            self.camera.yaw += speed * dt;
-        }
+        let turn_speed = PI / 4.0;
+        self.camera.yaw += turn_speed * dt * engine.mouse_motion().x;
         
     }
     pub fn update_scene(&mut self, engine:&mut dyn Engine) {

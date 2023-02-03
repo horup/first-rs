@@ -1,10 +1,11 @@
 use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureInfo};
+use log::info;
 use std::{collections::HashMap, cell::{RefCell}, mem::replace};
 
 use winit::{
-    event::{ElementState, KeyboardInput, VirtualKeyCode, WindowEvent, Event},
+    event::{ElementState, KeyboardInput, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
     event_loop::{ControlFlow, EventLoop},
     window::{WindowBuilder}
 };
@@ -216,6 +217,7 @@ impl Engine {
                                 ElementState::Released => self.input.mouse_pressed[button] = false,
                             }
                         }
+                        
                         WindowEvent::MouseWheel { delta, .. } =>{
                             match delta {
                                 winit::event::MouseScrollDelta::LineDelta(x, y) => {
@@ -245,22 +247,12 @@ impl Engine {
                         _ => {}
                     }
                 }
-               /* Event::DeviceEvent { event, .. } => match event {
-                    DeviceEvent::Key(input) => {
-                        if let Some(key_code) = input.virtual_keycode {
-                            match input.state {
-                                ElementState::Pressed => {
-                                        self.input.keys_pressed.insert(key_code, true);
-                                        self.input.keys_just_pressed.push(key_code);
-                                },
-                                ElementState::Released => {
-                                    self.input.keys_pressed.remove(&key_code);
-                                },
-                            }
-                        }
+                Event::DeviceEvent { event, .. } => match event {
+                    DeviceEvent::MouseMotion { delta: (dx, dy)} => {
+                        self.input.mouse_motion += vec2(dx as f32, dy as f32);
                     }
                     _ => {}
-                },*/
+                },
                 Event::RedrawRequested(_window_id) => {
                     let egui_raw_inputs = egui_winit_state.take_egui_input(&self.window.borrow());
                     self.update(egui_raw_inputs);
