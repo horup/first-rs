@@ -1,5 +1,6 @@
 use std::{mem::{size_of, replace}, ops::Range};
 
+use egui::epaint::ahash::HashMap;
 use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline};
 
@@ -124,7 +125,7 @@ impl SceneRenderer {
 
 
     fn wall(&mut self, cell:&Cell, pos:IVec2, normal:IVec2) {
-        if let Some(texture) = cell.wall {
+        if let Some(wall_texture) = cell.wall {
             let color = [1.0, 1.0, 1.0, 1.0];
             let start_vertex = self.geometry.vertices.len() as u32;
             let start_index = self.geometry.indicies.len() as u32;
@@ -162,7 +163,15 @@ impl SceneRenderer {
             self.geometry.indicies.push(start_vertex + 3);
 
             let end_index = self.geometry.indicies.len() as u32;
-            self.draw_calls.push(DrawCall::DrawWalls { texture, range: start_index..end_index });
+            if let Some(DrawCall::DrawWalls { texture, range }) = self.draw_calls.last_mut() {
+                if wall_texture == *texture {
+                    range.end = end_index;
+                    return;
+                }
+            } 
+
+            self.draw_calls.push(DrawCall::DrawWalls { texture: wall_texture, range: start_index..end_index });
+            
         }
     }
 
@@ -178,6 +187,13 @@ impl SceneRenderer {
         );
 
         // update grid
+        /*let mut textures = HashMap::default();
+        scene.grid.for_each(|cell, _| {
+            if let Some(wall) = cell.wall {
+                textures.insert(wall, Vec::new());
+            }
+        });*/
+        
         let size = scene.grid.size();
         for y in 0..size {
             for x in 0..size {
