@@ -7,7 +7,7 @@ use engine_sdk::{
     image::DynamicImage,
     DrawRectParams, TextureInfo, Event,
 };
-use winit::event::VirtualKeyCode;
+use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
     fn load_texture(&mut self, id: u32, image: &DynamicImage) {
@@ -115,5 +115,19 @@ impl engine_sdk::Engine for Engine {
 
     fn push_event(&mut self, event:Event) {
         self.new_events.push(event);
+    }
+
+    fn set_cursor_visible(&mut self, visible:bool) {
+        let window = self.window.borrow_mut();
+        window.set_cursor_visible(visible);
+        match visible {
+            true => {
+                let _ = window.set_cursor_grab(CursorGrabMode::None);
+            },
+            false => {
+                let _ = window.set_cursor_grab(CursorGrabMode::Confined);
+            },
+        }
+        
     }
 }

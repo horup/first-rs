@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use glam::Vec2;
 use image::DynamicImage;
-use winit::event::VirtualKeyCode;
+use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 use crate::{Camera, Scene, Color, Event};
 
@@ -27,6 +27,7 @@ pub trait Engine {
     fn key_just_pressed(&self, key_code:VirtualKeyCode) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
+    fn set_cursor_visible(&mut self, visible:bool);
 }
 
 #[derive(Clone, Debug, Default)]

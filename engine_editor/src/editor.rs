@@ -1,4 +1,4 @@
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams};
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, CursorGrabMode};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -13,6 +13,7 @@ pub struct Editor {
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
+        engine.set_cursor_visible(true);
         self.camera.update(engine);
         self.edit_map(engine);
         self.draw_map(engine);

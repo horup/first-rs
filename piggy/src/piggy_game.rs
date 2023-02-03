@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 use engine_sdk::glam::vec3;
-use engine_sdk::{Game, Map, Event, Scene, Camera};
+use engine_sdk::{Game, Map, Event, Scene, Camera, CursorGrabMode};
 use engine_sdk::image;
 use crate::Piggy;
 
@@ -25,6 +25,7 @@ impl Game for Piggy {
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
+        engine.set_cursor_visible(false);
         self.update_controls(engine);
         self.update_scene(engine);
         self.update_ui(engine);
