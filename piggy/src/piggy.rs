@@ -13,18 +13,20 @@ pub struct Piggy {
 impl Piggy {
     pub fn update_controls(&mut self, engine:&mut dyn Engine) {
         let dt = engine.dt();
-        let speed = 1.0;
+        let speed = 3.0;
+        let left = self.camera.left();
+        let forward = self.camera.forward_body();
         if engine.key_down(VirtualKeyCode::A) {
-            self.camera.pos.x -= speed * dt;
+            self.camera.pos += speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::D) {
-            self.camera.pos.x += speed * dt;
+            self.camera.pos -= speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::W) {
-            self.camera.pos.y -= speed * dt;
+            self.camera.pos += speed * dt * forward;
         }
         if engine.key_down(VirtualKeyCode::S) {
-            self.camera.pos.y += speed * dt;
+            self.camera.pos -= speed * dt * forward;
         }
 
         if engine.mouse_down(0) {
@@ -61,7 +63,7 @@ impl Piggy {
             texture: None,
         });
 
-        let p2 = p + vec2(self.camera.yaw.cos(), self.camera.yaw.sin()) * s * 2.0;
+        let p2 = p + self.camera.forward_body().truncate() * s * 2.0;
         engine.draw_line(DrawLineParams {
             begin: p,
             end: p2,
