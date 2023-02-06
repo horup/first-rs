@@ -132,8 +132,8 @@ impl SceneRenderer {
 
             let north = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
             let south = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
-            let west = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
-            let east = [[1.0, 1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]];
+            let east = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
+            let west = [[1.0, 1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]];
 
             //let walls = [north, south, west, east];
             let mut wall = &south;
@@ -185,7 +185,7 @@ impl SceneRenderer {
                     range.end = end_index;
                     return;
                 }
-            } 
+            }
 
             self.draw_calls.push(DrawCall::DrawWalls { texture: wall_texture, range: start_index..end_index });
             
@@ -218,11 +218,11 @@ impl SceneRenderer {
                 let y = y as i32;
                 if let Some(tile) = scene.grid.get((x, y)) {
                     if tile.wall.is_none() {
-                        let normals = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
-                        for n in normals.iter() {
+                        let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
+                        for n in directions.iter() {
                             let p = ivec2(x, y) - *n;
                             if let Some(cell) = scene.grid.get((p.x, p.y)) {
-                                self.wall(cell, p, *n);
+                                self.wall(cell, p, -*n);
                             }
                         }
                     }
