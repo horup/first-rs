@@ -100,7 +100,7 @@ impl SceneRenderer {
                 topology: wgpu::PrimitiveTopology::TriangleList,
                 strip_index_format: None,
                 front_face: wgpu::FrontFace::Ccw,
-                cull_mode: None,//Some(wgpu::Face::Back),
+                cull_mode: Some(wgpu::Face::Back),
                 polygon_mode: wgpu::PolygonMode::Fill,
                 unclipped_depth: false,
                 conservative: false,
@@ -130,20 +130,37 @@ impl SceneRenderer {
             let start_vertex = self.geometry.vertices.len() as u32;
             let start_index = self.geometry.indicies.len() as u32;
 
+            let north = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
+            let south = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
+            let west = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
+            let east = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
+
+            //let walls = [north, south, west, east];
+            let mut wall = &south;
+            if normal.y > 0 {
+                wall = &north;
+            } else if normal.y < 0 {
+                wall = &south;
+            } else if normal.x < 0 {
+                wall = &west;
+            } else if normal.x > 0 {
+                wall = &east;
+            }
+
             let wall = [Vertex {
-                position: [0.0, 0.0, 0.0],
+                position: wall[0],
                 color: color,
                 uv: [0.0, 1.0],
             }, Vertex {
-                position: [1.0, 0.0, 0.0],
+                position: wall[1],
                 color: color,
                 uv: [1.0, 1.0],
             }, Vertex {
-                position: [1.0, 0.0, 1.0],
+                position: wall[2],
                 color: color,
                 uv: [1.0, 0.0],
             },  Vertex {
-                position: [0.0, 0.0, 1.0],
+                position: wall[3],
                 color: color,
                 uv: [0.0, 0.0],
             }];
