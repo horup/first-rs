@@ -22,7 +22,7 @@ impl CameraUniform {
         let flip_y = Mat4::from_scale(vec3(1.0, -1.0, 1.0));
         let rot_x = Mat4::from_rotation_x(-PI / 2.0);
         let rot_y = Mat4::from_rotation_y(PI / 2.0 + camera.yaw);
-        let matrix = Mat4::perspective_rh(PI / 2.0, aspect, 0.0, 100.0) * rot_y * rot_x * flip_y * Mat4::from_translation(translate);
+        let matrix = Mat4::perspective_rh(PI / 2.0, aspect, 0.0, 1.0) * rot_y * rot_x * flip_y * Mat4::from_translation(translate);
         Self {
             view_proj:matrix.to_cols_array()
         }

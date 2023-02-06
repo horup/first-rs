@@ -2,7 +2,7 @@ use std::{mem::{size_of, replace}, ops::Range};
 
 use egui::epaint::ahash::HashMap;
 use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell};
-use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline};
+use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
 
@@ -11,10 +11,13 @@ pub struct SceneRenderer {
     camera_bind_group:BindGroup,
     render_pipeline:RenderPipeline,
     pub geometry:Model,
-    draw_calls:Vec<DrawCall>
+    draw_calls:Vec<DrawCall>,
 }
 
 enum DrawCall {
+    Clear {
+
+    },
     DrawWalls {
         texture:u32,
         range:Range<u32>
@@ -105,7 +108,13 @@ impl SceneRenderer {
                 unclipped_depth: false,
                 conservative: false,
             },
-            depth_stencil: None, // 1.
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: false,
+                depth_compare: wgpu::CompareFunction::Less,
+                stencil: StencilState::default(),
+                bias: DepthBiasState::default(),
+            }), // 1.
             multisample: wgpu::MultisampleState {
                 count: 1,
                 mask: !0,
@@ -195,6 +204,8 @@ impl SceneRenderer {
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
 
+        self.draw_calls.push(DrawCall::Clear {  });
+
         // update camera
         let camera_uniform = CameraUniform::new_scene_camera(camera, graphics.config.width as f32, graphics.config.height as f32);
         graphics.queue.write_buffer(
@@ -235,6 +246,7 @@ impl SceneRenderer {
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         self.geometry.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
+        dbg!(draw_calls.len());
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawWalls { texture, range } => {
@@ -249,7 +261,14 @@ impl SceneRenderer {
                                 store: true,
                             },
                         })],
-                        depth_stencil_attachment: None,
+                        depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                            view: &graphics.texture_depth.texture_view,
+                            depth_ops: Some(wgpu::Operations {
+                                load: wgpu::LoadOp::Load,
+                                store:true
+                            }),
+                            stencil_ops: None
+                        }),
                     });
 
                     render_pass.set_pipeline(&self.render_pipeline);
@@ -258,6 +277,34 @@ impl SceneRenderer {
                     render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
                     render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
                     render_pass.draw_indexed(range, 0, 0..1);
+                },
+                DrawCall::Clear {  } => {
+                    let render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                        label: Some("Render Pass"),
+                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                            view: &graphics.surface_view,
+                            resolve_target: None,
+                            ops: wgpu::Operations {
+                                load: wgpu::LoadOp::Clear(wgpu::Color { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }),
+                                store: true,
+                            },
+                        })],
+                        depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                            view: &graphics.texture_depth.texture_view,
+                            depth_ops: Some(wgpu::Operations {
+                                load: wgpu::LoadOp::Clear(1.0),
+                                store:true
+                            }),
+                            stencil_ops: None
+                        }),
+                    });
+
+                   /* render_pass.set_pipeline(&self.render_pipeline);
+                    render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                    render_pass.set_bind_group(1, texture, &[]);
+                    render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+                    render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
+                    render_pass.draw_indexed(range, 0, 0..1);*/
                 },
             }
         }

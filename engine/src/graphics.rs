@@ -20,8 +20,10 @@ pub struct Graphics {
     pub camera_bind_group: BindGroup,
     pub textures: HashMap<u32, crate::Texture>,
     pub texture_bind_group_layout: BindGroupLayout,
+    pub depth_texture_bind_group_layout: BindGroupLayout,
     pub texture_missing: crate::Texture,
     pub texture_white: crate::Texture,
+    pub texture_depth: crate::Texture,
     pub render_format: TextureFormat,
     pub egui_painter: egui_wgpu::renderer::Renderer,
 }
@@ -41,13 +43,15 @@ impl Graphics {
             .await
             .unwrap();
 
+        let mut limits = wgpu::Limits::downlevel_webgl2_defaults();
+        limits.max_texture_dimension_2d = 8192;
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
                     features: wgpu::Features::empty(),
                     // WebGL doesn't support all of wgpu's features, so if
                     // we're building for the web we'll have to disable some.
-                    limits: wgpu::Limits::downlevel_webgl2_defaults(),
+                    limits,
                     // limits: wgpu::Limits::downlevel_webgl2_defaults(),
                     label: None,
                 },
@@ -125,6 +129,32 @@ impl Graphics {
                 label: Some("texture_bind_group_layout"),
             });
 
+        let depth_texture_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        // This should match the filterable field of the
+                        // corresponding Texture entry above.
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
+                        count: None,
+                    },
+                ],
+                label: Some("depth_texture_bind_group_layout"),
+            });
+            
+
         let shader = device.create_shader_module(wgpu::include_wgsl!("../shaders/shader.wgsl"));
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -186,6 +216,8 @@ impl Graphics {
         texture_missing.put_pixel(0, 1, [0, 0, 255, 255].into());
         texture_missing.put_pixel(1, 1, [0, 0, 0, 255].into());
 
+        let texture_depth = crate::Texture::new_depth_texture(&device, &depth_texture_bind_group_layout, &config);
+
         let texture_missing = crate::Texture::new(
             &device,
             &queue,
@@ -207,6 +239,8 @@ impl Graphics {
             texture_missing: texture_missing,
             texture_white: texture_white,
             texture_bind_group_layout,
+            depth_texture_bind_group_layout,
+            texture_depth,
             render_format,
             egui_painter: egui_painter,
             pixels_per_point: pixels_per_point as f32,
@@ -223,8 +257,10 @@ impl Graphics {
         self.textures.insert(id, texture);
     }
 
+
     pub fn configure(&mut self) {
         self.surface.configure(&self.device, &self.config);
+        self.texture_depth = crate::Texture::new_depth_texture(&self.device, &self.depth_texture_bind_group_layout, &self.config);
         self.update_camera();
     }
 
@@ -297,8 +333,7 @@ impl Graphics {
         let surface_view = surface_texture
                 .texture
                 .create_view(&wgpu::TextureViewDescriptor::default());
-
-        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                     color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                         view: &surface_view,
                         resolve_target: None,
@@ -334,6 +369,7 @@ pub struct GraphicsContext<'a> {
     pub camera_bind_group: &'a BindGroup,
     pub texture_white: &'a crate::Texture,
     pub texture_missing: &'a crate::Texture,
+    pub texture_depth: &'a crate::Texture,
     pub textures: &'a HashMap<u32, crate::Texture>,
 }
 
@@ -353,6 +389,7 @@ impl<'a> GraphicsContext<'a> {
             camera_bind_group: &graphics.camera_bind_group,
             texture_white: &graphics.texture_white,
             texture_missing: &graphics.texture_missing,
+            texture_depth: &graphics.texture_depth,
             textures: &graphics.textures,
         }
     }
