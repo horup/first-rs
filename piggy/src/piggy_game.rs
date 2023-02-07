@@ -53,8 +53,8 @@ impl Game for Piggy {
                 });
 
                 let camera = Camera {
-                    pos: vec3(8.0, 8.0, 0.5),
-                    yaw: PI + PI / 4.0
+                    pos: vec3(3.5, 3.5, 0.5),
+                    yaw: 0.0//PI + PI / 4.0
                 };
 
                 self.scene = scene;

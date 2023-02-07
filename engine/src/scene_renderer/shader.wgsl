@@ -24,10 +24,6 @@ fn vs_main(
     out.color = in.color;
     out.uv = in.uv;
     out.clip_position = camera.view_proj * vec4<f32>(in.position, 1.0);
-    var d = out.clip_position.z;
-    out.color = vec4<f32>(d, d, d, 1.0);
-    out.clip_position.z = 0.0;
-    
     return out;
 }
 
