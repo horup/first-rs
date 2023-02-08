@@ -221,8 +221,8 @@ impl SceneRenderer {
         let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
         textures.sort();
 
-        // once per texture, render walls that can be reached from a spot without a wall
-        // i.e. dont render walls that are not reachable
+        // once per texture, prepare walls that can be reached from a spot without a wall
+        // i.e. dont prepare walls that are not reachable
         for texture in textures {
             scene.grid.for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
