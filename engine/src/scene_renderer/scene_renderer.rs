@@ -218,10 +218,12 @@ impl SceneRenderer {
                 textures.insert(wall, ());
             }
         });
+        let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
+        textures.sort();
 
         // once per texture, render walls that can be reached from a spot without a wall
         // i.e. dont render walls that are not reachable
-        for texture in textures.keys() {
+        for texture in textures {
             scene.grid.for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
                     let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
@@ -229,7 +231,7 @@ impl SceneRenderer {
                         let p = ivec2(x, y) - *n;
                         if let Some(cell) = scene.grid.get((p.x, p.y)) {
                             if let Some(wall_texture) = cell.wall {
-                                if wall_texture == *texture {
+                                if wall_texture == texture {
                                     self.wall(wall_texture, p, -*n);
                                 }
                             }
