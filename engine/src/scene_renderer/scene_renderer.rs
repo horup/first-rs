@@ -1,6 +1,6 @@
 use std::{mem::{size_of, replace}, ops::Range};
 
-use egui::epaint::ahash::HashMap;
+use egui::epaint::ahash::{HashMap, HashMapExt};
 use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
@@ -133,77 +133,74 @@ impl SceneRenderer {
     }
 
 
-    fn wall(&mut self, cell:&Cell, pos:IVec2, normal:IVec2) {
-        if let Some(wall_texture) = cell.wall {
-            let color = [1.0, 1.0, 1.0, 1.0];
-            let start_vertex = self.geometry.vertices.len() as u32;
-            let start_index = self.geometry.indicies.len() as u32;
+    fn wall(&mut self, wall_texture:u32, pos:IVec2, normal:IVec2) {
+        let color = [1.0, 1.0, 1.0, 1.0];
+        let start_vertex = self.geometry.vertices.len() as u32;
+        let start_index = self.geometry.indicies.len() as u32;
 
-            let north = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
-            let south = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
-            let east = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
-            let west = [[1.0, 1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]];
+        let north = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
+        let south = [[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]];
+        let east = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
+        let west = [[1.0, 1.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0]];
 
-            //let walls = [north, south, west, east];
-            let mut wall = &south;
-            if normal.y > 0 {
-                wall = &north;
-            } else if normal.y < 0 {
-                wall = &south;
-            } else if normal.x < 0 {
-                wall = &west;
-            } else if normal.x > 0 {
-                wall = &east;
-            }
-
-            let wall = [Vertex {
-                position: wall[0],
-                color: color,
-                uv: [0.0, 1.0],
-            }, Vertex {
-                position: wall[1],
-                color: color,
-                uv: [1.0, 1.0],
-            }, Vertex {
-                position: wall[2],
-                color: color,
-                uv: [1.0, 0.0],
-            },  Vertex {
-                position: wall[3],
-                color: color,
-                uv: [0.0, 0.0],
-            }];
-
-            for mut v in wall {
-                v.position[0] += pos.x as f32;
-                v.position[1] += pos.y as f32;
-                self.geometry.vertices.push(v);
-            }
-
-            self.geometry.indicies.push(start_vertex + 0);
-            self.geometry.indicies.push(start_vertex + 1);
-            self.geometry.indicies.push(start_vertex + 2);
-
-            self.geometry.indicies.push(start_vertex + 0);
-            self.geometry.indicies.push(start_vertex + 2);
-            self.geometry.indicies.push(start_vertex + 3);
-
-            let end_index = self.geometry.indicies.len() as u32;
-            if let Some(DrawCall::DrawWalls { texture, range }) = self.draw_calls.last_mut() {
-                if wall_texture == *texture {
-                    range.end = end_index;
-                    return;
-                }
-            }
-
-            self.draw_calls.push(DrawCall::DrawWalls { texture: wall_texture, range: start_index..end_index });
-            
+        //let walls = [north, south, west, east];
+        let mut wall = &south;
+        if normal.y > 0 {
+            wall = &north;
+        } else if normal.y < 0 {
+            wall = &south;
+        } else if normal.x < 0 {
+            wall = &west;
+        } else if normal.x > 0 {
+            wall = &east;
         }
+
+        let wall = [Vertex {
+            position: wall[0],
+            color: color,
+            uv: [0.0, 1.0],
+        }, Vertex {
+            position: wall[1],
+            color: color,
+            uv: [1.0, 1.0],
+        }, Vertex {
+            position: wall[2],
+            color: color,
+            uv: [1.0, 0.0],
+        },  Vertex {
+            position: wall[3],
+            color: color,
+            uv: [0.0, 0.0],
+        }];
+
+        for mut v in wall {
+            v.position[0] += pos.x as f32;
+            v.position[1] += pos.y as f32;
+            self.geometry.vertices.push(v);
+        }
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 1);
+        self.geometry.indicies.push(start_vertex + 2);
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 3);
+
+        let end_index = self.geometry.indicies.len() as u32;
+        if let Some(DrawCall::DrawWalls { texture, range }) = self.draw_calls.last_mut() {
+            if wall_texture == *texture {
+                range.end = end_index;
+                return;
+            }
+        }
+
+        self.draw_calls.push(DrawCall::DrawWalls { texture: wall_texture, range: start_index..end_index });
+            
     }
 
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
-
         self.draw_calls.push(DrawCall::Clear {  });
 
         // update camera
@@ -214,39 +211,38 @@ impl SceneRenderer {
             bytemuck::cast_slice(&[camera_uniform]),
         );
 
-        // update grid
-        /*let mut textures = HashMap::default();
+        // find textures in use
+        let mut textures = HashMap::new();
         scene.grid.for_each(|cell, _| {
             if let Some(wall) = cell.wall {
-                textures.insert(wall, Vec::new());
+                textures.insert(wall, ());
             }
-        });*/
-        
-        let size = scene.grid.size();
-        for y in 0..size {
-            for x in 0..size {
-                let x = x as i32;
-                let y = y as i32;
-                if let Some(tile) = scene.grid.get((x, y)) {
-                    if tile.wall.is_none() {
-                        let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
-                        for n in directions.iter() {
-                            let p = ivec2(x, y) - *n;
-                            if let Some(cell) = scene.grid.get((p.x, p.y)) {
-                                self.wall(cell, p, -*n);
+        });
+
+        // once per texture, render walls that can be reached from a spot without a wall
+        // i.e. dont render walls that are not reachable
+        for texture in textures.keys() {
+            scene.grid.for_each(|cell, (x,y)| {
+                if cell.wall.is_none() {
+                    let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
+                    for n in directions.iter() {
+                        let p = ivec2(x, y) - *n;
+                        if let Some(cell) = scene.grid.get((p.x, p.y)) {
+                            if let Some(wall_texture) = cell.wall {
+                                if wall_texture == *texture {
+                                    self.wall(wall_texture, p, -*n);
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
         }
-
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         self.geometry.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
-        dbg!(draw_calls.len());
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawWalls { texture, range } => {
