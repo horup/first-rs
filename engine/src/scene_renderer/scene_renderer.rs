@@ -1,7 +1,7 @@
 use std::{mem::{size_of, replace}, ops::Range};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell, Sprite};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -10,7 +10,8 @@ pub struct SceneRenderer {
     camera_buffer:Buffer,
     camera_bind_group:BindGroup,
     render_pipeline:RenderPipeline,
-    pub geometry:Model,
+    geometry:Model,
+    sprites:Model,
     draw_calls:Vec<DrawCall>,
 }
 
@@ -19,6 +20,10 @@ enum DrawCall {
 
     },
     DrawGeometry {
+        texture:u32,
+        range:Range<u32>
+    },
+    DrawSprite {
         texture:u32,
         range:Range<u32>
     }
@@ -124,6 +129,7 @@ impl SceneRenderer {
         });
 
         Self {
+            sprites:Model::new(&graphics.device),
             geometry:Model::new(&graphics.device),
             render_pipeline,
             camera_buffer, 
@@ -294,6 +300,58 @@ impl SceneRenderer {
             
     }
 
+    fn sprite(&mut self, sprite:&Sprite) {
+        let pos = sprite.pos;
+        let color = [1.0, 1.0, 1.0, 1.0];
+        let start_vertex = self.geometry.vertices.len() as u32;
+        let start_index = self.geometry.indicies.len() as u32;
+
+        let wall = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
+
+        let wall = [Vertex {
+            position: wall[0],
+            color: color,
+            uv: [0.0, 1.0],
+        }, Vertex {
+            position: wall[1],
+            color: color,
+            uv: [1.0, 1.0],
+        }, Vertex {
+            position: wall[2],
+            color: color,
+            uv: [1.0, 0.0],
+        },  Vertex {
+            position: wall[3],
+            color: color,
+            uv: [0.0, 0.0],
+        }];
+
+        for mut v in wall {
+            v.position[0] += pos.x as f32;
+            v.position[1] += pos.y as f32;
+            self.geometry.vertices.push(v);
+        }
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 1);
+        self.geometry.indicies.push(start_vertex + 2);
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 3);
+
+        let end_index = self.geometry.indicies.len() as u32;
+        if let Some(DrawCall::DrawSprite { texture, range }) = self.draw_calls.last_mut() {
+            if sprite.texture == *texture {
+                range.end = end_index;
+                return;
+            }
+        }
+
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: sprite.texture, range: start_index..end_index });
+            
+    }
+
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
         self.draw_calls.push(DrawCall::Clear {  });
@@ -306,7 +364,7 @@ impl SceneRenderer {
             bytemuck::cast_slice(&[camera_uniform]),
         );
 
-        // find textures in use
+        // find wall textures in use
         let mut textures = HashMap::new();
         scene.grid.for_each(|cell, _| {
             if let Some(wall) = cell.wall {
@@ -350,7 +408,22 @@ impl SceneRenderer {
             }
         });
 
-        
+        // find sprite textures
+        let mut textures = HashMap::new();
+        for sprite in scene.sprites.iter() {
+            textures.insert(sprite.texture, ());
+        }
+        let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
+        textures.sort();
+
+        // draw sprites
+        for texture in textures {
+            for sprite in &scene.sprites {
+                if sprite.texture == texture {
+                    self.sprite(sprite);
+                }
+            }
+        }
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
@@ -387,6 +460,35 @@ impl SceneRenderer {
                     render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
                     render_pass.draw_indexed(range, 0, 0..1);
                 },
+                DrawCall::DrawSprite { texture, range } => {
+                    let texture = &graphics.texture(texture).clone().texture_bind_group;
+                    let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                        label: Some("Render Pass"),
+                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                            view: &graphics.surface_view,
+                            resolve_target: None,
+                            ops: wgpu::Operations {
+                                load: wgpu::LoadOp::Load,
+                                store: true,
+                            },
+                        })],
+                        depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                            view: &graphics.texture_depth.texture_view,
+                            depth_ops: Some(wgpu::Operations {
+                                load: wgpu::LoadOp::Load,
+                                store:true
+                            }),
+                            stencil_ops: None
+                        }),
+                    });
+
+                    render_pass.set_pipeline(&self.render_pipeline);
+                    render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                    render_pass.set_bind_group(1, texture, &[]);
+                    render_pass.set_index_buffer(self.sprites.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+                    render_pass.set_vertex_buffer(0, self.sprites.vertex_buffer.slice(..));
+                    render_pass.draw_indexed(range, 0, 0..1);
+                },
                 DrawCall::Clear {  } => {
                     let render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
@@ -415,6 +517,7 @@ impl SceneRenderer {
                     render_pass.set_vertex_buffer(0, self.geometry.vertex_buffer.slice(..));
                     render_pass.draw_indexed(range, 0, 0..1);*/
                 },
+                
             }
         }
 

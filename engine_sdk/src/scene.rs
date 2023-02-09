@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::Grid;
+use crate::{Grid, Sprite};
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
 pub struct Cell {
@@ -9,6 +9,7 @@ pub struct Cell {
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Scene {
+    pub sprites:Vec<Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     pub grid:Grid<Cell>

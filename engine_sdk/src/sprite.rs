@@ -1,7 +1,8 @@
 use glam::Vec3;
+use serde::{Serialize, Deserialize};
 
+#[derive(Default, Copy, Clone, Serialize, Deserialize)]
 pub struct Sprite {
     pub pos:Vec3,
-    pub size:f32,
-    pub tex:u32
+    pub texture:u32
 }
