@@ -9,7 +9,8 @@ use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
 pub struct SceneRenderer {
     camera_buffer:Buffer,
     camera_bind_group:BindGroup,
-    render_pipeline:RenderPipeline,
+    geometry_render_pipeline:RenderPipeline,
+    sprite_render_pipeline:RenderPipeline,
     geometry:Model,
     sprites:Model,
     draw_calls:Vec<DrawCall>,
@@ -87,7 +88,7 @@ impl SceneRenderer {
                 push_constant_ranges: &[],
             });
 
-        let render_pipeline = graphics.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        let geometry_render_pipeline = graphics.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
             layout: Some(&render_pipeline_layout),
             vertex: wgpu::VertexState {
@@ -128,10 +129,52 @@ impl SceneRenderer {
             multiview: None, // 5.
         });
 
+        let sprite_render_pipeline = graphics.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("Render Pipeline"),
+            layout: Some(&render_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: "vs_main",     // 1.
+                buffers: &[Vertex::desc()], // 2.
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: "fs_main",
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: graphics.config.format,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                strip_index_format: None,
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: None,
+                polygon_mode: wgpu::PolygonMode::Fill,
+                unclipped_depth: false,
+                conservative: false,
+            },
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: true,
+                depth_compare: wgpu::CompareFunction::Less,
+                stencil: StencilState::default(),
+                bias: DepthBiasState::default(),
+            }), // 1.
+            multisample: wgpu::MultisampleState {
+                count: 1,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            multiview: None, // 5.
+        });
+
         Self {
             sprites:Model::new(&graphics.device),
             geometry:Model::new(&graphics.device),
-            render_pipeline,
+            geometry_render_pipeline,
+            sprite_render_pipeline,
             camera_buffer, 
             camera_bind_group,
             draw_calls:Vec::new()
@@ -303,8 +346,8 @@ impl SceneRenderer {
     fn sprite(&mut self, sprite:&Sprite) {
         let pos = sprite.pos;
         let color = [1.0, 1.0, 1.0, 1.0];
-        let start_vertex = self.geometry.vertices.len() as u32;
-        let start_index = self.geometry.indicies.len() as u32;
+        let start_vertex = self.sprites.vertices.len() as u32;
+        let start_index = self.sprites.indicies.len() as u32;
 
         let wall = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
 
@@ -329,18 +372,18 @@ impl SceneRenderer {
         for mut v in wall {
             v.position[0] += pos.x as f32;
             v.position[1] += pos.y as f32;
-            self.geometry.vertices.push(v);
+            self.sprites.vertices.push(v);
         }
 
-        self.geometry.indicies.push(start_vertex + 0);
-        self.geometry.indicies.push(start_vertex + 1);
-        self.geometry.indicies.push(start_vertex + 2);
+        self.sprites.indicies.push(start_vertex + 0);
+        self.sprites.indicies.push(start_vertex + 1);
+        self.sprites.indicies.push(start_vertex + 2);
 
-        self.geometry.indicies.push(start_vertex + 0);
-        self.geometry.indicies.push(start_vertex + 2);
-        self.geometry.indicies.push(start_vertex + 3);
+        self.sprites.indicies.push(start_vertex + 0);
+        self.sprites.indicies.push(start_vertex + 2);
+        self.sprites.indicies.push(start_vertex + 3);
 
-        let end_index = self.geometry.indicies.len() as u32;
+        let end_index = self.sprites.indicies.len() as u32;
         if let Some(DrawCall::DrawSprite { texture, range }) = self.draw_calls.last_mut() {
             if sprite.texture == *texture {
                 range.end = end_index;
@@ -348,12 +391,13 @@ impl SceneRenderer {
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawGeometry { texture: sprite.texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawSprite { texture: sprite.texture, range: start_index..end_index });
             
     }
 
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
+        self.sprites.clear();
         self.draw_calls.push(DrawCall::Clear {  });
 
         // update camera
@@ -428,6 +472,7 @@ impl SceneRenderer {
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         self.geometry.write(graphics);
+        self.sprites.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
         for draw_call in draw_calls {
             match draw_call {
@@ -453,7 +498,7 @@ impl SceneRenderer {
                         }),
                     });
 
-                    render_pass.set_pipeline(&self.render_pipeline);
+                    render_pass.set_pipeline(&self.geometry_render_pipeline);
                     render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
                     render_pass.set_bind_group(1, texture, &[]);
                     render_pass.set_index_buffer(self.geometry.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
@@ -482,7 +527,7 @@ impl SceneRenderer {
                         }),
                     });
 
-                    render_pass.set_pipeline(&self.render_pipeline);
+                    render_pass.set_pipeline(&self.sprite_render_pipeline);
                     render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
                     render_pass.set_bind_group(1, texture, &[]);
                     render_pass.set_index_buffer(self.sprites.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
@@ -490,7 +535,7 @@ impl SceneRenderer {
                     render_pass.draw_indexed(range, 0, 0..1);
                 },
                 DrawCall::Clear {  } => {
-                    let render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                             view: &graphics.surface_view,
