@@ -9,6 +9,8 @@ pub struct Cell {
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Scene {
+    pub ceiling_texture:u32,
+    pub floor_texture:u32,
     pub grid:Grid<Cell>
 }
 

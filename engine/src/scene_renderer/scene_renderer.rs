@@ -18,7 +18,7 @@ enum DrawCall {
     Clear {
 
     },
-    DrawWalls {
+    DrawGeometry {
         texture:u32,
         range:Range<u32>
     }
@@ -133,8 +133,103 @@ impl SceneRenderer {
     }
 
 
-    fn wall(&mut self, wall_texture:u32, pos:IVec2, normal:IVec2) {
+    fn ceiling(&mut self, ceiling_texture:u32, pos:IVec2) {
         let color = [1.0, 1.0, 1.0, 1.0];
+        let start_vertex = self.geometry.vertices.len() as u32;
+        let start_index = self.geometry.indicies.len() as u32;
+        let ceiling = [[1.0, 0.0, 1.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
+        let floor = [Vertex {
+            position: ceiling[0],
+            color: color,
+            uv: [0.0, 1.0],
+        }, Vertex {
+            position: ceiling[1],
+            color: color,
+            uv: [1.0, 1.0],
+        }, Vertex {
+            position: ceiling[2],
+            color: color,
+            uv: [1.0, 0.0],
+        },  Vertex {
+            position: ceiling[3],
+            color: color,
+            uv: [0.0, 0.0],
+        }];
+
+        for mut v in floor {
+            v.position[0] += pos.x as f32;
+            v.position[1] += pos.y as f32;
+            self.geometry.vertices.push(v);
+        }
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 1);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 3);
+
+        let end_index = self.geometry.indicies.len() as u32;
+        if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
+            if ceiling_texture == *texture {
+                range.end = end_index;
+                return;
+            }
+        }
+
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: ceiling_texture, range: start_index..end_index });
+    }
+    fn floor(&mut self, floor_texture:u32, pos:IVec2) {
+        let color = [1.0, 1.0, 1.0, 1.0];
+        let start_vertex = self.geometry.vertices.len() as u32;
+        let start_index = self.geometry.indicies.len() as u32;
+
+        let floor = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 0.0, 0.0]];
+        let floor = [Vertex {
+            position: floor[0],
+            color: color,
+            uv: [0.0, 1.0],
+        }, Vertex {
+            position: floor[1],
+            color: color,
+            uv: [1.0, 1.0],
+        }, Vertex {
+            position: floor[2],
+            color: color,
+            uv: [1.0, 0.0],
+        },  Vertex {
+            position: floor[3],
+            color: color,
+            uv: [0.0, 0.0],
+        }];
+
+        for mut v in floor {
+            v.position[0] += pos.x as f32;
+            v.position[1] += pos.y as f32;
+            self.geometry.vertices.push(v);
+        }
+
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 1);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex + 2);
+        self.geometry.indicies.push(start_vertex + 3);
+
+        let end_index = self.geometry.indicies.len() as u32;
+        if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
+            if floor_texture == *texture {
+                range.end = end_index;
+                return;
+            }
+        }
+
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: floor_texture, range: start_index..end_index });
+    }
+
+    fn wall(&mut self, wall_texture:u32, pos:IVec2, normal:IVec2) {
+        let s = 0.5;
+        let color = if normal.x == 0 {[1.0, 1.0, 1.0, 1.0]} else {[s, s, s, 1.0]};
         let start_vertex = self.geometry.vertices.len() as u32;
         let start_index = self.geometry.indicies.len() as u32;
 
@@ -188,14 +283,14 @@ impl SceneRenderer {
         self.geometry.indicies.push(start_vertex + 3);
 
         let end_index = self.geometry.indicies.len() as u32;
-        if let Some(DrawCall::DrawWalls { texture, range }) = self.draw_calls.last_mut() {
+        if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
             if wall_texture == *texture {
                 range.end = end_index;
                 return;
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawWalls { texture: wall_texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: wall_texture, range: start_index..end_index });
             
     }
 
@@ -240,6 +335,22 @@ impl SceneRenderer {
                 }
             });
         }
+
+        // draw floor 
+        scene.grid.for_each(|cell, (x,y)| {
+            if cell.wall.is_none() {
+                self.floor(scene.floor_texture, IVec2::new(x, y));
+            }
+        });
+
+        // draw ceiling
+        scene.grid.for_each(|cell, (x,y)| {
+            if cell.wall.is_none() {
+                self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
+            }
+        });
+
+        
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
@@ -247,7 +358,7 @@ impl SceneRenderer {
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
         for draw_call in draw_calls {
             match draw_call {
-                DrawCall::DrawWalls { texture, range } => {
+                DrawCall::DrawGeometry { texture, range } => {
                     let texture = &graphics.texture(texture).clone().texture_bind_group;
                     let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),

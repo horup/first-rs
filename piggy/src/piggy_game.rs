@@ -19,6 +19,8 @@ impl Game for Piggy {
         load_texture!(4, "../assets/textures/player.png");
         load_texture!(5, "../assets/textures/viktor.png");
         load_texture!(6, "../assets/textures/william.png");
+        load_texture!(7, "../assets/textures/floor.png");
+        load_texture!(8, "../assets/textures/ceiling.png");
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });
@@ -38,6 +40,8 @@ impl Game for Piggy {
                 dbg!("new map loaded");
 
                 let mut scene = Scene::default();
+                scene.floor_texture = 7;
+                scene.ceiling_texture = 8;
                 /*for i in 0..scene.grid.size() {
                     scene.grid.get_mut((i as i32, 0)).unwrap().wall = Some(1);
                     scene.grid.get_mut((i as i32, scene.grid.size() as i32 - 1)).unwrap().wall = Some(1);
