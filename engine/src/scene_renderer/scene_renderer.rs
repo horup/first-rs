@@ -1,7 +1,7 @@
-use std::{mem::{size_of, replace}, ops::Range};
+use std::{mem::{size_of, replace}, ops::Range, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Cell, Sprite};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -343,14 +343,15 @@ impl SceneRenderer {
             
     }
 
-    fn sprite(&mut self, sprite:&Sprite) {
+    fn sprite(&mut self, camera:&Camera, sprite:&Sprite) {
         let pos = sprite.pos;
         let color = [1.0, 1.0, 1.0, 1.0];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
-
-        let wall = [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 1.0]];
-
+        let sr = 0.5;
+        let sh = 1.0;
+        let n = camera.left() * vec3(sr, sr, 1.0);
+        let wall = [[-n.x, -n.y, 0.0], [n.x, n.y, 0.0], [n.x, n.y, sh], [-n.x, -n.y, sh]];
         let wall = [Vertex {
             position: wall[0],
             color: color,
@@ -370,8 +371,9 @@ impl SceneRenderer {
         }];
 
         for mut v in wall {
-            v.position[0] += pos.x as f32;
-            v.position[1] += pos.y as f32;
+            let p:Vec3 = v.position.into();
+            let p = p + sprite.pos;
+            v.position = p.into();
             self.sprites.vertices.push(v);
         }
 
@@ -464,7 +466,7 @@ impl SceneRenderer {
         for texture in textures {
             for sprite in &scene.sprites {
                 if sprite.texture == texture {
-                    self.sprite(sprite);
+                    self.sprite(camera, sprite);
                 }
             }
         }
