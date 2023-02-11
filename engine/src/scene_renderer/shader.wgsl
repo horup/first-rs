@@ -36,7 +36,7 @@ var diffuse_sampler:sampler;
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     var pixel = textureSample(diffuse_texture, diffuse_sampler, in.uv) * in.color;
-    if pixel[3] < 0.5 {
+    if pixel[3] == 0.0 {
         discard;
     }
     return pixel;
