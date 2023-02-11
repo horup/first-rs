@@ -1,4 +1,4 @@
-use std::{mem::{size_of, replace}, ops::Range, f32::consts::PI};
+use std::{mem::{size_of, replace}, ops::Range, f32::consts::PI, cmp::Ordering};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
 use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite};
@@ -11,6 +11,8 @@ pub struct SceneRenderer {
     camera_bind_group:BindGroup,
     geometry_render_pipeline:RenderPipeline,
     sprite_render_pipeline:RenderPipeline,
+    opaque_sprites:Vec<usize>,
+    translucent_sprites:Vec<usize>,
     geometry:Model,
     sprites:Model,
     draw_calls:Vec<DrawCall>,
@@ -177,7 +179,9 @@ impl SceneRenderer {
             sprite_render_pipeline,
             camera_buffer, 
             camera_bind_group,
-            draw_calls:Vec::new()
+            draw_calls:Vec::new(),
+            opaque_sprites: Vec::new(),
+            translucent_sprites: Vec::new(),
         }
     }
 
@@ -345,7 +349,7 @@ impl SceneRenderer {
 
     fn sprite(&mut self, camera:&Camera, sprite:&Sprite) {
         let pos = sprite.pos;
-        let color = [1.0, 1.0, 1.0, 1.0];
+        let color = [1.0, 1.0, 1.0, sprite.opacity];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
         let sr = 0.5;
@@ -400,6 +404,8 @@ impl SceneRenderer {
     pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
         self.geometry.clear();
         self.sprites.clear();
+        self.opaque_sprites.clear();
+        self.translucent_sprites.clear();
         self.draw_calls.push(DrawCall::Clear {  });
 
         // update camera
@@ -454,22 +460,55 @@ impl SceneRenderer {
             }
         });
 
-        // find sprite textures
+        // sort sprites into translucent and opaque
+        // and find textures in use
         let mut textures = HashMap::new();
-        for sprite in scene.sprites.iter() {
+        for (index, sprite) in scene.sprites.iter().enumerate() {
             textures.insert(sprite.texture, ());
+            if sprite.opacity == 1.0 {
+                self.opaque_sprites.push(index);
+            } else {
+                self.translucent_sprites.push(index)
+            }
         }
         let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
         textures.sort();
 
-        // draw sprites
+        let sprites = replace(&mut self.opaque_sprites, Vec::new());
+        // draw opaque sprites
         for texture in textures {
-            for sprite in &scene.sprites {
-                if sprite.texture == texture {
-                    self.sprite(camera, sprite);
+            for sprite in sprites.iter() {
+                if let Some(sprite) = scene.sprites.get(*sprite as usize) {
+                    if sprite.texture == texture {
+                        self.sprite(camera, sprite);
+                    }
                 }
             }
         }
+        self.opaque_sprites = sprites;
+
+        let mut sprites = replace(&mut self.translucent_sprites, Vec::new());
+        // sort sprites based upon distance to camera
+        sprites.sort_by(|a, b|{
+            if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
+                let a = (a.pos - camera.pos).length_squared();
+                let b = (b.pos - camera.pos).length_squared();
+                if a < b {
+                    return Ordering::Greater;
+                } else if a > b {
+                    return Ordering::Less;
+                }
+            }
+
+            return Ordering::Equal;
+        });
+        // and draw
+        for sprite in sprites.iter() {
+            if let Some(sprite) = scene.sprites.get(*sprite as usize) {
+                self.sprite(camera, sprite);
+            }
+        }
+        self.translucent_sprites = sprites;
     }
 
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
