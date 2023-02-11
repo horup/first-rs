@@ -5,5 +5,5 @@ use serde::{Serialize, Deserialize};
 pub struct Sprite {
     pub pos:Vec3,
     pub texture:u32,
-    pub opacity:f32
+    pub opacity:Option<f32>
 }

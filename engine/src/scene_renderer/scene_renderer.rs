@@ -349,7 +349,7 @@ impl SceneRenderer {
 
     fn sprite(&mut self, camera:&Camera, sprite:&Sprite) {
         let pos = sprite.pos;
-        let color = [1.0, 1.0, 1.0, sprite.opacity];
+        let color = [1.0, 1.0, 1.0, sprite.opacity.unwrap_or(1.0)];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
         let sr = 0.5;
@@ -465,7 +465,7 @@ impl SceneRenderer {
         let mut textures = HashMap::new();
         for (index, sprite) in scene.sprites.iter().enumerate() {
             textures.insert(sprite.texture, ());
-            if sprite.opacity == 1.0 {
+            if sprite.opacity.is_none() {
                 self.opaque_sprites.push(index);
             } else {
                 self.translucent_sprites.push(index)
@@ -488,7 +488,19 @@ impl SceneRenderer {
         self.opaque_sprites = sprites;
 
         let mut sprites = replace(&mut self.translucent_sprites, Vec::new());
-        // sort sprites based upon distance to camera
+        // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
+        sprites.sort_by(|a, b|{
+            if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
+                if a.texture < b.texture {
+                    return Ordering::Greater;
+                } else if a.texture > b.texture {
+                    return Ordering::Less;
+                }
+            }
+            return Ordering::Equal;
+        });
+
+        // then sort sprites based upon distance to camera
         sprites.sort_by(|a, b|{
             if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
                 let a = (a.pos - camera.pos).length_squared();
@@ -502,6 +514,7 @@ impl SceneRenderer {
 
             return Ordering::Equal;
         });
+
         // and draw
         for sprite in sprites.iter() {
             if let Some(sprite) = scene.sprites.get(*sprite as usize) {
@@ -515,6 +528,7 @@ impl SceneRenderer {
         self.geometry.write(graphics);
         self.sprites.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
+        dbg!(draw_calls.len());
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawGeometry { texture, range } => {
