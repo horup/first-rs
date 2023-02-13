@@ -47,7 +47,7 @@ impl Game for Piggy {
                 self.current_map.grid.for_each(|cell, index| {
                     scene.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
-                        scene.sprites.push(Sprite {
+                        scene.sprites.spawn(Sprite {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.0),
                             texture: thing,
                             opacity: None,

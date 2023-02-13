@@ -1,7 +1,7 @@
-use std::{mem::{size_of, replace}, ops::Range, f32::consts::PI, cmp::Ordering};
+use std::{mem::{size_of, replace}, ops::Range, cmp::Ordering};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite, SpriteId};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -11,8 +11,8 @@ pub struct SceneRenderer {
     camera_bind_group:BindGroup,
     geometry_render_pipeline:RenderPipeline,
     sprite_render_pipeline:RenderPipeline,
-    opaque_sprites:Vec<usize>,
-    translucent_sprites:Vec<usize>,
+    opaque_sprites:Vec<SpriteId>,
+    translucent_sprites:Vec<SpriteId>,
     geometry:Model,
     sprites:Model,
     draw_calls:Vec<DrawCall>,
@@ -463,7 +463,7 @@ impl SceneRenderer {
         // sort sprites into translucent and opaque
         // and find textures in use
         let mut textures = HashMap::new();
-        for (index, sprite) in scene.sprites.iter().enumerate() {
+        for (index, sprite) in scene.sprites.iter() {
             textures.insert(sprite.texture, ());
             if sprite.opacity.is_none() {
                 self.opaque_sprites.push(index);
@@ -478,7 +478,7 @@ impl SceneRenderer {
         // draw opaque sprites
         for texture in textures {
             for sprite in sprites.iter() {
-                if let Some(sprite) = scene.sprites.get(*sprite as usize) {
+                if let Some(sprite) = scene.sprites.get(*sprite) {
                     if sprite.texture == texture {
                         self.sprite(camera, sprite);
                     }
@@ -517,7 +517,7 @@ impl SceneRenderer {
 
         // and draw
         for sprite in sprites.iter() {
-            if let Some(sprite) = scene.sprites.get(*sprite as usize) {
+            if let Some(sprite) = scene.sprites.get(*sprite) {
                 self.sprite(camera, sprite);
             }
         }
@@ -528,7 +528,6 @@ impl SceneRenderer {
         self.geometry.write(graphics);
         self.sprites.write(graphics);
         let draw_calls = replace(&mut self.draw_calls, Vec::new());
-        dbg!(draw_calls.len());
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawGeometry { texture, range } => {

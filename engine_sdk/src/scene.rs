@@ -1,6 +1,8 @@
 use serde::{Serialize, Deserialize};
+use slotmap::new_key_type;
+use crate::{Grid, Sprite, Entities};
 
-use crate::{Grid, Sprite};
+new_key_type! {pub struct SpriteId;}
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
 pub struct Cell {
@@ -9,7 +11,7 @@ pub struct Cell {
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Scene {
-    pub sprites:Vec<Sprite>,
+    pub sprites:Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     pub grid:Grid<Cell>
