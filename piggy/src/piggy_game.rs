@@ -51,6 +51,7 @@ impl Game for Piggy {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.0),
                             texture: thing,
                             opacity: None,
+                            ..Default::default()
                         });
                     }
                 });
