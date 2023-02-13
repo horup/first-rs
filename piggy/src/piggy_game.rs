@@ -56,7 +56,9 @@ impl Game for Piggy {
                         };
                         if thing == 9 {
                             sprite.sprite_type = SpriteType::Wall;
-                            dbg!("lol");
+                        } else if thing == 4 {
+                            sprite.sprite_type = SpriteType::Floor;
+                            sprite.pos.z = 0.1;
                         }
                         scene.sprites.spawn(sprite);
                     }

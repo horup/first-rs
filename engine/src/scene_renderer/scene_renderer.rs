@@ -388,7 +388,37 @@ impl SceneRenderer {
                     self.sprites.vertices.push(v);
                 }
             },
-            engine_sdk::SpriteType::Floor => todo!(),
+            engine_sdk::SpriteType::Floor => {
+                let sr = 0.5;
+                let facing = sprite.facing - PI / 2.0;
+                let a = vec3(facing.cos(), facing.sin(), 0.0);
+                let b = -vec3(a.y, -a.x, 0.0);
+                let wall = [-sr * a + -sr *b, -sr * a + sr * b, sr * a + sr * b, sr * a - sr * b];
+                let wall = [Vertex {
+                    position: wall[0].into(),
+                    color: color,
+                    uv: [0.0, 1.0],
+                }, Vertex {
+                    position: wall[1].into(),
+                    color: color,
+                    uv: [1.0, 1.0],
+                }, Vertex {
+                    position: wall[2].into(),
+                    color: color,
+                    uv: [1.0, 0.0],
+                },  Vertex {
+                    position: wall[3].into(),
+                    color: color,
+                    uv: [0.0, 0.0],
+                }];
+
+                for mut v in wall {
+                    let p:Vec3 = v.position.into();
+                    let p = p + sprite.pos;
+                    v.position = p.into();
+                    self.sprites.vertices.push(v);
+                }
+            },
         }
         
         self.sprites.indicies.push(start_vertex + 0);
