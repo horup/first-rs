@@ -48,7 +48,7 @@ impl Game for Piggy {
                     scene.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
                         let mut sprite = Sprite {
-                            pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.0),
+                            pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
                             texture: thing,
                             opacity: None,
                             facing:cell.thing_facing,

@@ -356,13 +356,13 @@ impl SceneRenderer {
         match sprite.sprite_type {
             engine_sdk::SpriteType::Wall | engine_sdk::SpriteType::Facing => {
                 let sr = 0.5;
-                let sh = 1.0;
+                let sh = 0.5;
                 let facing = sprite.facing - PI / 2.0;
                 let n = match sprite.sprite_type {
-                    engine_sdk::SpriteType::Wall => vec3(facing.cos() * sr, facing.sin() * sr, 1.0),
-                    _ => -camera.left() * vec3(sr, sr, 1.0),
+                    engine_sdk::SpriteType::Wall => vec3(facing.cos() * sr, facing.sin() * sr, 0.0),
+                    _ => -camera.left() * vec3(sr, sr, 0.0),
                 };
-                let wall = [[-n.x, -n.y, 0.0], [n.x, n.y, 0.0], [n.x, n.y, sh], [-n.x, -n.y, sh]];
+                let wall = [[-n.x, -n.y, -sh], [n.x, n.y, -sh], [n.x, n.y, sh], [-n.x, -n.y, sh]];
                 let wall = [Vertex {
                     position: wall[0],
                     color: color,
