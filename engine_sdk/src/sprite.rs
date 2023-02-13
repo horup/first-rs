@@ -3,14 +3,14 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub enum SpriteType {
-    Normal,
+    Facing,
     Wall,
     Floor
 }
 
 impl Default for SpriteType {
     fn default() -> Self {
-        Self::Normal
+        Self::Facing
     }
 }
 
