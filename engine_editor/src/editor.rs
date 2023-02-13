@@ -1,4 +1,6 @@
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, CursorGrabMode};
+use std::f32::consts::PI;
+
+use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, CursorGrabMode, VirtualKeyCode};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -45,7 +47,7 @@ impl Editor {
             if cell.thing.is_some() {
                 let ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
 
-                for i in 0..ps.len() {
+                /*for i in 0..ps.len() {
                     let p1 = ps[i];
                     let p2 = ps[(i+1)% ps.len()];
                     engine.draw_line(DrawLineParams {
@@ -54,7 +56,8 @@ impl Editor {
                         line_width: 1.0,
                         color: Color::RED,
                     });
-                }
+                }*/
+
                 
                 engine.draw_rect(DrawRectParams {
                     pos: p,
@@ -62,13 +65,20 @@ impl Editor {
                     color: Color::WHITE,
                     texture: cell.thing,
                 });
+
+                let v = vec2(cell.thing_facing.cos(), cell.thing_facing.sin()) * size.x / 2.0;
+                engine.draw_line(DrawLineParams {
+                    begin: center,
+                    end: center + v,
+                    line_width: 1.0,
+                    color: Color::RED,
+                });
             }
         });
        
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
-
         match self.tool {
             Tool::PlaceWall => {
                 if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
@@ -90,7 +100,17 @@ impl Editor {
             },
         }
         
-       
+        if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+            if engine.key_down(VirtualKeyCode::Up) {
+                cell.thing_facing = PI / 2.0 * 3.0;
+            } else if  engine.key_down(VirtualKeyCode::Down) {
+                cell.thing_facing = PI / 2.0;
+            } else if engine.key_down(VirtualKeyCode::Left) {
+                cell.thing_facing = PI;
+            } else if  engine.key_down(VirtualKeyCode::Right) {
+                cell.thing_facing = 0.0;
+            }
+        }
     }
 
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {

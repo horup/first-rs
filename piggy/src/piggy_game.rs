@@ -1,9 +1,8 @@
 use std::f32::consts::PI;
 use engine_sdk::glam::{vec3, Vec3};
-use engine_sdk::{Game, Map, Event, Scene, Camera, CursorGrabMode, Grid, Sprite};
+use engine_sdk::{Game, Map, Event, Scene, Camera, CursorGrabMode, Grid, Sprite, SpriteType};
 use engine_sdk::image;
 use crate::Piggy;
-
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -21,6 +20,7 @@ impl Game for Piggy {
         load_texture!(6, "../assets/textures/william.png");
         load_texture!(7, "../assets/textures/floor.png");
         load_texture!(8, "../assets/textures/ceiling.png");
+        load_texture!(9, "../assets/textures/blue_door.png");
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });
@@ -47,12 +47,18 @@ impl Game for Piggy {
                 self.current_map.grid.for_each(|cell, index| {
                     scene.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
-                        scene.sprites.spawn(Sprite {
+                        let mut sprite = Sprite {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.0),
                             texture: thing,
                             opacity: None,
+                            facing:cell.thing_facing,
                             ..Default::default()
-                        });
+                        };
+                        if thing == 9 {
+                            sprite.sprite_type = SpriteType::Wall;
+                            dbg!("lol");
+                        }
+                        scene.sprites.spawn(sprite);
                     }
                 });
 

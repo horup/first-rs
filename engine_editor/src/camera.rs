@@ -29,7 +29,6 @@ impl EditorCamera {
         self.dir = Default::default();
         if engine.key_down(VirtualKeyCode::W) {
             self.dir.y = -1.0;
-
         } 
         if engine.key_down(VirtualKeyCode::S) {
             self.dir.y = 1.0;
