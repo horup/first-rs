@@ -5,20 +5,21 @@ use engine_sdk::{
     self,
     glam::{Vec2, Vec3},
     image::DynamicImage,
-    DrawRectParams, TextureInfo, Event,
+    DrawRectParams, TextureInfo, Event, Atlas,
 };
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
-    fn load_texture(&mut self, id: u32, image: &DynamicImage) {
-        self.graphics.load_texture(id, image);
+    fn load_texture(&mut self, id: u32, image: &DynamicImage, atlas:Atlas) {
+        self.graphics.load_texture(id, image, atlas.clone());
         self.textures.insert(
             id,
             TextureInfo {
                 id,
                 width: image.width() as f32,
                 height: image.height() as f32,
-                image: Rc::new(image.clone())
+                image: Rc::new(image.clone()),
+                atlas
             },
         );
     }

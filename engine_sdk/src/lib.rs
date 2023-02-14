@@ -37,6 +37,9 @@ pub use entities::*;
 mod components;
 pub use components::*;
 
+mod atlas;
+pub use atlas::*;
+
 pub use glam;
 pub use image;
 pub use egui;

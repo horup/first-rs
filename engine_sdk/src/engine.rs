@@ -2,14 +2,14 @@ use std::rc::Rc;
 
 use glam::Vec2;
 use image::DynamicImage;
-use winit::{event::VirtualKeyCode, window::CursorGrabMode};
+use winit::{event::VirtualKeyCode};
 
-use crate::{Camera, Scene, Color, Event};
+use crate::{Camera, Scene, Color, Event, Atlas};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
     fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
-    fn load_texture(&mut self, id:u32, image:&DynamicImage);
+    fn load_texture(&mut self, id:u32, image:&DynamicImage, atlas:Atlas);
     fn texture(&self, id:&u32) -> Option<TextureInfo>;
     fn textures(&self) -> Vec<TextureInfo>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
@@ -31,12 +31,14 @@ pub trait Engine {
     fn set_cursor_visible(&mut self, visible:bool);
 }
 
+
 #[derive(Clone, Debug, Default)]
 pub struct TextureInfo {
     pub id:u32,
     pub width:f32,
     pub height:f32,
-    pub image:Rc<DynamicImage>
+    pub image:Rc<DynamicImage>,
+    pub atlas:Atlas
 }
 
 impl TextureInfo {

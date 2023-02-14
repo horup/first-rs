@@ -1,7 +1,7 @@
 use std::{mem::{size_of, replace}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite, SpriteId};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite, SpriteId, Atlas};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -347,12 +347,12 @@ impl SceneRenderer {
             
     }
 
-    fn sprite(&mut self, camera:&Camera, sprite:&Sprite) {
+    fn sprite(&mut self, camera:&Camera, sprite:&Sprite, atlas:&Atlas) {
         let color = [1.0, 1.0, 1.0, sprite.opacity.unwrap_or(1.0)];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
-        
-
+        let u = atlas.u(sprite.atlas_index);
+        let v = atlas.v(sprite.atlas_index);
         match sprite.sprite_type {
             engine_sdk::SpriteType::Wall | engine_sdk::SpriteType::Facing => {
                 let sr = 0.5;
@@ -366,19 +366,19 @@ impl SceneRenderer {
                 let wall = [Vertex {
                     position: wall[0],
                     color: color,
-                    uv: [0.0, 1.0],
+                    uv: [u[0], v[1]],
                 }, Vertex {
                     position: wall[1],
                     color: color,
-                    uv: [1.0, 1.0],
+                    uv: [u[1], v[1]],
                 }, Vertex {
                     position: wall[2],
                     color: color,
-                    uv: [1.0, 0.0],
+                    uv: [u[1], v[0]],
                 },  Vertex {
                     position: wall[3],
                     color: color,
-                    uv: [0.0, 0.0],
+                    uv: [u[0], v[0]],
                 }];
 
                 for mut v in wall {
@@ -394,22 +394,24 @@ impl SceneRenderer {
                 let a = vec3(facing.cos(), facing.sin(), 0.0);
                 let b = -vec3(a.y, -a.x, 0.0);
                 let wall = [-sr * a + -sr *b, -sr * a + sr * b, sr * a + sr * b, sr * a - sr * b];
+                let u = atlas.u(sprite.atlas_index);
+                let v = atlas.v(sprite.atlas_index);
                 let wall = [Vertex {
                     position: wall[0].into(),
                     color: color,
-                    uv: [0.0, 1.0],
+                    uv: [u[0], v[1]],
                 }, Vertex {
                     position: wall[1].into(),
                     color: color,
-                    uv: [1.0, 1.0],
+                    uv: [u[1], v[1]],
                 }, Vertex {
                     position: wall[2].into(),
                     color: color,
-                    uv: [1.0, 0.0],
+                    uv: [u[1], v[0]],
                 },  Vertex {
                     position: wall[3].into(),
                     color: color,
-                    uv: [0.0, 0.0],
+                    uv: [u[0], v[0]],
                 }];
 
                 for mut v in wall {
@@ -520,7 +522,9 @@ impl SceneRenderer {
             for sprite in sprites.iter() {
                 if let Some(sprite) = scene.sprites.get(*sprite) {
                     if sprite.texture == texture {
-                        self.sprite(camera, sprite);
+                        if let Some(texture) = graphics.textures.get(&texture) {
+                            self.sprite(camera, sprite, &texture.atlas);
+                        }
                     }
                 }
             }
@@ -558,7 +562,9 @@ impl SceneRenderer {
         // and draw
         for sprite in sprites.iter() {
             if let Some(sprite) = scene.sprites.get(*sprite) {
-                self.sprite(camera, sprite);
+                if let Some(texture) = graphics.textures.get(&sprite.texture) {
+                    self.sprite(camera, sprite, &texture.atlas);
+                }
             }
         }
         self.translucent_sprites = sprites;

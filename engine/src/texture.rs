@@ -1,3 +1,4 @@
+use engine_sdk::Atlas;
 use engine_sdk::image::DynamicImage;
 use engine_sdk::image::GenericImageView;
 use wgpu::BindGroupLayout;
@@ -11,7 +12,8 @@ pub struct Texture {
     pub texture:wgpu::Texture,
     pub texture_view:wgpu::TextureView,
     pub sampler:wgpu::Sampler,
-    pub texture_bind_group:wgpu::BindGroup
+    pub texture_bind_group:wgpu::BindGroup,
+    pub atlas:Atlas
 }
 
 impl Texture {
@@ -66,9 +68,9 @@ impl Texture {
             }
         );
 
-        Self { texture, sampler, width: size.width, height: size.height, texture_view: view, texture_bind_group: texture_bind_group }
+        Self { texture, sampler, width: size.width, height: size.height, texture_view: view, texture_bind_group: texture_bind_group, atlas:Atlas::default() }
     }
-    pub fn new(device:&Device, queue:&Queue, texture_bind_group_layout:&BindGroupLayout,image:&DynamicImage) -> Self {
+    pub fn new(device:&Device, queue:&Queue, texture_bind_group_layout:&BindGroupLayout,image:&DynamicImage, atlas:Atlas) -> Self {
         let rgba = image.to_rgba8();
         let (width, height) = image.dimensions();
         let texture_size = wgpu::Extent3d {
@@ -136,7 +138,8 @@ impl Texture {
             texture,
             texture_view,
             sampler,
-            texture_bind_group
+            texture_bind_group,
+            atlas
         }
     }
 }

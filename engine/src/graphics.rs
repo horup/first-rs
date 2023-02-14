@@ -1,6 +1,6 @@
 use crate::{CameraUniform, Vertex};
 use egui::Context;
-use engine_sdk::image::{DynamicImage, GenericImage};
+use engine_sdk::{image::{DynamicImage, GenericImage}, Atlas};
 use std::collections::HashMap;
 use wgpu::{
     util::DeviceExt, BindGroup, BindGroupLayout, Buffer, CommandEncoder, Device, Queue,
@@ -207,7 +207,7 @@ impl Graphics {
         });
 
         let texture_white =
-            crate::Texture::new(&device, &queue, &texture_bind_group_layout, &white);
+            crate::Texture::new(&device, &queue, &texture_bind_group_layout, &white, Atlas::default());
 
         // missing texture
         let mut texture_missing = DynamicImage::new_rgba8(2, 2);
@@ -223,6 +223,7 @@ impl Graphics {
             &queue,
             &texture_bind_group_layout,
             &texture_missing,
+            Atlas::default()
         );
 
         let egui_painter = egui_wgpu::Renderer::new(&device, render_format, None, 1);
@@ -247,12 +248,13 @@ impl Graphics {
         }
     }
 
-    pub fn load_texture(&mut self, id: u32, image: &DynamicImage) {
+    pub fn load_texture(&mut self, id: u32, image: &DynamicImage, atlas:Atlas) {
         let texture = crate::Texture::new(
             &self.device,
             &self.queue,
             &self.texture_bind_group_layout,
             image,
+            atlas
         );
         self.textures.insert(id, texture);
     }
