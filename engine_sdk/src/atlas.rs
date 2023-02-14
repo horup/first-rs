@@ -11,6 +11,9 @@ impl Default for Atlas {
 }
 
 impl Atlas {
+    pub fn count(&self) -> u16 {
+        return self.rows as u16 * self.columns as u16;
+    }
     pub fn new(columns:u8, rows:u8) -> Self {
         Self { rows, columns }
     }
@@ -23,12 +26,14 @@ impl Atlas {
     }
 
     pub fn u(&self, index:u16) -> [f32;2] {
+        let index = index % self.count();
         let x = index % self.columns as u16;
         let x = x as f32 / self.columns as f32;
         [x, x+self.w()]
     }
 
     pub fn v(&self, index:u16) -> [f32;2] {
+        let index = index % self.count();
         let y = index / self.columns as u16;
         let y = y as f32 / self.rows as f32;
         [y, y+self.h()]

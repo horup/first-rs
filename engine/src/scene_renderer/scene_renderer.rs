@@ -351,8 +351,8 @@ impl SceneRenderer {
         let color = [1.0, 1.0, 1.0, sprite.opacity.unwrap_or(1.0)];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
-        let u = atlas.u(sprite.atlas_index);
-        let v = atlas.v(sprite.atlas_index);
+        let u = atlas.u(sprite.atlas_index as u16);
+        let v = atlas.v(sprite.atlas_index as u16);
         match sprite.sprite_type {
             engine_sdk::SpriteType::Wall | engine_sdk::SpriteType::Facing => {
                 let sr = 0.5;
@@ -394,8 +394,8 @@ impl SceneRenderer {
                 let a = vec3(facing.cos(), facing.sin(), 0.0);
                 let b = -vec3(a.y, -a.x, 0.0);
                 let wall = [-sr * a + -sr *b, -sr * a + sr * b, sr * a + sr * b, sr * a - sr * b];
-                let u = atlas.u(sprite.atlas_index);
-                let v = atlas.v(sprite.atlas_index);
+                let u = atlas.u(sprite.atlas_index as u16);
+                let v = atlas.v(sprite.atlas_index as u16);
                 let wall = [Vertex {
                     position: wall[0].into(),
                     color: color,

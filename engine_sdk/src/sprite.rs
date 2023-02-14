@@ -21,5 +21,5 @@ pub struct Sprite {
     pub opacity:Option<f32>,
     pub sprite_type:SpriteType,
     pub facing:f32,
-    pub atlas_index:u16
+    pub atlas_index:f32
 }

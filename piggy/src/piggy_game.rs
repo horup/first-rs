@@ -13,7 +13,7 @@ impl Game for Piggy {
 
         macro_rules! load_texture2 {
             ($id:expr, $path:expr, $atlas:expr) => {
-                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::new(2, 1));
+                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), $atlas);
             };
         }
         
@@ -22,7 +22,7 @@ impl Game for Piggy {
         load_texture!(3, "../assets/textures/white_wall.png");
         load_texture!(4, "../assets/textures/player.png");
         load_texture!(5, "../assets/textures/viktor.png");
-        load_texture2!(6, "../assets/textures/william.png", Atlas);
+        load_texture2!(6, "../assets/textures/william.png", Atlas::new(2, 1));
         load_texture!(7, "../assets/textures/floor.png");
         load_texture!(8, "../assets/textures/ceiling.png");
         load_texture!(9, "../assets/textures/blue_door.png");
@@ -36,6 +36,12 @@ impl Game for Piggy {
         self.update_controls(engine);
         self.update_scene(engine);
         self.update_ui(engine);
+
+        for (_, sprite) in self.scene.sprites.iter_mut() {
+            if sprite.texture == 6 {
+                sprite.atlas_index += engine.dt() * 2.0;
+            }
+        }
     }
 
     fn on_event(&mut self, _engine:&mut dyn engine_sdk::Engine, event:&Event) {
