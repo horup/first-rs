@@ -137,7 +137,6 @@ impl Editor {
                 ..Default::default()
             });
         }
-       
     }
 
     fn update_ui(&mut self, engine:&mut dyn Engine) {
