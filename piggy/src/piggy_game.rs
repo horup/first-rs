@@ -10,13 +10,19 @@ impl Game for Piggy {
                 engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::default());
             };
         }
+
+        macro_rules! load_texture2 {
+            ($id:expr, $path:expr, $atlas:expr) => {
+                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::new(2, 1));
+            };
+        }
         
         load_texture!(1, "../assets/textures/brick_wall.png");
         load_texture!(2, "../assets/textures/bush_wall.png");
         load_texture!(3, "../assets/textures/white_wall.png");
         load_texture!(4, "../assets/textures/player.png");
         load_texture!(5, "../assets/textures/viktor.png");
-        load_texture!(6, "../assets/textures/william.png");
+        load_texture2!(6, "../assets/textures/william.png", Atlas);
         load_texture!(7, "../assets/textures/floor.png");
         load_texture!(8, "../assets/textures/ceiling.png");
         load_texture!(9, "../assets/textures/blue_door.png");

@@ -1,7 +1,7 @@
 #[derive(Clone, Debug)]
 pub struct Atlas {
+    pub columns:u8,
     pub rows:u8,
-    pub columns:u8
 }
 
 impl Default for Atlas {
@@ -11,6 +11,9 @@ impl Default for Atlas {
 }
 
 impl Atlas {
+    pub fn new(columns:u8, rows:u8) -> Self {
+        Self { rows, columns }
+    }
     pub fn w(&self) -> f32 {
         1.0 / self.columns as f32
     }
