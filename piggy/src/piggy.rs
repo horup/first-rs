@@ -45,6 +45,7 @@ impl Piggy {
                         size: vec2(s, s),
                         color: Color::BLACK,
                         texture: None,
+                        ..Default::default()
                     })
                 }
             }
@@ -57,6 +58,7 @@ impl Piggy {
             size: s,
             color: Color::WHITE,
             texture: None,
+            ..Default::default()
         });
 
         let p2 = p + self.camera.forward_body().truncate() * s * 2.0;
@@ -65,6 +67,7 @@ impl Piggy {
             end: p2,
             line_width: 1.0,
             color: Color::RED,
+            ..Default::default()
         });
        
         // draw scene

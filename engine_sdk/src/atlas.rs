@@ -1,4 +1,4 @@
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Atlas {
     pub columns:u8,
     pub rows:u8,

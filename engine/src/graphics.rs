@@ -259,6 +259,16 @@ impl Graphics {
         self.textures.insert(id, texture);
     }
 
+    pub fn get_atlas(&self, texture:Option<u32>) -> Atlas {
+        if let Some(texture) = texture {
+            if let Some(texture) = self.textures.get(&texture) {
+                return texture.atlas.clone();
+            }
+        }
+
+        return Atlas::default();
+    }
+
 
     pub fn configure(&mut self) {
         self.surface.configure(&self.device, &self.config);

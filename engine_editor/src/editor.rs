@@ -35,6 +35,7 @@ impl Editor {
                     size: (self.camera.zoom, self.camera.zoom).into(),
                     color: Color::WHITE,
                     texture: cell.wall,
+                    ..Default::default()
                 });
             }
         });
@@ -64,6 +65,7 @@ impl Editor {
                     size: size,
                     color: Color::WHITE,
                     texture: cell.thing,
+                    ..Default::default()
                 });
 
                 let v = vec2(cell.thing_facing.cos(), cell.thing_facing.sin()) * size.x / 2.0;
@@ -132,6 +134,7 @@ impl Editor {
                 size: (s, s * tex.aspect()).into(),
                 color: Color::WHITE,
                 texture: Some(self.selected_texture),
+                ..Default::default()
             });
         }
        
@@ -214,7 +217,8 @@ impl Editor {
             pos: self.camera.to_screen(&grid_cursor),
             size: (self.camera.zoom, self.camera.zoom).into(),
             color: Color { r: 1.0, g: 1.0, b: 1.0, a: 0.25 },
-            texture: None
+            texture: None,
+            ..Default::default()
         });
     }
 }

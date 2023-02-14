@@ -1,6 +1,6 @@
 use std::{ops::Range, mem::{replace, size_of}};
 
-use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams};
+use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams, Atlas};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point}};
 use wgpu::{util::{StagingBelt}, RenderPipeline, BindGroup, Buffer, BufferDescriptor};
 use crate::{Model, Graphics, Vertex, GraphicsContext, CameraUniform, Texture};
@@ -179,7 +179,7 @@ impl Canvas {
         self.push_draw_call(DrawCall::Text(params));
     }
 
-    pub fn draw_rect(&mut self, params:DrawRectParams) {
+    pub fn draw_rect(&mut self, params:DrawRectParams, atlas:&Atlas) {
         let px = params.pos.x;
         let py = -params.pos.y;
         let w = params.size.x;
@@ -192,26 +192,27 @@ impl Canvas {
 
         let vs = model.vertices.len() as u32;
         let start = model.indicies.len() as u32;
-
+        let u = atlas.u(params.atlas_index as u16);
+        let v = atlas.v(params.atlas_index as u16);
         model.vertices.push(Vertex {
             position: [px, py, 0.0],
             color,
-            uv:[0.0, 0.0]
+            uv:[u[0], v[0]]
         });
         model.vertices.push(Vertex {
             position: [px, py2, 0.0],
             color,
-            uv:[0.0, 1.0]
+            uv:[u[0], v[1]]
         });
         model.vertices.push(Vertex {
             position: [px2, py2, 0.0],
             color,
-            uv:[1.0, 1.0]
+            uv:[u[1], v[1]]
         });
         model.vertices.push(Vertex {
             position: [px2, py, 0.0],
             color,
-            uv:[1.0, 0.0]
+            uv:[u[1], v[0]]
         });
 
         model.indicies.push(vs + 0);

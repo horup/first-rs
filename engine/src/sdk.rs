@@ -29,7 +29,8 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_rect(&mut self, params: DrawRectParams) {
-        self.canvas.draw_rect(params);
+        let atlas = self.graphics.get_atlas(params.texture);
+        self.canvas.draw_rect(params, &atlas);
     }
 
     fn screen_size(&self) -> engine_sdk::glam::Vec2 {

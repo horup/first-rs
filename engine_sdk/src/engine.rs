@@ -52,7 +52,8 @@ pub struct DrawRectParams {
     pub pos:Vec2,
     pub size:Vec2,
     pub color:Color,
-    pub texture:Option<u32>
+    pub texture:Option<u32>,
+    pub atlas_index:f32
 }
 
 #[derive(Clone, Debug, Default)]
