@@ -4,14 +4,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Default, Deserialize, Serialize)]
 pub struct Camera {
     pub pos:Vec3,
-    pub yaw:f32
+    pub facing:f32
 }
 
 impl Camera {
   
     /// Calculates the forward vector of the camera body, ignoring pitch
     pub fn forward_body(&self) -> Vec3 {
-        vec3(self.yaw.cos(), self.yaw.sin(), 0.0)
+        vec3(self.facing.cos(), self.facing.sin(), 0.0)
     }
 
     /// Calculate the left vector of the camera body

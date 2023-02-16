@@ -21,7 +21,7 @@ impl CameraUniform {
         let translate = -camera.pos;//Vec3::new(8.0, 8.0, 1.5);
         let flip_y = Mat4::from_scale(vec3(1.0, -1.0, 1.0));
         let rot_x = Mat4::from_rotation_x(-PI / 2.0);
-        let rot_y = Mat4::from_rotation_y(PI / 2.0 + camera.yaw);
+        let rot_y = Mat4::from_rotation_y(PI / 2.0 + camera.facing);
         let matrix = Mat4::perspective_infinite_rh(PI / 2.0, aspect, 0.1) * rot_y * rot_x * flip_y * Mat4::from_translation(translate);
         Self {
             view_proj:matrix.to_cols_array()

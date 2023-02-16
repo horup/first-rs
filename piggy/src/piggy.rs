@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 use engine_sdk::{
     image,
     glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
-    Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
+    Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game, egui::Vec2,
 };
 use serde::{Deserialize, Serialize};
 use crate::textures;
@@ -35,7 +35,7 @@ impl Piggy {
         }
 
         let turn_speed = PI / 4.0;
-        self.camera.yaw += turn_speed * dt * engine.mouse_motion().x;
+        self.camera.facing += turn_speed * dt * engine.mouse_motion().x;
     }
 
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
@@ -175,6 +175,10 @@ impl Game for Piggy {
     fn on_event(&mut self, _engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
             Event::Map { map } => {
+                let mut camera = Camera {
+                    pos: Vec3::default(),
+                    facing: 0.0
+                };
                 self.current_map = map.clone();
                 self.grid = Grid::new(self.current_map.grid.size());
                 self.current_map.grid.for_each(|cell, index| {
@@ -188,7 +192,6 @@ impl Game for Piggy {
                             ..Default::default()
                         };
 
-
                         match thing {
                             textures::THING_MARKER_EXIT => {
                                 sprite.sprite_type = SpriteType::Floor;
@@ -198,6 +201,8 @@ impl Game for Piggy {
                             }
                             textures::THING_MARKER_SPAWN_PLAYER => {
                                 sprite.sprite_type = SpriteType::Floor;
+                                camera.pos = sprite.pos;
+                                camera.facing = sprite.facing;
                             }
                             _=>{}
                         }
@@ -205,11 +210,6 @@ impl Game for Piggy {
                         self.sprites.spawn(sprite);
                     }
                 });
-
-                let camera = Camera {
-                    pos: vec3(3.5, 3.5, 0.5),
-                    yaw: 0.0//PI + PI / 4.0
-                };
 
                 self.camera = camera;
             }
