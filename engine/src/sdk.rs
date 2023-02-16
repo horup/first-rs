@@ -14,13 +14,7 @@ impl engine_sdk::Engine for Engine {
         self.graphics.load_texture(id, image, atlas.clone());
         self.textures.insert(
             id,
-            TextureInfo {
-                id,
-                width: image.width() as f32,
-                height: image.height() as f32,
-                image: Rc::new(image.clone()),
-                atlas
-            },
+            TextureInfo::new(id, Rc::new(image.clone()), atlas),
         );
     }
 
@@ -103,9 +97,11 @@ impl engine_sdk::Engine for Engine {
             return Some(texture.clone());
         }
         if let Some(texture) = self.textures.get(id) {
-            let w = texture.image.width() as usize;
-            let h = texture.image.height() as usize;
-            let bytes = texture.image.to_rgba8().to_vec();
+            let img = texture.image();
+            let img = img.crop_imm(0, 0, texture.width(), texture.height());
+            let w = img.width() as usize;
+            let h = img.height() as usize;
+            let bytes = img.to_rgba8().to_vec();
             let texture = self.egui_ctx.load_texture(format!("{}", id), egui::ColorImage::from_rgba_unmultiplied([w,h], &bytes), egui::TextureOptions::NEAREST);
             self.egui_textures.insert(*id, texture.clone());
 

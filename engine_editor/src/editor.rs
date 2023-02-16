@@ -171,10 +171,10 @@ impl Editor {
                 for line in texture_line {
                     ui.horizontal(|ui|{
                         for texture in line.iter() {
-                            let aspect = texture.height / texture.width;
-                            if let Some(handle) = engine.egui_texture(&texture.id) {
+                            let aspect = texture.aspect();
+                            if let Some(handle) = engine.egui_texture(&texture.id()) {
                                 if ui.add(egui::ImageButton::new(handle.id(), [size, size * aspect])).clicked() {
-                                    self.selected_texture = texture.id;
+                                    self.selected_texture = texture.id();
                                 }
                             }
                         }
