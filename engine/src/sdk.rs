@@ -5,16 +5,16 @@ use engine_sdk::{
     self,
     glam::{Vec2, Vec3},
     image::DynamicImage,
-    DrawRectParams, TextureInfo, Event, Atlas,
+    DrawRectParams, TextureAtlas, Event, Atlas,
 };
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
-    fn load_texture(&mut self, id: u32, image: &DynamicImage, atlas:Atlas) {
+    fn load_atlas(&mut self, id: u32, image: &DynamicImage, atlas:Atlas) {
         self.graphics.load_texture(id, image, atlas.clone());
         self.textures.insert(
             id,
-            TextureInfo::new(id, Rc::new(image.clone()), atlas),
+            TextureAtlas::new(id, Rc::new(image.clone()), atlas),
         );
     }
 
@@ -42,7 +42,7 @@ impl engine_sdk::Engine for Engine {
         self.canvas.draw_text(params);
     }
 
-    fn texture(&self, id: &u32) -> Option<engine_sdk::TextureInfo> {
+    fn atlas(&self, id: &u32) -> Option<engine_sdk::TextureAtlas> {
         match self.textures.get(id) {
             Some(v) => Some(v.clone()),
             None => None,
@@ -81,8 +81,8 @@ impl engine_sdk::Engine for Engine {
         self.input.mouse_wheel_delta
     }
 
-    fn textures(&self) -> Vec<TextureInfo> {
-        let textures: Vec<TextureInfo> = self
+    fn atlases(&self) -> Vec<TextureAtlas> {
+        let textures: Vec<TextureAtlas> = self
             .textures
             .iter()
             .map(|(_, v)| {
@@ -98,7 +98,7 @@ impl engine_sdk::Engine for Engine {
         }
         if let Some(texture) = self.textures.get(id) {
             let img = texture.image();
-            let img = img.crop_imm(0, 0, texture.width(), texture.height());
+            let img = img.crop_imm(0, 0, texture.width(0), texture.height(0));
             let w = img.width() as usize;
             let h = img.height() as usize;
             let bytes = img.to_rgba8().to_vec();

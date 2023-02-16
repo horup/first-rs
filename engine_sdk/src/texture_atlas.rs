@@ -4,7 +4,7 @@ use crate::Atlas;
 
 
 #[derive(Clone, Debug, Default)]
-pub struct TextureInfo {
+pub struct TextureAtlas {
     id:u32,
     image:Rc<DynamicImage>,
     atlas:Atlas,
@@ -12,7 +12,7 @@ pub struct TextureInfo {
     height:u32
 }
 
-impl TextureInfo {
+impl TextureAtlas {
     pub fn new(id:u32, image:Rc<DynamicImage>, atlas:Atlas) -> Self {
         let width = image.width();
         let height = image.height();
@@ -37,15 +37,15 @@ impl TextureInfo {
         self.image.clone()
     }
 
-    pub fn aspect(&self) -> f32 {
-        self.height() as f32 / self.width() as f32
+    pub fn aspect(&self, atlas_index:u16) -> f32 {
+        self.height(atlas_index) as f32 / self.width(atlas_index) as f32
     } 
 
-    pub fn width(&self) -> u32 {
+    pub fn width(&self, _atlas_index:u16) -> u32 {
         self.width / self.atlas.columns as u32
     }
 
-    pub fn height(&self) -> u32 {
+    pub fn height(&self, _atlas_index:u16) -> u32 {
         self.height / self.atlas.rows as u32
     }
 }

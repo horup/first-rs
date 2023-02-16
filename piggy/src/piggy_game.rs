@@ -7,13 +7,14 @@ impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
         macro_rules! load_texture {
             ($id:expr, $path:expr) => {
-                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::default());
+                engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::default());
             };
         }
 
         macro_rules! load_texture2 {
             ($id:expr, $path:expr, $atlas:expr) => {
-                engine.load_texture($id, &image::load_from_memory(include_bytes!($path)).unwrap(), $atlas);
+                engine.load_atlas
+                ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), $atlas);
             };
         }
         

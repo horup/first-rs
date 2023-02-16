@@ -2,14 +2,14 @@ use glam::Vec2;
 use image::DynamicImage;
 use winit::{event::VirtualKeyCode};
 
-use crate::{Camera, Scene, Color, Event, Atlas, TextureInfo};
+use crate::{Camera, Scene, Color, Event, Atlas, TextureAtlas};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
     fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
-    fn load_texture(&mut self, id:u32, image:&DynamicImage, atlas:Atlas);
-    fn texture(&self, id:&u32) -> Option<TextureInfo>;
-    fn textures(&self) -> Vec<TextureInfo>;
+    fn load_atlas(&mut self, id:u32, image:&DynamicImage, atlas:Atlas);
+    fn atlas(&self, id:&u32) -> Option<TextureAtlas>;
+    fn atlases(&self) -> Vec<TextureAtlas>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
     fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);

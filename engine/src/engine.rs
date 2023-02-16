@@ -1,6 +1,6 @@
 use egui::{RawInput};
 use engine_editor::Editor;
-use engine_sdk::{glam::vec2, Game, TextureInfo};
+use engine_sdk::{glam::vec2, Game, TextureAtlas};
 use log::info;
 use std::{collections::HashMap, cell::{RefCell}, mem::replace};
 
@@ -17,7 +17,7 @@ pub struct Engine {
     pub new_events:Vec<engine_sdk::Event>,
     pub show_editor:bool,
     pub editor: Option<Editor>,
-    pub(crate) textures:HashMap<u32, TextureInfo>,
+    pub(crate) textures:HashMap<u32, TextureAtlas>,
     pub(crate) egui_ctx: egui::Context,
     pub(crate) egui_textures: HashMap<u32, egui::TextureHandle>,
     pub(crate) game: Option<Box<dyn Game>>,

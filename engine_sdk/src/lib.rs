@@ -40,8 +40,8 @@ pub use components::*;
 mod atlas;
 pub use atlas::*;
 
-mod texture_info;
-pub use texture_info::*;
+mod texture_atlas;
+pub use texture_atlas::*;
 
 pub use glam;
 pub use image;

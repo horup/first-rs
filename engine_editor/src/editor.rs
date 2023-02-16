@@ -118,7 +118,7 @@ impl Editor {
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
         let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
 
-        if let Some(tex) = engine.texture(&self.selected_texture) {
+        if let Some(tex) = engine.atlas(&self.selected_texture) {
             let s = 32.0;
             engine.draw_text(DrawTextParams {
                 screen_pos: cursor_pos - vec2(0.0, 12.0),
@@ -131,7 +131,7 @@ impl Editor {
             });
             engine.draw_rect(DrawRectParams {
                 pos: cursor_pos,
-                size: (s, s * tex.aspect()).into(),
+                size: (s, s * tex.aspect(0)).into(),
                 color: Color::WHITE,
                 texture: Some(self.selected_texture),
                 ..Default::default()
@@ -160,7 +160,7 @@ impl Editor {
                 let mut count= 0;
                 let mut texture_line = Vec::new();
 
-                for texture in engine.textures().iter() { 
+                for texture in engine.atlases().iter() { 
                     if count % line_length == 0 {
                         texture_line.push(Vec::new());
                     }
@@ -171,7 +171,7 @@ impl Editor {
                 for line in texture_line {
                     ui.horizontal(|ui|{
                         for texture in line.iter() {
-                            let aspect = texture.aspect();
+                            let aspect = texture.aspect(0);
                             if let Some(handle) = engine.egui_texture(&texture.id()) {
                                 if ui.add(egui::ImageButton::new(handle.id(), [size, size * aspect])).clicked() {
                                     self.selected_texture = texture.id();
