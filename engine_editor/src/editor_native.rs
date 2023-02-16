@@ -5,7 +5,7 @@ use crate::Editor;
 
 fn file_dialog<'a>() -> FileDialog<'a> {
     FileDialog::new()
-    .set_location("~/Desktop")
+    //.set_location("~/Desktop")
     .add_filter("Map", &["map"])
 }
 

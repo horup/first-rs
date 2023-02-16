@@ -179,6 +179,7 @@ impl Game for Piggy {
                     pos: Vec3::default(),
                     facing: 0.0
                 };
+                self.sprites.clear();
                 self.current_map = map.clone();
                 self.grid = Grid::new(self.current_map.grid.size());
                 self.current_map.grid.for_each(|cell, index| {
@@ -195,6 +196,7 @@ impl Game for Piggy {
                         match thing {
                             textures::THING_MARKER_EXIT => {
                                 sprite.sprite_type = SpriteType::Floor;
+                                sprite.pos.z = 0.01;
                             }
                             textures::THING_DOOR_BLUE | textures::THING_DOOR_GOLD | textures::THING_DOOR_WHITE => {
                                 sprite.sprite_type = SpriteType::Wall;
@@ -203,6 +205,8 @@ impl Game for Piggy {
                                 sprite.sprite_type = SpriteType::Floor;
                                 camera.pos = sprite.pos;
                                 camera.facing = sprite.facing;
+                                sprite.pos.z = 0.01;
+
                             }
                             _=>{}
                         }
