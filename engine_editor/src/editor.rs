@@ -81,10 +81,11 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
+        let valid = self.is_tool_valid(engine);
         match self.tool {
             Tool::PlaceWall => {
                 if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-                    if engine.mouse_down(0) {
+                    if engine.mouse_down(0) && valid {
                         cell.wall = Some(self.selected_texture);
                     } else if engine.mouse_down(1) {
                         cell.wall = None;
@@ -93,7 +94,7 @@ impl Editor {
             },
             Tool::PlaceThing => {
                 if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-                    if engine.mouse_down(0) {
+                    if engine.mouse_down(0) && valid {
                         cell.thing = Some(self.selected_texture);
                     } else if engine.mouse_down(1) {
                         cell.thing = None;
@@ -115,7 +116,22 @@ impl Editor {
         }
     }
 
+    fn is_tool_valid(&self, engine:&dyn Engine) -> bool {
+        if let Some(texture) = engine.atlas(&self.selected_texture) {
+            match self.tool {
+                Tool::PlaceWall => return texture.editor_props().is_wall,
+                Tool::PlaceThing => return texture.editor_props().is_thing,
+            }
+        }
+       
+        return false;
+    }
+
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
+        if self.is_tool_valid(engine) == false {
+            return;
+        }
+
         let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
 
         if let Some(tex) = engine.atlas(&self.selected_texture) {
@@ -155,7 +171,6 @@ impl Editor {
 
         egui::Window::new("Textures").show(&ctx, |ui|{
             egui::containers::ScrollArea::vertical().show(ui, |ui|{
-
                 let line_length = 3;
                 let mut count= 0;
                 let mut texture_line = Vec::new();
@@ -164,6 +179,12 @@ impl Editor {
                     if count % line_length == 0 {
                         texture_line.push(Vec::new());
                     }
+
+                    match self.tool {
+                        Tool::PlaceWall => if texture.editor_props().is_wall == false { continue; },
+                        Tool::PlaceThing => if texture.editor_props().is_thing == false { continue; },
+                    }
+
                     texture_line.last_mut().unwrap().push(texture.clone());
                     count+=1;
                 }

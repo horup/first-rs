@@ -19,14 +19,14 @@ impl EditorProps {
     pub fn thing() -> Self {
         Self {
             is_thing:true,
-            ..Default::default()
+            is_wall:false
         }
     }
 
     pub fn wall() -> Self {
         Self {
             is_wall:true,
-            ..Default::default()
+            is_thing:false
         }
     }
 }
