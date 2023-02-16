@@ -1,17 +1,21 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Map, Engine, glam::{vec2}, Color, DrawLineParams, Scene, Camera, DrawRectParams, VirtualKeyCode};
-use serde::{Serialize, Deserialize};
+use engine_sdk::{
+    glam::vec2, Camera, Cell, Color, DrawLineParams, DrawRectParams, Engine, Entities, Grid, Map,
+    Scene, Sprite, SpriteId, VirtualKeyCode,
+};
+use serde::{Deserialize, Serialize};
 
 #[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
-    pub current_map:Map,
-    pub camera:Camera,
-    pub scene:Scene
+    pub current_map: Map,
+    pub camera: Camera,
+    pub sprites: Entities<SpriteId, Sprite>,
+    pub grid: Grid<Cell>,
 }
 
 impl Piggy {
-    pub fn update_controls(&mut self, engine:&mut dyn Engine) {
+    pub fn update_controls(&mut self, engine: &mut dyn Engine) {
         let dt = engine.dt();
         let speed = 3.0;
         let left = self.camera.left();
@@ -31,13 +35,12 @@ impl Piggy {
 
         let turn_speed = PI / 4.0;
         self.camera.yaw += turn_speed * dt * engine.mouse_motion().x;
-        
     }
-    pub fn update_scene(&mut self, engine:&mut dyn Engine) {
+    pub fn update_scene(&mut self, engine: &mut dyn Engine) {
         let s = 16.0;
-        for y in 0..self.scene.grid.size() as i32 {
-            for x in 0..self.scene.grid.size() as i32 {
-                let cell = self.scene.grid.get((x, y)).unwrap();
+        for y in 0..self.grid.size() as i32 {
+            for x in 0..self.grid.size() as i32 {
+                let cell = self.grid.get((x, y)).unwrap();
                 let p = vec2(x as f32, y as f32);
                 if cell.wall.is_some() {
                     engine.draw_rect(DrawRectParams {
@@ -69,11 +72,19 @@ impl Piggy {
             color: Color::RED,
             ..Default::default()
         });
-       
+
         // draw scene
-        engine.draw_scene(&self.camera, &self.scene);
+        engine.draw_scene(
+            &self.camera,
+            &Scene {
+                sprites: &mut self.sprites,
+                ceiling_texture: 8,
+                floor_texture: 7,
+                grid: &mut self.grid,
+            },
+        );
     }
-    pub fn update_ui(&mut self, engine:&mut dyn Engine) {
+    pub fn update_ui(&mut self, engine: &mut dyn Engine) {
         // draw ui
         let _margin = vec2(16.0, 16.0);
         let center = engine.screen_size() / 2.0;
@@ -87,17 +98,17 @@ impl Piggy {
         let l = 8.0;
         let w = 1.0;
         engine.draw_line(DrawLineParams {
-            begin: center + vec2(-l,0.0),
-            end: center + vec2(l,0.0),
+            begin: center + vec2(-l, 0.0),
+            end: center + vec2(l, 0.0),
             line_width: w,
-            color: Color::WHITE
+            color: Color::WHITE,
         });
 
         engine.draw_line(DrawLineParams {
-            begin: center + vec2(0.0,-l),
-            end: center + vec2(0.0,l),
+            begin: center + vec2(0.0, -l),
+            end: center + vec2(0.0, l),
             line_width: w,
-            color: Color::WHITE
+            color: Color::WHITE,
         });
     }
 }

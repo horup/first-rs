@@ -45,7 +45,7 @@ impl Game for Piggy {
         self.update_scene(engine);
         self.update_ui(engine);
 
-        for (_, sprite) in self.scene.sprites.iter_mut() {
+        for (_, sprite) in self.sprites.iter_mut() {
             if sprite.texture == 6 {
                 sprite.atlas_index += engine.dt() * 2.0;
             }
@@ -56,15 +56,9 @@ impl Game for Piggy {
         match event {
             Event::Map { map } => {
                 self.current_map = map.clone();
-                dbg!("new map loaded");
-
-                let mut scene = Scene::default();
-                scene.floor_texture = 7;
-                scene.ceiling_texture = 8;
-
-                scene.grid = Grid::new(self.current_map.grid.size());
+                self.grid = Grid::new(self.current_map.grid.size());
                 self.current_map.grid.for_each(|cell, index| {
-                    scene.grid.get_mut(index).unwrap().wall = cell.wall;
+                    self.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
                         let mut sprite = Sprite {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
@@ -79,7 +73,7 @@ impl Game for Piggy {
                             sprite.sprite_type = SpriteType::Floor;
                             sprite.pos.z = 0.1;
                         }
-                        scene.sprites.spawn(sprite);
+                        self.sprites.spawn(sprite);
                     }
                 });
 
@@ -88,7 +82,6 @@ impl Game for Piggy {
                     yaw: 0.0//PI + PI / 4.0
                 };
 
-                self.scene = scene;
                 self.camera = camera;
             },
             _=>{}

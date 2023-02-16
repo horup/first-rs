@@ -9,11 +9,10 @@ pub struct Cell {
     pub wall:Option<u32>
 }
 
-#[derive(Default, Clone, Serialize, Deserialize)]
-pub struct Scene {
-    pub sprites:Entities<SpriteId, Sprite>,
+pub struct Scene<'a> {
+    pub sprites:&'a mut Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
-    pub grid:Grid<Cell>
+    pub grid:&'a mut Grid<Cell>
 }
 
