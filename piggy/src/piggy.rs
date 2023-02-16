@@ -140,7 +140,7 @@ impl Game for Piggy {
         wall!(textures::WALL_BUSH, "../assets/textures/wall_bush.png");
         wall!(textures::WALL_WHITE, "../assets/textures/wall_white.png");
 
-        thing!(textures::THING_PLAYER, "../assets/textures/thing_player.png", Atlas::new(1, 1));
+        thing!(textures::THING_MARKER_SPAWN_PLAYER, "../assets/textures/thing_player.png", Atlas::new(1, 1));
         thing!(textures::THING_VIKTOR, "../assets/textures/thing_player_viktor.png", Atlas::new(1, 1));
         thing!(textures::THING_WILLIAM, "../assets/textures/thing_player_william.png", Atlas::new(2, 1));
         thing!(textures::THING_DOOR_BLUE, "../assets/textures/thing_door_blue.png", Atlas::new(1, 1));
@@ -187,12 +187,21 @@ impl Game for Piggy {
                             facing:cell.thing_facing,
                             ..Default::default()
                         };
-                        if thing == 9 {
-                            sprite.sprite_type = SpriteType::Wall;
-                        } else if thing == 4 {
-                            sprite.sprite_type = SpriteType::Floor;
-                            sprite.pos.z = 0.1;
+
+
+                        match thing {
+                            textures::THING_MARKER_EXIT => {
+                                sprite.sprite_type = SpriteType::Floor;
+                            }
+                            textures::THING_DOOR_BLUE | textures::THING_DOOR_GOLD | textures::THING_DOOR_WHITE => {
+                                sprite.sprite_type = SpriteType::Wall;
+                            }
+                            textures::THING_MARKER_SPAWN_PLAYER => {
+                                sprite.sprite_type = SpriteType::Floor;
+                            }
+                            _=>{}
                         }
+                        
                         self.sprites.spawn(sprite);
                     }
                 });
