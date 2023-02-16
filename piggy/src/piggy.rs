@@ -148,10 +148,10 @@ impl Game for Piggy {
         thing!(textures::THING_DOOR_GOLD, "../assets/textures/thing_door_gold.png", Atlas::new(1, 1));
         thing!(textures::THING_ITEM_POKEMONCARD, "../assets/textures/thing_item_pokemoncard.png", Atlas::new(1, 1));
         thing!(textures::THING_ITEM_KEY_GOLD, "../assets/textures/thing_item_key_gold.png", Atlas::new(1, 1));
-        thing!(textures::THING_ITEM_KEY_BLUE, "../assets/textures/thing_item_key_gold.png", Atlas::new(1, 1));
+        thing!(textures::THING_ITEM_KEY_BLUE, "../assets/textures/thing_item_key_blue.png", Atlas::new(1, 1));
         thing!(textures::THING_MONSTER_PIGGY, "../assets/textures/thing_monster_piggy.png", Atlas::new(1, 1));
         thing!(textures::THING_PLANT, "../assets/textures/thing_plant.png", Atlas::new(1, 1));
-        
+        thing!(textures::THING_MARKER_EXIT, "../assets/textures/thing_marker_exit.png", Atlas::new(1, 1));
         wall!(textures::FLOOR_GREY, "../assets/textures/floor_grey.png");
         wall!(textures::CEILING_GREY, "../assets/textures/ceiling_grey.png");
 
