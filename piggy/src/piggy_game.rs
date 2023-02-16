@@ -1,7 +1,7 @@
 use engine_sdk::glam::{vec3, Vec3};
 use engine_sdk::{EditorProps, Atlas, Game, Map, Event, Scene, Camera, Grid, Sprite, SpriteType, LoadAtlasParams};
 use engine_sdk::image;
-use crate::Piggy;
+use crate::{Piggy, textures};
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -25,15 +25,15 @@ impl Game for Piggy {
             };
         }
         
-        load_atlas!(1, "../assets/textures/brick_wall.png");
-        load_atlas!(2, "../assets/textures/bush_wall.png");
-        load_atlas!(3, "../assets/textures/white_wall.png");
-        load_atlas2!(4, "../assets/textures/player.png", Atlas::new(1, 1));
-        load_atlas2!(5, "../assets/textures/viktor.png", Atlas::new(1, 1));
-        load_atlas2!(6, "../assets/textures/william.png", Atlas::new(2, 1));
-        load_atlas!(7, "../assets/textures/floor.png");
-        load_atlas!(8, "../assets/textures/ceiling.png");
-        load_atlas2!(9, "../assets/textures/blue_door.png", Atlas::new(1, 1));
+        load_atlas!(textures::WALL_BRICK, "../assets/textures/brick_wall.png");
+        load_atlas!(textures::WALL_BUSH, "../assets/textures/bush_wall.png");
+        load_atlas!(textures::WALL_WHITE, "../assets/textures/white_wall.png");
+        load_atlas2!(textures::THING_PLAYER, "../assets/textures/player.png", Atlas::new(1, 1));
+        load_atlas2!(textures::THING_VIKTOR, "../assets/textures/viktor.png", Atlas::new(1, 1));
+        load_atlas2!(textures::THING_WILLIAM, "../assets/textures/william.png", Atlas::new(2, 1));
+        load_atlas!(textures::FLOOR_GREY, "../assets/textures/floor.png");
+        load_atlas!(textures::CEILING_GREY, "../assets/textures/ceiling.png");
+        load_atlas2!(textures::DOOR_BLUE, "../assets/textures/blue_door.png", Atlas::new(1, 1));
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });

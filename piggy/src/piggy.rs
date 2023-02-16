@@ -6,6 +6,8 @@ use engine_sdk::{
 };
 use serde::{Deserialize, Serialize};
 
+use crate::textures;
+
 #[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
     pub current_map: Map,
@@ -78,8 +80,8 @@ impl Piggy {
             &self.camera,
             &Scene {
                 sprites: &mut self.sprites,
-                ceiling_texture: 8,
-                floor_texture: 7,
+                ceiling_texture: textures::CEILING_GREY,
+                floor_texture: textures::FLOOR_GREY,
                 grid: &mut self.grid,
             },
         );
@@ -88,12 +90,6 @@ impl Piggy {
         // draw ui
         let _margin = vec2(16.0, 16.0);
         let center = engine.screen_size() / 2.0;
-        /*engine.draw_text(DrawTextParams {
-            screen_pos: margin + vec2(0.0, 0.0),
-            text: "Hello world".into(),
-            scale: 16.0,
-            color: Color::WHITE,
-        });*/
 
         let l = 8.0;
         let w = 1.0;
