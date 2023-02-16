@@ -14,7 +14,7 @@ impl engine_sdk::Engine for Engine {
         self.graphics.load_texture(id, image, params.atlas.clone());
         self.textures.insert(
             id,
-            TextureAtlas::new(id, Rc::new(image.clone()), params.atlas),
+            TextureAtlas::new(id, Rc::new(image.clone()), params.atlas, params.editor_props),
         );
     }
 

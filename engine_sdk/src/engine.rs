@@ -2,7 +2,7 @@ use glam::Vec2;
 use image::DynamicImage;
 use winit::{event::VirtualKeyCode};
 
-use crate::{Camera, Scene, Color, Event, Atlas, TextureAtlas};
+use crate::{Camera, Scene, Color, Event, Atlas, TextureAtlas, EditorProps};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
@@ -32,7 +32,8 @@ pub trait Engine {
 
 #[derive(Clone, Debug, Default)]
 pub struct LoadAtlasParams {
-    pub atlas:Atlas
+    pub atlas:Atlas,
+    pub editor_props:EditorProps
 }
 
 #[derive(Clone, Debug, Default)]
