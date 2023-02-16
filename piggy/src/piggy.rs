@@ -1,12 +1,10 @@
 use std::f32::consts::PI;
-
 use engine_sdk::{
     image,
     glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
     Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
-
 use crate::textures;
 
 #[derive(Default, Serialize, Deserialize)]
@@ -39,7 +37,23 @@ impl Piggy {
         let turn_speed = PI / 4.0;
         self.camera.yaw += turn_speed * dt * engine.mouse_motion().x;
     }
+
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
+        // self.draw_map(engine);
+
+        // draw scene
+        engine.draw_scene(
+            &self.camera,
+            &Scene {
+                sprites: &self.sprites,
+                ceiling_texture: textures::CEILING_GREY,
+                floor_texture: textures::FLOOR_GREY,
+                grid: &self.grid,
+            },
+        );
+    }
+
+    fn _draw_map(&mut self, engine: &mut dyn Engine) {
         let s = 16.0;
         for y in 0..self.grid.size() as i32 {
             for x in 0..self.grid.size() as i32 {
@@ -75,18 +89,8 @@ impl Piggy {
             color: Color::RED,
             ..Default::default()
         });
-
-        // draw scene
-        engine.draw_scene(
-            &self.camera,
-            &Scene {
-                sprites: &mut self.sprites,
-                ceiling_texture: textures::CEILING_GREY,
-                floor_texture: textures::FLOOR_GREY,
-                grid: &mut self.grid,
-            },
-        );
     }
+
     pub fn update_ui(&mut self, engine: &mut dyn Engine) {
         // draw ui
         let _margin = vec2(16.0, 16.0);

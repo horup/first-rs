@@ -10,9 +10,9 @@ pub struct Cell {
 }
 
 pub struct Scene<'a> {
-    pub sprites:&'a mut Entities<SpriteId, Sprite>,
+    pub sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
-    pub grid:&'a mut Grid<Cell>
+    pub grid:&'a Grid<Cell>
 }
 
