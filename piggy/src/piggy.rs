@@ -136,15 +136,15 @@ impl Game for Piggy {
             };
         }
         
-        load_atlas!(textures::WALL_BRICK, "../assets/textures/brick_wall.png");
-        load_atlas!(textures::WALL_BUSH, "../assets/textures/bush_wall.png");
-        load_atlas!(textures::WALL_WHITE, "../assets/textures/white_wall.png");
-        load_atlas2!(textures::THING_PLAYER, "../assets/textures/player.png", Atlas::new(1, 1));
-        load_atlas2!(textures::THING_VIKTOR, "../assets/textures/viktor.png", Atlas::new(1, 1));
-        load_atlas2!(textures::THING_WILLIAM, "../assets/textures/william.png", Atlas::new(2, 1));
-        load_atlas!(textures::FLOOR_GREY, "../assets/textures/floor.png");
-        load_atlas!(textures::CEILING_GREY, "../assets/textures/ceiling.png");
-        load_atlas2!(textures::DOOR_BLUE, "../assets/textures/blue_door.png", Atlas::new(1, 1));
+        load_atlas!(textures::WALL_BRICK, "../assets/textures/wall_brick.png");
+        load_atlas!(textures::WALL_BUSH, "../assets/textures/wall_bush.png");
+        load_atlas!(textures::WALL_WHITE, "../assets/textures/wall_white.png");
+        load_atlas2!(textures::THING_PLAYER, "../assets/textures/thing_player.png", Atlas::new(1, 1));
+        load_atlas2!(textures::THING_VIKTOR, "../assets/textures/thing_viktor.png", Atlas::new(1, 1));
+        load_atlas2!(textures::THING_WILLIAM, "../assets/textures/thing_william.png", Atlas::new(2, 1));
+        load_atlas!(textures::FLOOR_GREY, "../assets/textures/floor_grey.png");
+        load_atlas!(textures::CEILING_GREY, "../assets/textures/ceiling_grey.png");
+        load_atlas2!(textures::DOOR_BLUE, "../assets/textures/door_blue.png", Atlas::new(1, 1));
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });
