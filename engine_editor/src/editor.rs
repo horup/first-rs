@@ -43,7 +43,7 @@ impl Editor {
         // draw things
         self.map.grid.for_each(|cell, (x,y)| {
             let center = self.camera.to_screen(&vec2(x as f32 + 0.5, y as f32 + 0.5));
-            let size = vec2(self.camera.zoom, self.camera.zoom) / 2.0;
+            let size = vec2(self.camera.zoom, self.camera.zoom);
             let p = center - size/2.0;
             if cell.thing.is_some() {
                 let _ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
@@ -207,6 +207,7 @@ impl Editor {
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {
         let size = self.map.grid.size();
+        let color:Color = [1.0, 1.0, 1.0, 0.1].into();
         for x in 0..(size+1) {
             let x = x as f32;
             let start = vec2(x, 0.0);
@@ -215,7 +216,7 @@ impl Editor {
                 begin: self.camera.to_screen(&start),
                 end: self.camera.to_screen(&end),
                 line_width: 1.0,
-                color: Color::WHITE,
+                color,
             });
         }
         for y in 0..(size+1) {
@@ -226,7 +227,7 @@ impl Editor {
                 begin: self.camera.to_screen(&start),
                 end: self.camera.to_screen(&end),
                 line_width: 1.0,
-                color: Color::WHITE,
+                color,
             });
         }
     }
