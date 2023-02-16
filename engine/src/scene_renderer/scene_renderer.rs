@@ -1,7 +1,7 @@
 use std::{mem::{size_of, replace}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3, Mat4, Mat3}, Cell, Sprite, SpriteId, Atlas};
+use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};

@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, image, Event, Map, Engine, DrawTextParams, glam::{vec2, vec3}, Color, DrawLineParams, Scene, Camera, DrawRectParams, VirtualKeyCode};
+use engine_sdk::{Map, Engine, glam::{vec2}, Color, DrawLineParams, Scene, Camera, DrawRectParams, VirtualKeyCode};
 use serde::{Serialize, Deserialize};
 
 #[derive(Default, Serialize, Deserialize)]
@@ -75,7 +75,7 @@ impl Piggy {
     }
     pub fn update_ui(&mut self, engine:&mut dyn Engine) {
         // draw ui
-        let margin = vec2(16.0, 16.0);
+        let _margin = vec2(16.0, 16.0);
         let center = engine.screen_size() / 2.0;
         /*engine.draw_text(DrawTextParams {
             screen_pos: margin + vec2(0.0, 0.0),

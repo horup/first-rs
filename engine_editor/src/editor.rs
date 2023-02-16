@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, Scene, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, CursorGrabMode, VirtualKeyCode};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, VirtualKeyCode};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -46,7 +46,7 @@ impl Editor {
             let size = vec2(self.camera.zoom, self.camera.zoom) / 2.0;
             let p = center - size/2.0;
             if cell.thing.is_some() {
-                let ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
+                let _ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
 
                 /*for i in 0..ps.len() {
                     let p1 = ps[i];
@@ -268,7 +268,7 @@ impl Game for Editor {
         self.update(engine);          
     }
 
-    fn on_event(&mut self, engine:&mut dyn Engine, event:&engine_sdk::Event) {
+    fn on_event(&mut self, _engine:&mut dyn Engine, event:&engine_sdk::Event) {
         match event {
             engine_sdk::Event::Map { map } => {
                 self.map = map.clone();

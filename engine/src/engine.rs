@@ -1,7 +1,7 @@
 use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureAtlas};
-use log::info;
+
 use std::{collections::HashMap, cell::{RefCell}, mem::replace};
 
 use winit::{
@@ -10,7 +10,7 @@ use winit::{
     window::{WindowBuilder}
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, Model, SceneRenderer};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
 
 pub struct Engine {
     pub scene_renderer:SceneRenderer,

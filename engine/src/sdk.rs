@@ -1,11 +1,11 @@
 use std::{rc::Rc};
 
-use crate::{Engine, Vertex};
+use crate::{Engine};
 use engine_sdk::{
     self,
-    glam::{Vec2, Vec3},
+    glam::{Vec2},
     image::DynamicImage,
-    DrawRectParams, TextureAtlas, Event, Atlas, LoadAtlasParams,
+    DrawRectParams, TextureAtlas, Event, LoadAtlasParams,
 };
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 

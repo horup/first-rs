@@ -1,7 +1,7 @@
 
 use std::f32::consts::PI;
 
-use engine_sdk::{glam::{Mat4, Vec3, vec3}, Camera};
+use engine_sdk::{glam::{Mat4, vec3}, Camera};
 #[repr(C)]
 #[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct CameraUniform {
