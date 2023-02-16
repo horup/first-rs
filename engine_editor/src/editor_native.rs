@@ -18,10 +18,8 @@ impl Editor {
         let ctx = engine.egui().clone();
         egui::TopBottomPanel::top("top_pane").show(&ctx, |ui|{
             ui.menu_button("File", |ui|{
-                if ui.button("New").clicked() {
-                    if ask("Want to create a new map?") {
-                        self.map = Map::default();
-                    }
+                if ui.button("New").clicked() && ask("Want to create a new map?") {
+                    self.map = Map::default();
                 }
                 if ui.button("Save").clicked() {
                     let path = file_dialog().show_save_single_file().unwrap();

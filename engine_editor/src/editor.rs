@@ -62,7 +62,7 @@ impl Editor {
                 
                 engine.draw_rect(DrawRectParams {
                     pos: p,
-                    size: size,
+                    size,
                     color: Color::WHITE,
                     texture: cell.thing,
                     ..Default::default()
@@ -124,11 +124,11 @@ impl Editor {
             }
         }
        
-        return false;
+        false
     }
 
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
-        if self.is_tool_valid(engine) == false {
+        if !self.is_tool_valid(engine) {
             return;
         }
 
@@ -181,8 +181,8 @@ impl Editor {
                     }
 
                     match self.tool {
-                        Tool::PlaceWall => if texture.editor_props().is_wall == false { continue; },
-                        Tool::PlaceThing => if texture.editor_props().is_thing == false { continue; },
+                        Tool::PlaceWall => if !texture.editor_props().is_wall { continue; },
+                        Tool::PlaceThing => if !texture.editor_props().is_thing { continue; },
                     }
 
                     texture_line.last_mut().unwrap().push(texture.clone());

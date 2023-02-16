@@ -39,7 +39,7 @@ impl Piggy {
             for x in 0..self.scene.grid.size() as i32 {
                 let cell = self.scene.grid.get((x, y)).unwrap();
                 let p = vec2(x as f32, y as f32);
-                if let Some(_) = cell.wall {
+                if cell.wall.is_some() {
                     engine.draw_rect(DrawRectParams {
                         pos: p * s,
                         size: vec2(s, s),

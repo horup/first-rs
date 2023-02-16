@@ -2,7 +2,7 @@ use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureAtlas};
 
-use std::{collections::HashMap, cell::{RefCell}, mem::replace};
+use std::{collections::HashMap, cell::{RefCell}};
 
 use winit::{
     event::{ElementState, KeyboardInput, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
@@ -110,7 +110,7 @@ impl Engine {
                 if let Some(editor) = self.editor.take() {
                     let map = editor.map.clone();
                     self.editor = Some(editor);
-                    self.push_event(engine_sdk::Event::Map { map: map });
+                    self.push_event(engine_sdk::Event::Map { map });
                 }
             }
 
@@ -118,7 +118,7 @@ impl Engine {
         }
 
         // process events
-        let events = replace(&mut self.new_events, Vec::new());
+        let events = std::mem::take(&mut self.new_events);
         for e in events {
             if let Some(mut editor) = self.editor.take() {
                 editor.on_event(self, &e);
@@ -180,8 +180,8 @@ impl Engine {
                     ref event,
                     window_id,
                 } if window_id == self.window.borrow().id() => {
-                    let res = egui_winit_state.on_event(&self.egui_ctx, &event);
-                    if res.consumed == true {
+                    let res = egui_winit_state.on_event(&self.egui_ctx, event);
+                    if res.consumed {
                         // egui consumed the event
                         return;
                     }

@@ -237,13 +237,13 @@ impl Graphics {
             camera_buffer,
             camera_bind_group,
             textures: HashMap::new(),
-            texture_missing: texture_missing,
-            texture_white: texture_white,
+            texture_missing,
+            texture_white,
             texture_bind_group_layout,
             depth_texture_bind_group_layout,
             texture_depth,
             render_format,
-            egui_painter: egui_painter,
+            egui_painter,
             pixels_per_point: pixels_per_point as f32,
         }
     }
@@ -262,11 +262,11 @@ impl Graphics {
     pub fn get_atlas(&self, texture:Option<u32>) -> Atlas {
         if let Some(texture) = texture {
             if let Some(texture) = self.textures.get(&texture) {
-                return texture.atlas.clone();
+                return texture.atlas;
             }
         }
 
-        return Atlas::default();
+        Atlas::default()
     }
 
 
@@ -362,7 +362,7 @@ impl Graphics {
                     ..Default::default()
                 });
 
-        return (encoder, surface_texture, surface_view);
+        (encoder, surface_texture, surface_view)
     }
 
     pub fn submit(&mut self, encoder: CommandEncoder, surface_texture: SurfaceTexture) {
@@ -411,6 +411,6 @@ impl<'a> GraphicsContext<'a> {
             return texture;
         }
 
-        return self.texture_missing;
+        self.texture_missing
     }
 }

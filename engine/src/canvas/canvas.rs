@@ -1,4 +1,4 @@
-use std::{ops::Range, mem::{replace, size_of}};
+use std::{ops::Range, mem::{size_of}};
 
 use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams, Atlas};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point}};
@@ -215,10 +215,10 @@ impl Canvas {
             uv:[u[1], v[0]]
         });
 
-        model.indicies.push(vs + 0);
+        model.indicies.push(vs);
         model.indicies.push(vs + 1);
         model.indicies.push(vs + 2);
-        model.indicies.push(vs + 0);
+        model.indicies.push(vs);
         model.indicies.push(vs + 2);
         model.indicies.push(vs + 3);
 
@@ -241,24 +241,24 @@ impl Canvas {
                                 if diffuse_texture1 == diffuse_texture {
                                     range.end = range1.end;
                                 } else {
-                                    return self.draw_calls.push(call);
+                                    self.draw_calls.push(call)
                                 }
                             },
-                            _=> return self.draw_calls.push(call)
+                            _=> self.draw_calls.push(call)
                         }
                     },
-                    None => return self.draw_calls.push(call),
+                    None => self.draw_calls.push(call),
                 }
             },
             _=> {
-                return self.draw_calls.push(call);
+                self.draw_calls.push(call)
             }
         }
       
     }
 
     pub fn draw_geometry(&mut self, graphics:&mut GraphicsContext, diffuse_texture:&Texture, indicies:Range<u32>) {
-        if self.geometry.index_buffer.size() == 0 || self.geometry.indicies.len() == 0 {
+        if self.geometry.index_buffer.size() == 0 || self.geometry.indicies.is_empty() {
             return;
         }
 
@@ -266,7 +266,7 @@ impl Canvas {
             let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &graphics.surface_view,
+                    view: graphics.surface_view,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Load,
@@ -297,7 +297,7 @@ impl Canvas {
         );
 
         // schedule draw calls
-        let draw_calls = replace(&mut self.draw_calls, Vec::new());
+        let draw_calls = std::mem::take(&mut self.draw_calls);
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::Text(params) => {
@@ -311,9 +311,9 @@ impl Canvas {
                     });
                     let size = graphics.screen_size;
                     self.glyph_brush.draw_queued(
-                        &graphics.device, 
+                        graphics.device, 
                         &mut self.staging_belt, 
-                        &mut graphics.encoder, 
+                        graphics.encoder, 
                         graphics.surface_view, 
                         size.width, 
                         size.height)

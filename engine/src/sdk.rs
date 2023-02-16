@@ -11,7 +11,7 @@ use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
     fn load_atlas(&mut self, id: u32, image: &DynamicImage, params:LoadAtlasParams) {
-        self.graphics.load_texture(id, image, params.atlas.clone());
+        self.graphics.load_texture(id, image, params.atlas);
         self.textures.insert(
             id,
             TextureAtlas::new(id, Rc::new(image.clone()), params.atlas, params.editor_props),
@@ -43,10 +43,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn atlas(&self, id: &u32) -> Option<engine_sdk::TextureAtlas> {
-        match self.textures.get(id) {
-            Some(v) => Some(v.clone()),
-            None => None,
-        }
+        self.textures.get(id).cloned()
     }
 
     fn mouse_pos(&self) -> Vec2 {
@@ -62,7 +59,7 @@ impl engine_sdk::Engine for Engine {
             return *k;
         }
 
-        return false;
+        false
     }
 
     fn keys_just_pressed(&self) -> &[VirtualKeyCode] {
@@ -74,7 +71,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn dt(&self) -> f32 {
-        return self.diagnostics.frame_time.as_millis() as f32 / 1000.0;
+        self.diagnostics.frame_time.as_millis() as f32 / 1000.0
     }
 
     fn mouse_wheel_delta(&self) -> Vec2 {
@@ -83,11 +80,7 @@ impl engine_sdk::Engine for Engine {
 
     fn atlases(&self) -> Vec<TextureAtlas> {
         let textures: Vec<TextureAtlas> = self
-            .textures
-            .iter()
-            .map(|(_, v)| {
-                return v.clone();
-            })
+            .textures.values().cloned()
             .collect();
         textures
     }
@@ -108,7 +101,7 @@ impl engine_sdk::Engine for Engine {
             return Some(texture);
         }
 
-        return None;
+        None
     }
 
     fn push_event(&mut self, event:Event) {

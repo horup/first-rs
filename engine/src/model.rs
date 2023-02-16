@@ -32,7 +32,7 @@ impl Model {
     fn create_vertex_buffer(device:&wgpu::Device, size:u64) -> wgpu::Buffer {
         device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Vertex Buffer"),
-            size: size,
+            size,
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         })
@@ -42,7 +42,7 @@ impl Model {
     fn create_index_buffer(device:&wgpu::Device, size:u64) -> wgpu::Buffer {
         device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Index Buffer"),
-            size: size,
+            size,
             usage: wgpu::BufferUsages::INDEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         })
@@ -72,7 +72,7 @@ impl Model {
     }
 
     pub fn draw_indexed<'a>(&'a self, graphics:&mut GraphicsContext, indicies:Range<u32>, diffuse_texture:&crate::Texture) {
-        if self.index_buffer.size() == 0 || self.indicies.len() == 0 {
+        if self.index_buffer.size() == 0 || self.indicies.is_empty() {
             return;
         }
 
@@ -80,7 +80,7 @@ impl Model {
             let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &graphics.surface_view,
+                    view: graphics.surface_view,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Load,
@@ -89,8 +89,8 @@ impl Model {
                 })],
                 depth_stencil_attachment: None,
             });
-            render_pass.set_pipeline(&graphics.render_pipeline);
-            render_pass.set_bind_group(0, &graphics.camera_bind_group, &[]);
+            render_pass.set_pipeline(graphics.render_pipeline);
+            render_pass.set_bind_group(0, graphics.camera_bind_group, &[]);
             render_pass.set_bind_group(1, &diffuse_texture.texture_bind_group, &[]);
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));

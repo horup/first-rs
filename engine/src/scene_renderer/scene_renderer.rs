@@ -1,4 +1,4 @@
-use std::{mem::{size_of, replace}, ops::Range, cmp::Ordering, f32::consts::PI};
+use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
 use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas};
@@ -193,19 +193,19 @@ impl SceneRenderer {
         let ceiling = [[1.0, 0.0, 1.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
         let floor = [Vertex {
             position: ceiling[0],
-            color: color,
+            color,
             uv: [0.0, 1.0],
         }, Vertex {
             position: ceiling[1],
-            color: color,
+            color,
             uv: [1.0, 1.0],
         }, Vertex {
             position: ceiling[2],
-            color: color,
+            color,
             uv: [1.0, 0.0],
         },  Vertex {
             position: ceiling[3],
-            color: color,
+            color,
             uv: [0.0, 0.0],
         }];
 
@@ -215,10 +215,10 @@ impl SceneRenderer {
             self.geometry.vertices.push(v);
         }
 
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 1);
         self.geometry.indicies.push(start_vertex + 2);
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 2);
         self.geometry.indicies.push(start_vertex + 3);
 
@@ -240,19 +240,19 @@ impl SceneRenderer {
         let floor = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 0.0, 0.0]];
         let floor = [Vertex {
             position: floor[0],
-            color: color,
+            color,
             uv: [0.0, 1.0],
         }, Vertex {
             position: floor[1],
-            color: color,
+            color,
             uv: [1.0, 1.0],
         }, Vertex {
             position: floor[2],
-            color: color,
+            color,
             uv: [1.0, 0.0],
         },  Vertex {
             position: floor[3],
-            color: color,
+            color,
             uv: [0.0, 0.0],
         }];
 
@@ -262,10 +262,10 @@ impl SceneRenderer {
             self.geometry.vertices.push(v);
         }
 
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 1);
         self.geometry.indicies.push(start_vertex + 2);
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 2);
         self.geometry.indicies.push(start_vertex + 3);
 
@@ -305,19 +305,19 @@ impl SceneRenderer {
 
         let wall = [Vertex {
             position: wall[0],
-            color: color,
+            color,
             uv: [0.0, 1.0],
         }, Vertex {
             position: wall[1],
-            color: color,
+            color,
             uv: [1.0, 1.0],
         }, Vertex {
             position: wall[2],
-            color: color,
+            color,
             uv: [1.0, 0.0],
         },  Vertex {
             position: wall[3],
-            color: color,
+            color,
             uv: [0.0, 0.0],
         }];
 
@@ -327,11 +327,11 @@ impl SceneRenderer {
             self.geometry.vertices.push(v);
         }
 
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 1);
         self.geometry.indicies.push(start_vertex + 2);
 
-        self.geometry.indicies.push(start_vertex + 0);
+        self.geometry.indicies.push(start_vertex);
         self.geometry.indicies.push(start_vertex + 2);
         self.geometry.indicies.push(start_vertex + 3);
 
@@ -365,19 +365,19 @@ impl SceneRenderer {
                 let wall = [[-n.x, -n.y, -sh], [n.x, n.y, -sh], [n.x, n.y, sh], [-n.x, -n.y, sh]];
                 let wall = [Vertex {
                     position: wall[0],
-                    color: color,
+                    color,
                     uv: [u[0], v[1]],
                 }, Vertex {
                     position: wall[1],
-                    color: color,
+                    color,
                     uv: [u[1], v[1]],
                 }, Vertex {
                     position: wall[2],
-                    color: color,
+                    color,
                     uv: [u[1], v[0]],
                 },  Vertex {
                     position: wall[3],
-                    color: color,
+                    color,
                     uv: [u[0], v[0]],
                 }];
 
@@ -398,19 +398,19 @@ impl SceneRenderer {
                 let v = atlas.v(sprite.atlas_index as u16);
                 let wall = [Vertex {
                     position: wall[0].into(),
-                    color: color,
+                    color,
                     uv: [u[0], v[1]],
                 }, Vertex {
                     position: wall[1].into(),
-                    color: color,
+                    color,
                     uv: [u[1], v[1]],
                 }, Vertex {
                     position: wall[2].into(),
-                    color: color,
+                    color,
                     uv: [u[1], v[0]],
                 },  Vertex {
                     position: wall[3].into(),
-                    color: color,
+                    color,
                     uv: [u[0], v[0]],
                 }];
 
@@ -423,11 +423,11 @@ impl SceneRenderer {
             },
         }
         
-        self.sprites.indicies.push(start_vertex + 0);
+        self.sprites.indicies.push(start_vertex);
         self.sprites.indicies.push(start_vertex + 1);
         self.sprites.indicies.push(start_vertex + 2);
 
-        self.sprites.indicies.push(start_vertex + 0);
+        self.sprites.indicies.push(start_vertex);
         self.sprites.indicies.push(start_vertex + 2);
         self.sprites.indicies.push(start_vertex + 3);
 
@@ -465,7 +465,7 @@ impl SceneRenderer {
                 textures.insert(wall, ());
             }
         });
-        let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
+        let mut textures:Vec<u32> = textures.keys().copied().collect();
         textures.sort();
 
         // once per texture, prepare walls that can be reached from a spot without a wall
@@ -513,10 +513,10 @@ impl SceneRenderer {
                 self.translucent_sprites.push(index)
             }
         }
-        let mut textures:Vec<u32> = textures.keys().map(|k|{*k}).collect();
+        let mut textures:Vec<u32> = textures.keys().copied().collect();
         textures.sort();
 
-        let sprites = replace(&mut self.opaque_sprites, Vec::new());
+        let sprites = std::mem::take(&mut self.opaque_sprites);
         // draw opaque sprites
         for texture in textures {
             for sprite in sprites.iter() {
@@ -531,7 +531,7 @@ impl SceneRenderer {
         }
         self.opaque_sprites = sprites;
 
-        let mut sprites = replace(&mut self.translucent_sprites, Vec::new());
+        let mut sprites = std::mem::take(&mut self.translucent_sprites);
         // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
         sprites.sort_by(|a, b|{
             if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
@@ -541,7 +541,7 @@ impl SceneRenderer {
                     return Ordering::Less;
                 }
             }
-            return Ordering::Equal;
+            Ordering::Equal
         });
 
         // then sort sprites based upon distance to camera
@@ -556,7 +556,7 @@ impl SceneRenderer {
                 }
             }
 
-            return Ordering::Equal;
+            Ordering::Equal
         });
 
         // and draw
@@ -573,7 +573,7 @@ impl SceneRenderer {
     pub fn draw(&mut self, graphics:&mut GraphicsContext) {
         self.geometry.write(graphics);
         self.sprites.write(graphics);
-        let draw_calls = replace(&mut self.draw_calls, Vec::new());
+        let draw_calls = std::mem::take(&mut self.draw_calls);
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::DrawGeometry { texture, range } => {
@@ -581,7 +581,7 @@ impl SceneRenderer {
                     let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: &graphics.surface_view,
+                            view: graphics.surface_view,
                             resolve_target: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Load,
@@ -610,7 +610,7 @@ impl SceneRenderer {
                     let mut render_pass = graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: &graphics.surface_view,
+                            view: graphics.surface_view,
                             resolve_target: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Load,
@@ -638,7 +638,7 @@ impl SceneRenderer {
                     graphics.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("Render Pass"),
                         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: &graphics.surface_view,
+                            view: graphics.surface_view,
                             resolve_target: None,
                             ops: wgpu::Operations {
                                 load: wgpu::LoadOp::Clear(wgpu::Color { r: 0.0, g: 0.0, b: 0.0, a: 1.0 }),

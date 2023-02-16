@@ -68,7 +68,7 @@ impl Texture {
             }
         );
 
-        Self { texture, sampler, width: size.width, height: size.height, texture_view: view, texture_bind_group: texture_bind_group, atlas:Atlas::default() }
+        Self { texture, sampler, width: size.width, height: size.height, texture_view: view, texture_bind_group, atlas:Atlas::default() }
     }
     pub fn new(device:&Device, queue:&Queue, texture_bind_group_layout:&BindGroupLayout,image:&DynamicImage, atlas:Atlas) -> Self {
         let rgba = image.to_rgba8();

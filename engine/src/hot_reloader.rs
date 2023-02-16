@@ -74,7 +74,7 @@ impl HotReloader {
                 to.pop();
                 to.push("hot.module");
 
-                if std::fs::copy(&self.game_lib_path.clone(), to.clone()).is_ok() {
+                if std::fs::copy(self.game_lib_path.clone(), to.clone()).is_ok() {
                     unsafe {
                         let lib = libloading::Library::new(to.clone());
                         match lib {

@@ -12,7 +12,7 @@ impl Default for Atlas {
 
 impl Atlas {
     pub fn count(&self) -> u16 {
-        return self.rows as u16 * self.columns as u16;
+        self.rows as u16 * self.columns as u16
     }
     pub fn new(columns:u8, rows:u8) -> Self {
         Self { rows, columns }
