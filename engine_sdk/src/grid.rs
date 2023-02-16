@@ -9,7 +9,7 @@ pub struct Grid<T:Clone + Default> {
 
 impl<T> Default for Grid<T> where T:Default+Clone {
     fn default() -> Self {
-        Self::new(16)
+        Self::new(64)
     }
 }
 

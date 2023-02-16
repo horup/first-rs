@@ -116,7 +116,7 @@ impl Piggy {
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        macro_rules! load_atlas {
+        macro_rules! wall {
             ($id:expr, $path:expr) => {
                 engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
                     editor_props:EditorProps::wall(),
@@ -125,7 +125,7 @@ impl Game for Piggy {
             };
         }
 
-        macro_rules! load_atlas2 {
+        macro_rules! thing {
             ($id:expr, $path:expr, $atlas:expr) => {
                 engine.load_atlas
                 ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
@@ -136,15 +136,24 @@ impl Game for Piggy {
             };
         }
         
-        load_atlas!(textures::WALL_BRICK, "../assets/textures/wall_brick.png");
-        load_atlas!(textures::WALL_BUSH, "../assets/textures/wall_bush.png");
-        load_atlas!(textures::WALL_WHITE, "../assets/textures/wall_white.png");
-        load_atlas2!(textures::THING_PLAYER, "../assets/textures/thing_player.png", Atlas::new(1, 1));
-        load_atlas2!(textures::THING_VIKTOR, "../assets/textures/thing_viktor.png", Atlas::new(1, 1));
-        load_atlas2!(textures::THING_WILLIAM, "../assets/textures/thing_william.png", Atlas::new(2, 1));
-        load_atlas!(textures::FLOOR_GREY, "../assets/textures/floor_grey.png");
-        load_atlas!(textures::CEILING_GREY, "../assets/textures/ceiling_grey.png");
-        load_atlas2!(textures::DOOR_BLUE, "../assets/textures/door_blue.png", Atlas::new(1, 1));
+        wall!(textures::WALL_BRICK, "../assets/textures/wall_brick.png");
+        wall!(textures::WALL_BUSH, "../assets/textures/wall_bush.png");
+        wall!(textures::WALL_WHITE, "../assets/textures/wall_white.png");
+
+        thing!(textures::THING_PLAYER, "../assets/textures/thing_player.png", Atlas::new(1, 1));
+        thing!(textures::THING_VIKTOR, "../assets/textures/thing_player_viktor.png", Atlas::new(1, 1));
+        thing!(textures::THING_WILLIAM, "../assets/textures/thing_player_william.png", Atlas::new(2, 1));
+        thing!(textures::THING_DOOR_BLUE, "../assets/textures/thing_door_blue.png", Atlas::new(1, 1));
+        thing!(textures::THING_DOOR_WHITE, "../assets/textures/thing_door_white.png", Atlas::new(1, 1));
+        thing!(textures::THING_DOOR_GOLD, "../assets/textures/thing_door_gold.png", Atlas::new(1, 1));
+        thing!(textures::THING_ITEM_POKEMONCARD, "../assets/textures/thing_item_pokemoncard.png", Atlas::new(1, 1));
+        thing!(textures::THING_ITEM_KEY_GOLD, "../assets/textures/thing_item_key_gold.png", Atlas::new(1, 1));
+        thing!(textures::THING_ITEM_KEY_BLUE, "../assets/textures/thing_item_key_gold.png", Atlas::new(1, 1));
+        thing!(textures::THING_MONSTER_PIGGY, "../assets/textures/thing_monster_piggy.png", Atlas::new(1, 1));
+        thing!(textures::THING_PLANT, "../assets/textures/thing_plant.png", Atlas::new(1, 1));
+        
+        wall!(textures::FLOOR_GREY, "../assets/textures/floor_grey.png");
+        wall!(textures::CEILING_GREY, "../assets/textures/ceiling_grey.png");
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });
