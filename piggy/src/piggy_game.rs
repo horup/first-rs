@@ -1,32 +1,34 @@
 use engine_sdk::glam::{vec3, Vec3};
-use engine_sdk::{Atlas, Game, Map, Event, Scene, Camera, Grid, Sprite, SpriteType};
+use engine_sdk::{Atlas, Game, Map, Event, Scene, Camera, Grid, Sprite, SpriteType, LoadAtlasParams};
 use engine_sdk::image;
 use crate::Piggy;
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        macro_rules! load_texture {
+        macro_rules! load_atlas {
             ($id:expr, $path:expr) => {
-                engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), Atlas::default());
+                engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams::default());
             };
         }
 
-        macro_rules! load_texture2 {
+        macro_rules! load_atlas2 {
             ($id:expr, $path:expr, $atlas:expr) => {
                 engine.load_atlas
-                ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), $atlas);
+                ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
+                    atlas:$atlas
+                });
             };
         }
         
-        load_texture!(1, "../assets/textures/brick_wall.png");
-        load_texture!(2, "../assets/textures/bush_wall.png");
-        load_texture!(3, "../assets/textures/white_wall.png");
-        load_texture!(4, "../assets/textures/player.png");
-        load_texture!(5, "../assets/textures/viktor.png");
-        load_texture2!(6, "../assets/textures/william.png", Atlas::new(2, 1));
-        load_texture!(7, "../assets/textures/floor.png");
-        load_texture!(8, "../assets/textures/ceiling.png");
-        load_texture!(9, "../assets/textures/blue_door.png");
+        load_atlas!(1, "../assets/textures/brick_wall.png");
+        load_atlas!(2, "../assets/textures/bush_wall.png");
+        load_atlas!(3, "../assets/textures/white_wall.png");
+        load_atlas!(4, "../assets/textures/player.png");
+        load_atlas!(5, "../assets/textures/viktor.png");
+        load_atlas2!(6, "../assets/textures/william.png", Atlas::new(2, 1));
+        load_atlas!(7, "../assets/textures/floor.png");
+        load_atlas!(8, "../assets/textures/ceiling.png");
+        load_atlas!(9, "../assets/textures/blue_door.png");
 
         let map:Map = serde_json::from_str(include_str!("../assets/maps/test.map")).unwrap();
         engine.push_event(Event::Map { map });

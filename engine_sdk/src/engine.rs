@@ -7,7 +7,7 @@ use crate::{Camera, Scene, Color, Event, Atlas, TextureAtlas};
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
     fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
-    fn load_atlas(&mut self, id:u32, image:&DynamicImage, atlas:Atlas);
+    fn load_atlas(&mut self, id:u32, image:&DynamicImage, params:LoadAtlasParams);
     fn atlas(&self, id:&u32) -> Option<TextureAtlas>;
     fn atlases(&self) -> Vec<TextureAtlas>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
@@ -30,6 +30,10 @@ pub trait Engine {
 }
 
 
+#[derive(Clone, Debug, Default)]
+pub struct LoadAtlasParams {
+    pub atlas:Atlas
+}
 
 #[derive(Clone, Debug, Default)]
 pub struct DrawRectParams {
