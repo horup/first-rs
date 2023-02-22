@@ -4,8 +4,8 @@ pub use game::*;
 mod engine;
 pub use engine::*;
 
-mod scene;
-pub use scene::*;
+mod world;
+pub use world::*;
 
 mod sprite;
 pub use sprite::*;

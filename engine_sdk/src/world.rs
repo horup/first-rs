@@ -11,7 +11,7 @@ pub struct Cell {
     pub wall:Option<u32>
 }
 
-pub struct Scene<'a> {
+pub struct World<'a> {
     sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
@@ -24,7 +24,7 @@ pub struct Collision {
     pub tile:Option<IVec2>
 }
 
-impl<'a> Scene<'a> {
+impl<'a> World<'a> {
     pub fn new(sprites:&'a Entities<SpriteId, Sprite>, grid:&'a Grid<Cell>) -> Self {
         Self {
             sprites,

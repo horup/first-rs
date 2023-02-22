@@ -1,7 +1,7 @@
 use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, Scene, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas};
+use engine_sdk::{Camera, World, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -443,7 +443,7 @@ impl SceneRenderer {
             
     }
 
-    pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&Scene) {
+    pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&World) {
         self.geometry.clear();
         self.sprites.clear();
         self.opaque_sprites.clear();

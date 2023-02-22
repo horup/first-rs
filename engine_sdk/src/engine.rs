@@ -2,7 +2,7 @@ use glam::Vec2;
 use image::DynamicImage;
 use winit::{event::VirtualKeyCode};
 
-use crate::{Camera, Scene, Color, Event, Atlas, TextureAtlas, EditorProps};
+use crate::{Camera, World, Color, Event, Atlas, TextureAtlas, EditorProps};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;
@@ -10,7 +10,7 @@ pub trait Engine {
     fn load_atlas(&mut self, id:u32, image:&DynamicImage, params:LoadAtlasParams);
     fn atlas(&self, id:&u32) -> Option<TextureAtlas>;
     fn atlases(&self) -> Vec<TextureAtlas>;
-    fn draw_scene(&mut self, camera:&Camera, scene:&Scene);
+    fn draw_scene(&mut self, camera:&Camera, scene:&World);
     fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);
