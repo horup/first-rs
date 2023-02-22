@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 use engine_sdk::{
     image,
     glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
-    Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
+    Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game, egui::text,
 };
 use serde::{Deserialize, Serialize};
 use crate::textures;
@@ -17,6 +17,13 @@ pub struct Piggy {
 }
 
 impl Piggy {
+    pub fn scene(&self) -> Scene {
+        let mut scene = Scene::new(&self.sprites, &self.grid);
+        scene.ceiling_texture = textures::CEILING_GREY;
+        scene.floor_texture = textures::FLOOR_GREY;
+        return scene;
+    }
+
     pub fn update_player(&mut self, engine: &mut dyn Engine) {
         let dt = engine.dt();
         let speed = 3.0;
@@ -62,12 +69,7 @@ impl Piggy {
         // draw scene
         engine.draw_scene(
             &self.camera,
-            &Scene {
-                sprites: &self.sprites,
-                ceiling_texture: textures::CEILING_GREY,
-                floor_texture: textures::FLOOR_GREY,
-                grid: &self.grid,
-            },
+            &self.scene(),
         );
     }
 

@@ -460,7 +460,7 @@ impl SceneRenderer {
 
         // find wall textures in use
         let mut textures = HashMap::new();
-        scene.grid.for_each(|cell, _| {
+        scene.grid().for_each(|cell, _| {
             if let Some(wall) = cell.wall {
                 textures.insert(wall, ());
             }
@@ -471,12 +471,12 @@ impl SceneRenderer {
         // once per texture, prepare walls that can be reached from a spot without a wall
         // i.e. dont prepare walls that are not reachable
         for texture in textures {
-            scene.grid.for_each(|cell, (x,y)| {
+            scene.grid().for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
                     let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
                     for n in directions.iter() {
                         let p = ivec2(x, y) - *n;
-                        if let Some(cell) = scene.grid.get((p.x, p.y)) {
+                        if let Some(cell) = scene.grid().get((p.x, p.y)) {
                             if let Some(wall_texture) = cell.wall {
                                 if wall_texture == texture {
                                     self.wall(wall_texture, p, -*n);
@@ -489,14 +489,14 @@ impl SceneRenderer {
         }
 
         // draw floor 
-        scene.grid.for_each(|cell, (x,y)| {
+        scene.grid().for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
                 self.floor(scene.floor_texture, IVec2::new(x, y));
             }
         });
 
         // draw ceiling
-        scene.grid.for_each(|cell, (x,y)| {
+        scene.grid().for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
                 self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
             }
@@ -505,7 +505,7 @@ impl SceneRenderer {
         // sort sprites into translucent and opaque
         // and find textures in use
         let mut textures = HashMap::new();
-        for (index, sprite) in scene.sprites.iter() {
+        for (index, sprite) in scene.sprites().iter() {
             textures.insert(sprite.texture, ());
             if sprite.opacity.is_none() {
                 self.opaque_sprites.push(index);
@@ -520,7 +520,7 @@ impl SceneRenderer {
         // draw opaque sprites
         for texture in textures {
             for sprite in sprites.iter() {
-                if let Some(sprite) = scene.sprites.get(*sprite) {
+                if let Some(sprite) = scene.sprites().get(*sprite) {
                     if sprite.texture == texture {
                         if let Some(texture) = graphics.textures.get(&texture) {
                             self.sprite(camera, sprite, &texture.atlas);
@@ -534,7 +534,7 @@ impl SceneRenderer {
         let mut sprites = std::mem::take(&mut self.translucent_sprites);
         // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
+            if let (Some(a), Some(b)) = (scene.sprites().get(*a), scene.sprites().get(*b)) {
                 if a.texture < b.texture {
                     return Ordering::Greater;
                 } else if a.texture > b.texture {
@@ -546,7 +546,7 @@ impl SceneRenderer {
 
         // then sort sprites based upon distance to camera
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.sprites.get(*a), scene.sprites.get(*b)) {
+            if let (Some(a), Some(b)) = (scene.sprites().get(*a), scene.sprites().get(*b)) {
                 let a = (a.pos - camera.pos).length_squared();
                 let b = (b.pos - camera.pos).length_squared();
                 if a < b {
@@ -561,7 +561,7 @@ impl SceneRenderer {
 
         // and draw
         for sprite in sprites.iter() {
-            if let Some(sprite) = scene.sprites.get(*sprite) {
+            if let Some(sprite) = scene.sprites().get(*sprite) {
                 if let Some(texture) = graphics.textures.get(&sprite.texture) {
                     self.sprite(camera, sprite, &texture.atlas);
                 }

@@ -10,9 +10,28 @@ pub struct Cell {
 }
 
 pub struct Scene<'a> {
-    pub sprites:&'a Entities<SpriteId, Sprite>,
+    sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
-    pub grid:&'a Grid<Cell>
+    grid:&'a Grid<Cell>
+}
+
+impl<'a> Scene<'a> {
+    pub fn new(sprites:&'a Entities<SpriteId, Sprite>, grid:&'a Grid<Cell>) -> Self {
+        Self {
+            sprites,
+            ceiling_texture: 0,
+            floor_texture: 0,
+            grid,
+        }
+    }
+
+    pub fn sprites(&self) -> &'a Entities<SpriteId, Sprite> {
+        self.sprites
+    }
+
+    pub fn grid(&self) -> &'a Grid<Cell> {
+        self.grid
+    }
 }
 
