@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 use engine_sdk::{
     image,
     glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
-    World, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game, egui::text,
+    World, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
 use crate::textures;
