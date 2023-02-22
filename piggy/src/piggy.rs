@@ -233,6 +233,7 @@ impl Game for Piggy {
                                 sprite.texture = textures::THING_WILLIAM;
                                 camera.pos = sprite.pos;
                                 camera.facing = sprite.facing;
+                                sprite.radius = 0.5;
                             }
                             _=>{}
                         }
