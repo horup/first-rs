@@ -17,26 +17,43 @@ pub struct Piggy {
 }
 
 impl Piggy {
-    pub fn update_controls(&mut self, engine: &mut dyn Engine) {
+    pub fn update_player(&mut self, engine: &mut dyn Engine) {
         let dt = engine.dt();
         let speed = 3.0;
         let left = self.camera.left();
         let forward = self.camera.forward_body();
+        let mut pos = &mut self.camera.pos;
+        let mut facing = &mut self.camera.facing;
+        let mut copy_to_camera = false;
+        if let Some(player_id) = self.player_id {
+            if let Some(player_sprite) = self.sprites.get_mut(player_id) {
+                pos = &mut player_sprite.pos;
+                facing = &mut player_sprite.facing;
+                copy_to_camera = true;
+            }
+        }
+
         if engine.key_down(VirtualKeyCode::A) {
-            self.camera.pos += speed * dt * left;
+            *pos += speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::D) {
-            self.camera.pos -= speed * dt * left;
+            *pos -= speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::W) {
-            self.camera.pos += speed * dt * forward;
+            *pos += speed * dt * forward;
         }
         if engine.key_down(VirtualKeyCode::S) {
-            self.camera.pos -= speed * dt * forward;
+            *pos -= speed * dt * forward;
         }
 
         let turn_speed = PI / 4.0;
-        self.camera.facing += turn_speed * dt * engine.mouse_motion().x;
+        *facing += turn_speed * dt * engine.mouse_motion().x;
+
+        if copy_to_camera { 
+            self.camera.pos = *pos;
+            self.camera.facing = *facing;
+        }
+        
     }
 
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
@@ -162,7 +179,7 @@ impl Game for Piggy {
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
         engine.set_cursor_visible(false);
-        self.update_controls(engine);
+        self.update_player(engine);
         self.update_scene(engine);
         self.update_ui(engine);
 
@@ -214,7 +231,6 @@ impl Game for Piggy {
                         match thing {
                             textures::THING_MARKER_SPAWN_PLAYER => {
                                 self.player_id = Some(id);
-                               
                             }
                             _=>{}
                         }
