@@ -55,11 +55,11 @@ impl Piggy {
         new_facing += turn_speed * dt * engine.mouse_motion().x;
 
         if let Some(player_id) = self.player_id {
+            let scene = self.scene();
+            scene.clip_move(player_id, new_pos);
             match self.sprites.get_mut(player_id) {
                 Some(player_sprite) => {
-                    player_sprite.pos = new_pos;
                     player_sprite.facing = new_facing;
-                    
                     self.camera.pos = player_sprite.pos;
                     self.camera.facing = player_sprite.facing;
                 },

@@ -1,3 +1,4 @@
+use glam::Vec3;
 use serde::{Serialize, Deserialize};
 use slotmap::new_key_type;
 use crate::{Grid, Sprite, Entities};
@@ -32,6 +33,12 @@ impl<'a> Scene<'a> {
 
     pub fn grid(&self) -> &'a Grid<Cell> {
         self.grid
+    }
+
+    pub fn clip_move(&self, id:SpriteId, new_pos:Vec3) {
+        if let Some(sprite) = self.sprites.get_mut(id) {
+            sprite.pos = new_pos;
+        }
     }
 }
 
