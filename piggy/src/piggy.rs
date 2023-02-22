@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 use engine_sdk::{
     image,
-    glam::{vec2, Vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
+    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
     Scene, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
@@ -13,6 +13,7 @@ pub struct Piggy {
     pub camera: Camera,
     pub sprites: Entities<SpriteId, Sprite>,
     pub grid: Grid<Cell>,
+    pub player_id: Option<SpriteId>
 }
 
 impl Piggy {
@@ -176,7 +177,7 @@ impl Game for Piggy {
         match event {
             Event::Map { map } => {
                 let mut camera = Camera {
-                    pos: Vec3::default(),
+                    pos: vec3(0.0, 0.0, 0.5),
                     facing: 0.0
                 };
                 self.sprites.clear();
@@ -202,16 +203,21 @@ impl Game for Piggy {
                                 sprite.sprite_type = SpriteType::Wall;
                             }
                             textures::THING_MARKER_SPAWN_PLAYER => {
-                                sprite.sprite_type = SpriteType::Floor;
+                                sprite.texture = textures::THING_WILLIAM;
                                 camera.pos = sprite.pos;
                                 camera.facing = sprite.facing;
-                                sprite.pos.z = 0.01;
-
                             }
                             _=>{}
                         }
                         
-                        self.sprites.spawn(sprite);
+                        let id = self.sprites.spawn(sprite);
+                        match thing {
+                            textures::THING_MARKER_SPAWN_PLAYER => {
+                                self.player_id = Some(id);
+                               
+                            }
+                            _=>{}
+                        }
                     }
                 });
 
