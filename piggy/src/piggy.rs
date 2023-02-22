@@ -21,7 +21,7 @@ impl Piggy {
         let mut scene = World::new(&self.sprites, &self.grid);
         scene.ceiling_texture = textures::CEILING_GREY;
         scene.floor_texture = textures::FLOOR_GREY;
-        return scene;
+        scene
     }
 
     pub fn update_player(&mut self, engine: &mut dyn Engine) {
@@ -33,7 +33,7 @@ impl Piggy {
         let mut new_facing = self.camera.facing;
         if let Some(player_id) = self.player_id {
             if let Some(player_sprite) = self.sprites.get_mut(player_id) {
-                new_pos = player_sprite.pos.clone();
+                new_pos = player_sprite.pos;
                 new_facing = player_sprite.facing;
             }
         }
