@@ -642,6 +642,7 @@ dependencies = [
  "egui",
  "glam",
  "image",
+ "parry2d",
  "serde",
  "slotmap",
  "winit",
@@ -1269,6 +1270,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "matrixmultiply"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "add85d4dd35074e6fedc608f8c8f513a3548619a9024b751949ef0e8e45a4d84"
+dependencies = [
+ "rawpointer",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1360,6 +1370,21 @@ dependencies = [
  "termcolor",
  "thiserror",
  "unicode-xid",
+]
+
+[[package]]
+name = "nalgebra"
+version = "0.31.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20bd243ab3dbb395b39ee730402d2e5405e448c75133ec49cc977762c4cba3d1"
+dependencies = [
+ "approx",
+ "matrixmultiply",
+ "num-complex",
+ "num-rational",
+ "num-traits",
+ "simba",
+ "typenum",
 ]
 
 [[package]]
@@ -1491,6 +1516,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-complex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02e0d21255c828d6f128a1e41534206671e8c3ea0c62f32291e808dc82cff17d"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
+name = "num-derive"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "876a53fff98e03a936a674b29568b0e605f06b29372c2489ff4de23f1949743d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "num-integer"
 version = "0.1.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1598,6 +1643,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
 
 [[package]]
+name = "optional"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "978aa494585d3ca4ad74929863093e87cac9790d81fe7aba2b3dc2890643a0fc"
+
+[[package]]
 name = "ordered-float"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1637,6 +1688,33 @@ dependencies = [
  "smallvec",
  "windows-sys 0.42.0",
 ]
+
+[[package]]
+name = "parry2d"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee29895c34e7dae094c8ea355af4f6fb3f3ab6b76ea037b49bc51bf5972d2464"
+dependencies = [
+ "approx",
+ "arrayvec 0.7.2",
+ "bitflags",
+ "downcast-rs",
+ "either",
+ "nalgebra",
+ "num-derive",
+ "num-traits",
+ "rustc-hash",
+ "simba",
+ "slab",
+ "smallvec",
+ "spade",
+]
+
+[[package]]
+name = "paste"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d01a5bd0424d00070b0098dd17ebca6f961a959dead1dbcbbbc1d1cd8d3deeba"
 
 [[package]]
 name = "percent-encoding"
@@ -1800,6 +1878,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rawpointer"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60a357793950651c4ed0f3f52338f53b2f809f32d83a07f72909fa13e4c6c1e3"
+
+[[package]]
 name = "rayon"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1865,6 +1949,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f1382d1f0a252c4bf97dc20d979a2fdd05b024acd7c2ed0f7595d7817666a157"
 
 [[package]]
+name = "robust"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5864e7ef1a6b7bcf1d6ca3f655e65e724ed3b52546a0d0a663c991522f552ea"
+
+[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1895,6 +1985,15 @@ name = "safe_arch"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1ff3d6d9696af502cc3110dacce942840fb06ff4514cad92236ecc455f2ce05"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
+name = "safe_arch"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "794821e4ccb0d9f979512f9c1973480123f9bd62a90d74ab0f9426fcf8f4a529"
 dependencies = [
  "bytemuck",
 ]
@@ -1982,6 +2081,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "simba"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f3fd720c48c53cace224ae62bef1bbff363a70c68c4802a78b5cc6159618176"
+dependencies = [
+ "approx",
+ "num-complex",
+ "num-traits",
+ "paste",
+ "wide",
+]
+
+[[package]]
+name = "slab"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6528351c9bc8ab22353f9d776db39a20288e8d6c37ef8cfe3317cf875eecfc2d"
+dependencies = [
+ "autocfg",
+]
+
+[[package]]
 name = "slotmap"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2014,6 +2135,18 @@ dependencies = [
  "wayland-client",
  "wayland-cursor",
  "wayland-protocols",
+]
+
+[[package]]
+name = "spade"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1190e0e8f4eb17fc3dbb2d20e1142676e56aaac3daede39f64a3302d687b80f3"
+dependencies = [
+ "num-traits",
+ "optional",
+ "robust",
+ "smallvec",
 ]
 
 [[package]]
@@ -2118,7 +2251,7 @@ dependencies = [
  "bytemuck",
  "cfg-if",
  "png",
- "safe_arch",
+ "safe_arch 0.5.2",
  "tiny-skia-path",
 ]
 
@@ -2186,6 +2319,12 @@ checksum = "deb68604048ff8fa93347f02441e4487594adc20bb8a084f9e564d2b827a0a9f"
 dependencies = [
  "rustc-hash",
 ]
+
+[[package]]
+name = "typenum"
+version = "1.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
 
 [[package]]
 name = "unicode-ident"
@@ -2503,6 +2642,16 @@ dependencies = [
  "either",
  "libc",
  "once_cell",
+]
+
+[[package]]
+name = "wide"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "feff0a412894d67223777b6cc8d68c0dab06d52d95e9890d5f2d47f10dd9366c"
+dependencies = [
+ "bytemuck",
+ "safe_arch 0.6.0",
 ]
 
 [[package]]

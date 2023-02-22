@@ -22,5 +22,6 @@ pub struct Sprite {
     pub sprite_type:SpriteType,
     pub facing:f32,
     pub atlas_index:f32,
-    pub radius:f32
+    pub radius:f32,
+    pub no_clip:bool
 }
