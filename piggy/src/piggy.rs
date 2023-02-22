@@ -29,38 +29,46 @@ impl Piggy {
         let speed = 3.0;
         let left = self.camera.left();
         let forward = self.camera.forward_body();
-        let mut pos = &mut self.camera.pos;
-        let mut facing = &mut self.camera.facing;
-        let mut copy_to_camera = false;
+        let mut new_pos = self.camera.pos;
+        let mut new_facing = self.camera.facing;
         if let Some(player_id) = self.player_id {
             if let Some(player_sprite) = self.sprites.get_mut(player_id) {
-                pos = &mut player_sprite.pos;
-                facing = &mut player_sprite.facing;
-                copy_to_camera = true;
+                new_pos = player_sprite.pos.clone();
+                new_facing = player_sprite.facing;
             }
         }
 
         if engine.key_down(VirtualKeyCode::A) {
-            *pos += speed * dt * left;
+            new_pos += speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::D) {
-            *pos -= speed * dt * left;
+            new_pos -= speed * dt * left;
         }
         if engine.key_down(VirtualKeyCode::W) {
-            *pos += speed * dt * forward;
+            new_pos += speed * dt * forward;
         }
         if engine.key_down(VirtualKeyCode::S) {
-            *pos -= speed * dt * forward;
+            new_pos -= speed * dt * forward;
         }
 
         let turn_speed = PI / 4.0;
-        *facing += turn_speed * dt * engine.mouse_motion().x;
+        new_facing += turn_speed * dt * engine.mouse_motion().x;
 
-        if copy_to_camera { 
-            self.camera.pos = *pos;
-            self.camera.facing = *facing;
+        if let Some(player_id) = self.player_id {
+            match self.sprites.get_mut(player_id) {
+                Some(player_sprite) => {
+                    player_sprite.pos = new_pos;
+                    player_sprite.facing = new_facing;
+                    
+                    self.camera.pos = player_sprite.pos;
+                    self.camera.facing = player_sprite.facing;
+                },
+                None => {
+                    self.camera.pos = new_pos;
+                    self.camera.facing = new_facing;
+                },
+            }
         }
-        
     }
 
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
