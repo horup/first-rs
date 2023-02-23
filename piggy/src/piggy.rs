@@ -17,8 +17,8 @@ pub struct Piggy {
 }
 
 impl Piggy {
-    pub fn world(&self) -> World {
-        let mut scene = World::new(&self.sprites, &self.grid);
+    pub fn world(&mut self) -> World {
+        let mut scene = World::new(&mut self.sprites, &mut self.grid);
         scene.ceiling_texture = textures::CEILING_GREY;
         scene.floor_texture = textures::FLOOR_GREY;
         scene
@@ -55,8 +55,8 @@ impl Piggy {
         new_facing += turn_speed * dt * engine.mouse_motion().x;
 
         if let Some(player_id) = self.player_id {
-            let scene = self.world();
-            scene.clip_move(player_id, new_pos);
+            let world = self.world();
+            world.clip_move(player_id, new_pos);
             match self.sprites.get_mut(player_id) {
                 Some(player_sprite) => {
                     player_sprite.facing = new_facing;
@@ -74,9 +74,10 @@ impl Piggy {
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
         // self.draw_map(engine);
 
+        let cam = self.camera.clone();
         // draw scene
         engine.draw_scene(
-            &self.camera,
+            &cam,
             &self.world(),
         );
     }

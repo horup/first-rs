@@ -1,7 +1,7 @@
 use glam::{Vec3, vec3};
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Deserialize, Serialize)]
+#[derive(Default, Deserialize, Serialize, Clone, Copy)]
 pub struct Camera {
     pub pos:Vec3,
     pub facing:f32
