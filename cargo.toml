@@ -7,3 +7,6 @@ members = [
     "./piggy",
     "./main",
 ]
+
+[profile.test] 
+opt-level = 3
