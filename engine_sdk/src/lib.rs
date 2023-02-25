@@ -43,8 +43,8 @@ pub use atlas::*;
 mod texture_atlas;
 pub use texture_atlas::*;
 
-mod spatial_grid;
-pub use spatial_grid::*;
+mod spatial_hashmap;
+pub use spatial_hashmap::*;
 
 pub use glam;
 pub use image;
