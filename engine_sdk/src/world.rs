@@ -2,11 +2,11 @@ use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
 use serde::{Serialize, Deserialize};
 use slotmap::new_key_type;
-use crate::{Grid, Sprite, Entities};
+use crate::{Grid, Sprite, Entities, SpatialHashmap};
 
 new_key_type! {pub struct SpriteId;}
 
-#[derive(Default, Clone, Copy, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Cell {
     pub wall:Option<u32>
 }
@@ -23,6 +23,7 @@ pub struct Collision {
     pub other_entity:Option<SpriteId>,
     pub tile:Option<IVec2>
 }
+
 
 impl<'a> World<'a> {
     pub fn new(sprites:&'a Entities<SpriteId, Sprite>, grid:&'a Grid<Cell>) -> Self {

@@ -640,6 +640,7 @@ name = "engine_sdk"
 version = "0.1.0"
 dependencies = [
  "egui",
+ "flat_spatial",
  "glam",
  "image",
  "parry2d",
@@ -730,6 +731,16 @@ dependencies = [
  "miniz_oxide",
  "smallvec",
  "threadpool",
+]
+
+[[package]]
+name = "flat_spatial"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b205de489f223eb226736d312895aa6a7c6a1520258a74e0ab7e7f36f074b655"
+dependencies = [
+ "fnv",
+ "slotmap",
 ]
 
 [[package]]
