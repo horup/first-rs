@@ -55,7 +55,7 @@ impl Piggy {
         new_facing += turn_speed * dt * engine.mouse_motion().x;
 
         if let Some(player_id) = self.player_id {
-            let world = self.world();
+            let mut world = self.world();
             world.clip_move(player_id, new_pos);
             match self.sprites.get_mut(player_id) {
                 Some(player_sprite) => {

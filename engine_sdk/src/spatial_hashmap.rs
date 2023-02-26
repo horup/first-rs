@@ -13,7 +13,9 @@ pub struct SpatialHashmap {
 }
 
 impl SpatialHashmap {
-   
+    pub fn max_radius(&self) -> f32 {
+        self.max_radius
+    }
     pub fn new(sprites:&Entities<SpriteId, Sprite>) -> Self {
         let cell_size = 8;
         let grid = FlatGrid::new(cell_size);
@@ -38,17 +40,6 @@ impl SpatialHashmap {
 
         let key = self.grid.insert([pos.x, pos.y], id);
         self.handles.insert(key);
-    }
-
-    pub fn query(&self, sprite:(SpriteId, &Sprite), results:&mut Vec<SpriteId>) {
-        results.clear();
-        for (handle, _) in self.grid.query_around([sprite.1.pos.x, sprite.1.pos.y], sprite.1.radius + self.max_radius) {
-            if let Some((_, sprite_id)) = self.grid.get(handle) {
-                if sprite.0 != *sprite_id {
-                    results.push(sprite_id.clone());
-                }
-            }
-        }
     }
 
     pub fn query_around(&self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
@@ -92,9 +83,9 @@ fn test() {
     let elapsed = Instant::now() - now;
     println!("updating all sprite positions took {}ms", elapsed.as_millis());
     
-    let mut res = Vec::with_capacity(16);
+    /*let mut res = Vec::with_capacity(16);
     let now = Instant::now();
     spatial.query_around(vec2(size as f32 / 2.0, size as f32 / 2.0 as f32), 1.0, &mut res);
     let elapsed = Instant::now() - now;
-    println!("query around took {}ms and found {} sprites", elapsed.as_millis(), res.len());
+    println!("query around took {}ms and found {} sprites", elapsed.as_millis(), res.len());*/
 }

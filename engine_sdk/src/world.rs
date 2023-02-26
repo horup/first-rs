@@ -12,10 +12,12 @@ pub struct Cell {
 }
 
 pub struct World<'a> {
+    spatial_hashmap:SpatialHashmap,
     sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
-    grid:&'a Grid<Cell>
+    grid:&'a Grid<Cell>,
+    potential_colliders:Vec<SpriteId>
 }
 
 #[derive(Default)]
@@ -28,10 +30,12 @@ pub struct Collision {
 impl<'a> World<'a> {
     pub fn new(sprites:&'a Entities<SpriteId, Sprite>, grid:&'a Grid<Cell>) -> Self {
         Self {
+            spatial_hashmap:SpatialHashmap::new(sprites),
             sprites,
             ceiling_texture: 0,
             floor_texture: 0,
             grid,
+            potential_colliders:Vec::with_capacity(64)
         }
     }
 
@@ -43,7 +47,7 @@ impl<'a> World<'a> {
         self.grid
     }
 
-    pub fn clip_move(&self, id:SpriteId, new_pos:Vec3) -> Collision {
+    pub fn clip_move(&mut self, id:SpriteId, new_pos:Vec3) -> Collision {
         let mut col = Collision::default();
         if let Some(e) = self.sprites.get_mut(id) {
             let v = new_pos - e.pos;
@@ -72,9 +76,14 @@ impl<'a> World<'a> {
                         let mut pos_new = pos_org + v.extend(0.0);
 
                         // collision handling between entities
-                        for (other_id, other_e) in self.sprites.iter() {
+                        self.spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + self.spatial_hashmap.max_radius(), &mut self.potential_colliders);
+                        for other_id in self.potential_colliders.iter() {
+                            if (*other_id == id) {
+                                continue;
+                            }
+                            let mut other_e = self.sprites.get(*other_id).unwrap();
                             let ignore = e.no_clip || other_e.no_clip;
-                            if other_id != id && !ignore {
+                            if *other_id != id && !ignore {
                                 let d = e.pos - other_e.pos;
                                 let r2 = e.radius + other_e.radius;
                                 if d.length() < r2 {
@@ -83,7 +92,7 @@ impl<'a> World<'a> {
                                     pos_new += v;
 
                                     // FIXME: last collision is saved, even though multiple might exist
-                                    col.other_entity = Some(other_id);
+                                    col.other_entity = Some(*other_id);
                                 }
                             }
                         }
