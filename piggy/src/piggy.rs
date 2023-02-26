@@ -5,7 +5,8 @@ use engine_sdk::{
     World, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
-use crate::{textures, State};
+use crate::{textures, State, systems, components::Item};
+
 
 #[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
@@ -14,60 +15,7 @@ pub struct Piggy {
 }
 
 impl Piggy {
-    pub fn world(&mut self) -> World {
-        let mut scene = World::new(&mut self.state.sprites, &mut self.state.grid);
-        scene.ceiling_texture = textures::CEILING_GREY;
-        scene.floor_texture = textures::FLOOR_GREY;
-        scene
-    }
-
-    pub fn update_player(&mut self, engine: &mut dyn Engine) {
-        let dt = engine.dt();
-        let speed = 3.0;
-        let left = self.state.camera.left();
-        let forward = self.state.camera.forward_body();
-        let mut new_pos = self.state.camera.pos;
-        let mut new_facing = self.state.camera.facing;
-        if let Some(player_id) = self.state.player_id {
-            if let Some(player_sprite) = self.state.sprites.get_mut(player_id) {
-                new_pos = player_sprite.pos;
-                new_facing = player_sprite.facing;
-            }
-        }
-
-        if engine.key_down(VirtualKeyCode::A) {
-            new_pos += speed * dt * left;
-        }
-        if engine.key_down(VirtualKeyCode::D) {
-            new_pos -= speed * dt * left;
-        }
-        if engine.key_down(VirtualKeyCode::W) {
-            new_pos += speed * dt * forward;
-        }
-        if engine.key_down(VirtualKeyCode::S) {
-            new_pos -= speed * dt * forward;
-        }
-
-        let turn_speed = PI / 4.0;
-        new_facing += turn_speed * dt * engine.mouse_motion().x;
-
-        if let Some(player_id) = self.state.player_id {
-            let mut world = self.world();
-            world.clip_move(player_id, new_pos);
-            match self.state.sprites.get_mut(player_id) {
-                Some(player_sprite) => {
-                    player_sprite.facing = new_facing;
-                    self.state.camera.pos = player_sprite.pos;
-                    self.state.camera.facing = player_sprite.facing;
-                },
-                None => {
-                    self.state.camera.pos = new_pos;
-                    self.state.camera.facing = new_facing;
-                },
-            }
-        }
-    }
-
+    
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
         // self.draw_map(engine);
 
@@ -75,7 +23,7 @@ impl Piggy {
         // draw scene
         engine.draw_scene(
             &cam,
-            &self.world(),
+            &self.state.as_world(),
         );
     }
 
@@ -187,7 +135,9 @@ impl Game for Piggy {
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
         engine.set_cursor_visible(false);
-        self.update_player(engine);
+        systems::player_system(&mut self.state, engine);
+        systems::proximity_system(&mut self.state, engine);
+        
         self.update_scene(engine);
         self.update_ui(engine);
 
@@ -220,6 +170,10 @@ impl Game for Piggy {
                             ..Default::default()
                         };
 
+                        
+                        
+                        let id = self.state.sprites.spawn(sprite);
+                        let sprite = self.state.sprites.get_mut(id).unwrap();
                         match thing {
                             textures::THING_MARKER_EXIT => {
                                 sprite.sprite_type = SpriteType::Floor;
@@ -229,18 +183,15 @@ impl Game for Piggy {
                                 sprite.sprite_type = SpriteType::Wall;
                             }
                             textures::THING_MARKER_SPAWN_PLAYER => {
+                                self.state.player_id = Some(id);
                                 sprite.texture = textures::THING_WILLIAM;
                                 camera.pos = sprite.pos;
                                 camera.facing = sprite.facing;
                                 sprite.radius = 0.25;
                             }
-                            _=>{}
-                        }
-                        
-                        let id = self.state.sprites.spawn(sprite);
-                        match thing {
-                            textures::THING_MARKER_SPAWN_PLAYER => {
-                                self.state.player_id = Some(id);
+                            textures::THING_ITEM_POKEMONCARD => {
+                                sprite.no_clip = true;
+                                self.state.items.attach(id, Item::PokemonCard);
                             }
                             _=>{}
                         }
