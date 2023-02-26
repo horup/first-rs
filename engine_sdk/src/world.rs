@@ -39,6 +39,10 @@ impl<'a> World<'a> {
         }
     }
 
+    pub fn query_around(&self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
+        self.spatial_hashmap.query_around(pos, radius, results);
+    }
+
     pub fn sprites(&self) -> &'a Entities<SpriteId, Sprite> {
         self.sprites
     }
@@ -78,9 +82,6 @@ impl<'a> World<'a> {
                         // collision handling between entities
                         self.spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + self.spatial_hashmap.max_radius(), &mut self.potential_colliders);
                         for other_id in self.potential_colliders.iter() {
-                            if *other_id == id {
-                                continue;
-                            }
                             let other_e = self.sprites.get(*other_id).unwrap();
                             let ignore = e.no_clip || other_e.no_clip;
                             if *other_id != id && !ignore {

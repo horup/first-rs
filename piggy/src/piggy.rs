@@ -5,20 +5,17 @@ use engine_sdk::{
     World, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
-use crate::textures;
+use crate::{textures, State};
 
 #[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
     pub current_map: Map,
-    pub camera: Camera,
-    pub sprites: Entities<SpriteId, Sprite>,
-    pub grid: Grid<Cell>,
-    pub player_id: Option<SpriteId>
+    pub state:State
 }
 
 impl Piggy {
     pub fn world(&mut self) -> World {
-        let mut scene = World::new(&mut self.sprites, &mut self.grid);
+        let mut scene = World::new(&mut self.state.sprites, &mut self.state.grid);
         scene.ceiling_texture = textures::CEILING_GREY;
         scene.floor_texture = textures::FLOOR_GREY;
         scene
@@ -27,12 +24,12 @@ impl Piggy {
     pub fn update_player(&mut self, engine: &mut dyn Engine) {
         let dt = engine.dt();
         let speed = 3.0;
-        let left = self.camera.left();
-        let forward = self.camera.forward_body();
-        let mut new_pos = self.camera.pos;
-        let mut new_facing = self.camera.facing;
-        if let Some(player_id) = self.player_id {
-            if let Some(player_sprite) = self.sprites.get_mut(player_id) {
+        let left = self.state.camera.left();
+        let forward = self.state.camera.forward_body();
+        let mut new_pos = self.state.camera.pos;
+        let mut new_facing = self.state.camera.facing;
+        if let Some(player_id) = self.state.player_id {
+            if let Some(player_sprite) = self.state.sprites.get_mut(player_id) {
                 new_pos = player_sprite.pos;
                 new_facing = player_sprite.facing;
             }
@@ -54,18 +51,18 @@ impl Piggy {
         let turn_speed = PI / 4.0;
         new_facing += turn_speed * dt * engine.mouse_motion().x;
 
-        if let Some(player_id) = self.player_id {
+        if let Some(player_id) = self.state.player_id {
             let mut world = self.world();
             world.clip_move(player_id, new_pos);
-            match self.sprites.get_mut(player_id) {
+            match self.state.sprites.get_mut(player_id) {
                 Some(player_sprite) => {
                     player_sprite.facing = new_facing;
-                    self.camera.pos = player_sprite.pos;
-                    self.camera.facing = player_sprite.facing;
+                    self.state.camera.pos = player_sprite.pos;
+                    self.state.camera.facing = player_sprite.facing;
                 },
                 None => {
-                    self.camera.pos = new_pos;
-                    self.camera.facing = new_facing;
+                    self.state.camera.pos = new_pos;
+                    self.state.camera.facing = new_facing;
                 },
             }
         }
@@ -74,7 +71,7 @@ impl Piggy {
     pub fn update_scene(&mut self, engine: &mut dyn Engine) {
         // self.draw_map(engine);
 
-        let cam = self.camera.clone();
+        let cam = self.state.camera;
         // draw scene
         engine.draw_scene(
             &cam,
@@ -84,9 +81,9 @@ impl Piggy {
 
     fn _draw_map(&mut self, engine: &mut dyn Engine) {
         let s = 16.0;
-        for y in 0..self.grid.size() as i32 {
-            for x in 0..self.grid.size() as i32 {
-                let cell = self.grid.get((x, y)).unwrap();
+        for y in 0..self.state.grid.size() as i32 {
+            for x in 0..self.state.grid.size() as i32 {
+                let cell = self.state.grid.get((x, y)).unwrap();
                 let p = vec2(x as f32, y as f32);
                 if cell.wall.is_some() {
                     engine.draw_rect(DrawRectParams {
@@ -100,7 +97,7 @@ impl Piggy {
             }
         }
 
-        let p = vec2(self.camera.pos.x, self.camera.pos.y) * s;
+        let p = vec2(self.state.camera.pos.x, self.state.camera.pos.y) * s;
         let s = vec2(s, s) / 2.0;
         engine.draw_rect(DrawRectParams {
             pos: p - s / 2.0,
@@ -110,7 +107,7 @@ impl Piggy {
             ..Default::default()
         });
 
-        let p2 = p + self.camera.forward_body().truncate() * s * 2.0;
+        let p2 = p + self.state.camera.forward_body().truncate() * s * 2.0;
         engine.draw_line(DrawLineParams {
             begin: p,
             end: p2,
@@ -194,7 +191,7 @@ impl Game for Piggy {
         self.update_scene(engine);
         self.update_ui(engine);
 
-        for (_, sprite) in self.sprites.iter_mut() {
+        for (_, sprite) in self.state.sprites.iter_mut() {
             if sprite.texture == 6 {
                 sprite.atlas_index += engine.dt() * 2.0;
             }
@@ -208,11 +205,11 @@ impl Game for Piggy {
                     pos: vec3(0.0, 0.0, 0.5),
                     facing: 0.0
                 };
-                self.sprites.clear();
+                self.state.sprites.clear();
                 self.current_map = map.clone();
-                self.grid = Grid::new(self.current_map.grid.size());
+                self.state.grid = Grid::new(self.current_map.grid.size());
                 self.current_map.grid.for_each(|cell, index| {
-                    self.grid.get_mut(index).unwrap().wall = cell.wall;
+                    self.state.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
                         let mut sprite = Sprite {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
@@ -240,17 +237,17 @@ impl Game for Piggy {
                             _=>{}
                         }
                         
-                        let id = self.sprites.spawn(sprite);
+                        let id = self.state.sprites.spawn(sprite);
                         match thing {
                             textures::THING_MARKER_SPAWN_PLAYER => {
-                                self.player_id = Some(id);
+                                self.state.player_id = Some(id);
                             }
                             _=>{}
                         }
                     }
                 });
 
-                self.camera = camera;
+                self.state.camera = camera;
             }
         }
     }
