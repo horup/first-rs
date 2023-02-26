@@ -219,6 +219,7 @@ impl Game for Piggy {
                             texture: thing,
                             opacity: None,
                             facing:cell.thing_facing,
+                            radius:0.5,
                             ..Default::default()
                         };
 
@@ -234,7 +235,7 @@ impl Game for Piggy {
                                 sprite.texture = textures::THING_WILLIAM;
                                 camera.pos = sprite.pos;
                                 camera.facing = sprite.facing;
-                                sprite.radius = 0.5;
+                                sprite.radius = 0.25;
                             }
                             _=>{}
                         }
