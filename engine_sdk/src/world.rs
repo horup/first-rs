@@ -78,10 +78,10 @@ impl<'a> World<'a> {
                         // collision handling between entities
                         self.spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + self.spatial_hashmap.max_radius(), &mut self.potential_colliders);
                         for other_id in self.potential_colliders.iter() {
-                            if (*other_id == id) {
+                            if *other_id == id {
                                 continue;
                             }
-                            let mut other_e = self.sprites.get(*other_id).unwrap();
+                            let other_e = self.sprites.get(*other_id).unwrap();
                             let ignore = e.no_clip || other_e.no_clip;
                             if *other_id != id && !ignore {
                                 let d = e.pos - other_e.pos;

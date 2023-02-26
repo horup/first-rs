@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use glam::{Vec2, vec2, vec3};
+use glam::{Vec2, vec3};
 use slotmap::SlotMap;
 use crate::{SpriteId, Entities, Sprite};
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
