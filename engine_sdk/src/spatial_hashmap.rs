@@ -1,10 +1,8 @@
-use std::time::Instant;
 
-use glam::{Vec2, vec3};
+use glam::{Vec2};
 use slotmap::SlotMap;
 use crate::{SpriteId, Entities, Sprite};
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
-
 
 pub struct SpatialHashmap {
     grid:FlatGrid<SpriteId, [f32;2]>,
@@ -46,46 +44,8 @@ impl SpatialHashmap {
         results.clear();
         for (handle, _) in self.grid.query_around([pos.x, pos.y], radius) {
             if let Some((_, sprite_id)) = self.grid.get(handle) {
-                results.push(sprite_id.clone());
+                results.push(*sprite_id);
             }
         }
     }
-}
-
-
-#[test]
-fn test() {
-    let mut sprites = Entities::default();
-    let size = 1024;
-    let now = Instant::now();
-    for y in 0..size {
-        for x in 0..size {
-            sprites.spawn(Sprite {
-                pos:vec3(x as f32, y as f32, 0.0),
-                ..Default::default()
-            });
-        }
-    }
-    let elapsed = Instant::now() - now;
-    println!("init sprites took {}ms with {} sprites", elapsed.as_millis(), sprites.len());
-    
-    let now = Instant::now();
-    let mut spatial = SpatialHashmap::new(&sprites);
-    let elapsed = Instant::now() - now;
-    println!("init spatial took {}ms", elapsed.as_millis());
-
-    let now = Instant::now();
-    for (id, sprite) in sprites.iter_mut() {
-        sprite.pos.x = size as f32 / 2.0;
-        sprite.pos.y = size as f32 / 2.0;
-        spatial.update_pos(id, sprite.pos.truncate());
-    }
-    let elapsed = Instant::now() - now;
-    println!("updating all sprite positions took {}ms", elapsed.as_millis());
-    
-    /*let mut res = Vec::with_capacity(16);
-    let now = Instant::now();
-    spatial.query_around(vec2(size as f32 / 2.0, size as f32 / 2.0 as f32), 1.0, &mut res);
-    let elapsed = Instant::now() - now;
-    println!("query around took {}ms and found {} sprites", elapsed.as_millis(), res.len());*/
 }
