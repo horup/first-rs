@@ -11,7 +11,7 @@ pub fn proximity_system(state:&mut State, _engine:&mut dyn Engine) {
             let mut near = Vec::new();
             world.query_around(player_pos.truncate(), pickup_radius, &mut near);
             for id in near.drain(..) {
-                if let Some(_) = state.items.get(id) {
+                if state.items.get(id).is_some() {
                     state.sprites.despawn(id);
                     state.flash.flash(0.2, 0.5);
                 }

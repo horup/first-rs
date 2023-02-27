@@ -24,7 +24,7 @@ impl Flash {
             return a;
         }
 
-        return 0.0;
+        0.0
     }
 }
 
