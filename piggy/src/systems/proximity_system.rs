@@ -13,6 +13,7 @@ pub fn proximity_system(state:&mut State, engine:&mut dyn Engine) {
             for id in near.drain(..) {
                 if let Some(_) = state.items.get(id) {
                     state.sprites.despawn(id);
+                    state.flash.flash(0.2, 0.5);
                 }
             }
         }

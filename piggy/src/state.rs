@@ -1,6 +1,7 @@
-use engine_sdk::{Camera, Entities, SpriteId, Sprite, Grid, Cell, Components, World};
+use engine_sdk::{Camera, Entities, SpriteId, Sprite, Grid, Cell, Components, World, Color};
 use serde::{Serialize, Deserialize};
-use crate::{components::*, textures};
+use crate::{components::*, textures, systems::Flash};
+
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct State {
@@ -8,7 +9,8 @@ pub struct State {
     pub sprites: Entities<SpriteId, Sprite>,
     pub grid: Grid<Cell>,
     pub player_id: Option<SpriteId>,
-    pub items: Components<SpriteId, Item>
+    pub items: Components<SpriteId, Item>, 
+    pub flash:Flash
 }
 
 impl State {

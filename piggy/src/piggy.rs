@@ -139,6 +139,8 @@ impl Game for Piggy {
         systems::proximity_system(&mut self.state, engine);
         
         self.update_scene(engine);
+
+        systems::flash_system(&mut self.state, engine);
         self.update_ui(engine);
 
         for (_, sprite) in self.state.sprites.iter_mut() {
