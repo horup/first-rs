@@ -1,8 +1,7 @@
-use std::f32::consts::PI;
+
 use engine_sdk::{
     image,
-    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Cell, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Entities, Grid, Map,
-    World, Sprite, SpriteId, VirtualKeyCode, Event, SpriteType, Game,
+    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Grid, Map, Sprite, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
 use crate::{textures, State, systems, components::Item};
@@ -163,7 +162,7 @@ impl Game for Piggy {
                 self.current_map.grid.for_each(|cell, index| {
                     self.state.grid.get_mut(index).unwrap().wall = cell.wall;
                     if let Some(thing) = cell.thing {
-                        let mut sprite = Sprite {
+                        let sprite = Sprite {
                             pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
                             texture: thing,
                             opacity: None,

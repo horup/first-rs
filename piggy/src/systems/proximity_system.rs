@@ -1,7 +1,7 @@
 use engine_sdk::Engine;
 use crate::{State};
 
-pub fn proximity_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn proximity_system(state:&mut State, _engine:&mut dyn Engine) {
     if let Some(player_id) = state.player_id {
         if let Some(player) = state.sprites.get(player_id) {
             let player_pos = player.pos;
