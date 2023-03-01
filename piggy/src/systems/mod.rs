@@ -4,5 +4,8 @@ pub use proximity_system::*;
 mod player_system;
 pub use player_system::*;
 
-mod flash_system;
-pub use flash_system::*;
+mod render_system;
+pub use render_system::*;
+
+mod door_system;
+pub use door_system::*;

@@ -10,6 +10,7 @@ pub struct State {
     pub grid: Grid<Cell>,
     pub player_id: Option<SpriteId>,
     pub items: Components<SpriteId, Item>, 
+    pub doors: Components<SpriteId, Door>,
     pub flash:Flash
 }
 

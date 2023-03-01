@@ -4,7 +4,7 @@ use engine_sdk::{
     glam::{vec2, Vec3, vec3}, EditorProps, Camera, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Grid, Map, Sprite, Event, SpriteType, Game,
 };
 use serde::{Deserialize, Serialize};
-use crate::{textures, State, systems, components::Item};
+use crate::{textures, State, systems, components::{Item, Door}};
 
 
 #[derive(Default, Serialize, Deserialize)]
@@ -136,10 +136,9 @@ impl Game for Piggy {
         engine.set_cursor_visible(false);
         systems::player_system(&mut self.state, engine);
         systems::proximity_system(&mut self.state, engine);
-        
+        systems::door_system(&mut self.state, engine);
         self.update_scene(engine);
-
-        systems::flash_system(&mut self.state, engine);
+        systems::render_system(&mut self.state, engine);
         self.update_ui(engine);
 
         for (_, sprite) in self.state.sprites.iter_mut() {
@@ -182,6 +181,7 @@ impl Game for Piggy {
                             }
                             textures::THING_DOOR_BLUE | textures::THING_DOOR_GOLD | textures::THING_DOOR_WHITE => {
                                 sprite.sprite_type = SpriteType::Wall;
+                                self.state.doors.attach(id, Door::default());
                             }
                             textures::THING_MARKER_SPAWN_PLAYER => {
                                 self.state.player_id = Some(id);

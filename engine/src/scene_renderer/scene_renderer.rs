@@ -505,7 +505,8 @@ impl SceneRenderer {
         // sort sprites into translucent and opaque
         // and find textures in use
         let mut textures = HashMap::new();
-        for (index, sprite) in scene.sprites().iter() {
+        let visible = |(_, sprite):&(SpriteId, &Sprite)| !sprite.hidden;
+        for (index, sprite) in scene.sprites().iter().filter(visible) {
             textures.insert(sprite.texture, ());
             if sprite.opacity.is_none() {
                 self.opaque_sprites.push(index);
