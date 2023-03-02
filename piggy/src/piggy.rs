@@ -169,8 +169,6 @@ impl Game for Piggy {
                             radius:0.5,
                             ..Default::default()
                         };
-
-                        
                         
                         let id = self.state.sprites.spawn(sprite);
                         let sprite = self.state.sprites.get_mut(id).unwrap();
@@ -181,7 +179,10 @@ impl Game for Piggy {
                             }
                             textures::THING_DOOR_BLUE | textures::THING_DOOR_GOLD | textures::THING_DOOR_WHITE => {
                                 sprite.sprite_type = SpriteType::Wall;
-                                self.state.doors.attach(id, Door::default());
+                                self.state.doors.attach(id, Door {
+                                    pos:sprite.pos,
+                                    ..Default::default()
+                                });
                             }
                             textures::THING_MARKER_SPAWN_PLAYER => {
                                 self.state.player_id = Some(id);

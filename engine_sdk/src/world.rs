@@ -90,7 +90,7 @@ impl<'a> World<'a> {
                                 if d.length() < r2 {
                                     let r = r2 - d.length();
                                     let v = d.normalize() * r;
-                                    pos_new += v;
+                                    pos_new += v.truncate().extend(0.0); // ignore z movement
 
                                     // FIXME: last collision is saved, even though multiple might exist
                                     col.other_entity = Some(*other_id);

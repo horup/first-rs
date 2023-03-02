@@ -1,3 +1,4 @@
+use engine_sdk::{glam::Vec3};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
@@ -5,6 +6,7 @@ pub struct Door {
     pub openess:f32,
     pub close_timer:f32,
     pub direction:f32,
+    pub pos:Vec3
 }
 
 

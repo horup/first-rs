@@ -1,4 +1,6 @@
-use engine_sdk::Engine;
+use std::f32::consts::PI;
+
+use engine_sdk::{Engine, glam::{Vec3, vec3}};
 use crate::State;
 
 pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
@@ -24,12 +26,11 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
                 if door.close_timer > door.time_to_start_closing() {
                     door.close();
                 }
-                sprite.hidden = true;
-            } else {
-                sprite.no_clip = false;
-                sprite.hidden = false;
-            }
-            
+            } 
+
+            let dir = sprite.facing - PI / 2.0;
+            let v = vec3(dir.cos(), dir.sin(), 0.0);
+            sprite.pos = door.pos + v * door.openess;            
         }
     }
 }
