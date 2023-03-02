@@ -11,6 +11,7 @@ pub struct State {
     pub player_id: Option<SpriteId>,
     pub items: Components<SpriteId, Item>, 
     pub doors: Components<SpriteId, Door>,
+    pub effectors: Components<SpriteId, Effector>,
     pub flash:Flash
 }
 

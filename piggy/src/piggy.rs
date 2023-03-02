@@ -148,59 +148,10 @@ impl Game for Piggy {
         }
     }
 
-    fn on_event(&mut self, _engine:&mut dyn engine_sdk::Engine, event:&Event) {
+    fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
             Event::Map { map } => {
-                let mut camera = Camera {
-                    pos: vec3(0.0, 0.0, 0.5),
-                    facing: 0.0
-                };
-                self.state.sprites.clear();
-                self.current_map = map.clone();
-                self.state.grid = Grid::new(self.current_map.grid.size());
-                self.current_map.grid.for_each(|cell, index| {
-                    self.state.grid.get_mut(index).unwrap().wall = cell.wall;
-                    if let Some(thing) = cell.thing {
-                        let sprite = Sprite {
-                            pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
-                            texture: thing,
-                            opacity: None,
-                            facing:cell.thing_facing,
-                            radius:0.5,
-                            ..Default::default()
-                        };
-                        
-                        let id = self.state.sprites.spawn(sprite);
-                        let sprite = self.state.sprites.get_mut(id).unwrap();
-                        match thing {
-                            textures::THING_MARKER_EXIT => {
-                                sprite.sprite_type = SpriteType::Floor;
-                                sprite.pos.z = 0.01;
-                            }
-                            textures::THING_DOOR_BLUE | textures::THING_DOOR_GOLD | textures::THING_DOOR_WHITE => {
-                                sprite.sprite_type = SpriteType::Wall;
-                                self.state.doors.attach(id, Door {
-                                    pos:sprite.pos,
-                                    ..Default::default()
-                                });
-                            }
-                            textures::THING_MARKER_SPAWN_PLAYER => {
-                                self.state.player_id = Some(id);
-                                sprite.texture = textures::THING_WILLIAM;
-                                camera.pos = sprite.pos;
-                                camera.facing = sprite.facing;
-                                sprite.radius = 0.25;
-                            }
-                            textures::THING_ITEM_POKEMONCARD => {
-                                sprite.no_clip = true;
-                                self.state.items.attach(id, Item::PokemonCard);
-                            }
-                            _=>{}
-                        }
-                    }
-                });
-
-                self.state.camera = camera;
+                systems::spawn_system(&mut self.state, engine, map);
             }
         }
     }
