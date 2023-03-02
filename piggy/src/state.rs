@@ -12,7 +12,8 @@ pub struct State {
     pub items: Components<SpriteId, Item>, 
     pub doors: Components<SpriteId, Door>,
     pub effectors: Components<SpriteId, Effector>,
-    pub flash:Flash
+    pub flash:Flash,
+    pub players: Components<SpriteId, Player>
 }
 
 impl State {

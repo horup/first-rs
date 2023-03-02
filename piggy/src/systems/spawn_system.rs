@@ -1,5 +1,5 @@
 use engine_sdk::{Event, Engine, Map, Camera, Grid, Sprite, SpriteType, glam::{Vec3, vec3, IVec2}, egui::Vec2};
-use crate::{State, textures, components::{Item, Door, Effector}};
+use crate::{State, textures, components::{Item, Door, Effector, Player}};
 
 pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     let sprite = Sprite {
@@ -31,6 +31,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
             state.player_id = Some(id);
             sprite.texture = textures::THING_WILLIAM;
             sprite.radius = 0.25;
+            state.players.attach(id, Player::default());
         }
         textures::THING_ITEM_POKEMONCARD => {
             sprite.no_clip = true;

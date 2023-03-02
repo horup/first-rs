@@ -1,7 +1,7 @@
 
 use engine_sdk::{
     image,
-    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Grid, Map, Sprite, Event, SpriteType, Game,
+    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Grid, Map, Sprite, Event, SpriteType, Game, DrawTextParams,
 };
 use serde::{Deserialize, Serialize};
 use crate::{textures, State, systems, components::{Item, Door}};
@@ -84,6 +84,20 @@ impl Piggy {
             line_width: w,
             color: Color::WHITE,
         });
+
+
+        if let Some(player) = self.state.player_id {
+            if let Some(player) = self.state.players.get(player) {
+                engine.draw_text(DrawTextParams {
+                    screen_pos:vec2(16.0, 16.0),
+                    text: format!("Pokemon Cards:{:?}", player.pokemoncards).into(),
+                    color:Color::WHITE,
+                    scale:16.0
+                });
+            }
+        }
+
+        
     }
 }
 
@@ -135,8 +149,9 @@ impl Game for Piggy {
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
         engine.set_cursor_visible(false);
         systems::player_system(&mut self.state, engine);
-        systems::proximity_system(&mut self.state, engine);
+        systems::item_system(&mut self.state, engine);
         systems::door_system(&mut self.state, engine);
+        systems::effector_system(&mut self.state, engine);
         self.update_scene(engine);
         systems::render_system(&mut self.state, engine);
         self.update_ui(engine);

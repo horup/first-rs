@@ -1,7 +1,7 @@
 use engine_sdk::Engine;
 use crate::{State};
 
-pub fn proximity_system(state:&mut State, _engine:&mut dyn Engine) {
+pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
     if let Some(player_id) = state.player_id {
         if let Some(player) = state.sprites.get(player_id) {
             let player_pos = player.pos;
@@ -13,25 +13,13 @@ pub fn proximity_system(state:&mut State, _engine:&mut dyn Engine) {
                 if state.items.get(id).is_some() {
                     state.sprites.despawn(id);
                     state.flash.flash(0.2, 0.5);
-                }
-            }
-
-            let world = state.as_world();
-            let radius = 1.0;
-            world.query_around(player_pos.truncate(), radius, &mut near);
-            for id in near.drain(..) {
-                if let Some(door) = state.doors.get_mut(id) {
-                    door.open();
-                }
-
-                if let Some(effector) = state.effectors.get(id) {
-                    match effector {
-                        crate::components::Effector::ExitMarker => {
-                            panic!("you won!");
-                        },
+                    if let Some(player) = state.players.get_mut(player_id) {
+                        player.pokemoncards += 1;
                     }
                 }
             }
+
+            
         }
     }
     

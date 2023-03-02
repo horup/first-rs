@@ -6,3 +6,6 @@ pub use door::*;
 
 mod effector;
 pub use effector::*;
+
+mod player;
+pub use player::*;
