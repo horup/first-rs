@@ -166,7 +166,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
             Event::Map { map } => {
-                systems::spawn_system(&mut self.state, engine, map);
+                systems::start_system(&mut self.state, engine, map);
             }
         }
     }

@@ -41,8 +41,8 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     }
 }
 
-pub fn spawn_system(state:&mut State, engine:&mut dyn Engine, map:&Map) {
-    state.sprites.clear();
+pub fn start_system(state:&mut State, engine:&mut dyn Engine, map:&Map) {
+    *state = State::default();
     state.grid = Grid::new(state.grid.size());
     map.grid.for_each(|cell, index| {
         state.grid.get_mut(index).unwrap().wall = cell.wall;
