@@ -1,13 +1,13 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, glam::{Vec3, vec3}};
+use engine_sdk::{Engine, glam::{vec3}};
 use crate::State;
 
 pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
     if let Some(player_id) = state.player_id {
         if let Some(player) = state.sprites.get(player_id) {
             let player_pos = player.pos;
-            let world = state.as_world();
+            let _world = state.as_world();
             let mut near = Vec::new();
             let world = state.as_world();
             let radius = 1.0;

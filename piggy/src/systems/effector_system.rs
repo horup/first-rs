@@ -1,7 +1,7 @@
 use crate::State;
 use engine_sdk::Engine;
 
-pub fn effector_system(state: &mut State, engine: &mut dyn Engine) {
+pub fn effector_system(state: &mut State, _engine: &mut dyn Engine) {
     if let Some(player_id) = state.player_id {
         if let Some(player) = state.sprites.get(player_id) {
             let mut near = Vec::new();

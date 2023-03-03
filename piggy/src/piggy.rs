@@ -1,10 +1,10 @@
 
 use engine_sdk::{
     image,
-    glam::{vec2, Vec3, vec3}, EditorProps, Camera, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Grid, Map, Sprite, Event, SpriteType, Game, DrawTextParams,
+    glam::{vec2}, EditorProps, Color, DrawLineParams, LoadAtlasParams, Atlas, DrawRectParams, Engine, Map, Event, Game, DrawTextParams,
 };
 use serde::{Deserialize, Serialize};
-use crate::{textures, State, systems, components::{Item, Door}};
+use crate::{textures, State, systems};
 
 
 #[derive(Default, Serialize, Deserialize)]
