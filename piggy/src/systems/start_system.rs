@@ -6,7 +6,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         texture: thing,
         opacity: None,
-        facing:facing,
+        facing,
         radius:0.5,
         ..Default::default()
     };
