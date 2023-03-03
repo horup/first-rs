@@ -94,6 +94,27 @@ impl Piggy {
                     color:Color::WHITE,
                     scale:16.0
                 });
+
+                let size = vec2(32.0, 32.0);
+
+                if player.has_key_blue {
+                    engine.draw_rect(DrawRectParams { 
+                        pos: vec2(16.0, 32.0), 
+                        size: size, 
+                        texture: Some(textures::THING_ITEM_KEY_BLUE), 
+                        ..Default::default()
+                    });
+                }
+
+                if player.has_key_gold {
+                    engine.draw_rect(DrawRectParams { 
+                        pos: vec2(16.0, 32.0 + size.y), 
+                        size: size, 
+                        texture: Some(textures::THING_ITEM_KEY_GOLD), 
+                        ..Default::default()
+                    });
+                }
+                
             }
         }
 
