@@ -8,7 +8,8 @@ new_key_type! {pub struct SpriteId;}
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Cell {
-    pub wall:Option<u32>
+    pub wall:Option<u32>,
+    pub clips:bool
 }
 
 pub struct World<'a> {
@@ -83,7 +84,7 @@ impl<'a> World<'a> {
                         self.spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + self.spatial_hashmap.max_radius(), &mut self.potential_colliders);
                         for other_id in self.potential_colliders.iter() {
                             let other_e = self.sprites.get(*other_id).unwrap();
-                            let ignore = e.no_clip || other_e.no_clip;
+                            let ignore = !e.clips || !other_e.clips;
                             if *other_id != id && !ignore {
                                 let d = e.pos - other_e.pos;
                                 let r2 = e.radius + other_e.radius;
@@ -108,7 +109,7 @@ impl<'a> World<'a> {
                             let cp = Vec2::new(i, i) * rev_dim + d + pos_org.truncate();
                             let np = cp.as_ivec2();
                             if let Some(cell) = self.grid.get((np.x, np.y)) {
-                                if cell.wall.is_some() {
+                                if cell.clips {
                                     let s1 =
                                         parry2d::shape::Cuboid::new([e.radius, e.radius].into());
                                     let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);

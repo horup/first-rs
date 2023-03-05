@@ -38,7 +38,7 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
 
             if door.is_open() {
                 door.close_timer += dt;
-                sprite.no_clip = true;
+                sprite.clips = true;
                 if door.close_timer > door.time_to_start_closing() {
                     door.close();
                 }
