@@ -32,8 +32,4 @@ impl Door {
     pub fn is_open(&self) -> bool {
         self.openess == 1.0
     }
-
-    pub fn is_closed(&self) -> bool {
-        self.openess == 0.0
-    }
 }

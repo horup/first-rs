@@ -4,10 +4,10 @@ use engine_sdk::{Engine, glam::{vec3}};
 use crate::State;
 
 pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
+    // check proximity to door
     if let Some(player_id) = state.player_id {
         if let Some(player) = state.sprites.get(player_id) {
             let player_pos = player.pos;
-            let _world = state.as_world();
             let mut near = Vec::new();
             let mut world = state.as_world();
             let radius = 1.0;
@@ -20,13 +20,12 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
         }
     }
 
+    // update doors 
     let dt = engine.dt();
     for (id, sprite) in state.sprites.iter_mut() {
         if let Some(door) = state.doors.get_mut(id) {
-            if door.direction != 0.0 {
-                door.openess += door.direction * dt;
-            }
-
+            let speed = 2.0;
+            door.openess += speed * door.direction * dt;
             if door.openess < 0.0 {
                 door.openess = 0.0;
                 door.direction = 0.0;
@@ -46,7 +45,15 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
 
             let dir = sprite.facing - PI / 2.0;
             let v = vec3(dir.cos(), dir.sin(), 0.0);
-            sprite.pos = door.pos + v * door.openess;            
+            sprite.pos = door.pos + v * door.openess;     
+
+            if let Some(tile) = state.grid.get_mut(door.pos.as_ivec3().truncate().into()) {
+                if door.openess > 0.5 {
+                    tile.clips = false;
+                } else {
+                    tile.clips = true;
+                }   
+            }
         }
     }
 }

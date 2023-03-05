@@ -26,3 +26,10 @@ pub struct Sprite {
     pub clips:bool,
     pub hidden:bool
 }
+
+impl Sprite {
+    pub fn tile_index(&self) -> (i32, i32) {
+        let index = self.pos.as_ivec3().truncate();
+        return index.into();
+    }
+}
