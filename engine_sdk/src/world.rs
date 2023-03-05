@@ -10,7 +10,7 @@ pub struct World<'a> {
     sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
-    grid:&'a Grid<Tile>,
+    tilemap:&'a Grid<Tile>,
     potential_colliders:Vec<SpriteId>
 }
 
@@ -28,7 +28,7 @@ impl<'a> World<'a> {
             sprites,
             ceiling_texture: 0,
             floor_texture: 0,
-            grid,
+            tilemap: grid,
             potential_colliders:Vec::with_capacity(64)
         }
     }
@@ -41,8 +41,8 @@ impl<'a> World<'a> {
         self.sprites
     }
 
-    pub fn grid(&self) -> &'a Grid<Tile> {
-        self.grid
+    pub fn tilemap(&self) -> &'a Grid<Tile> {
+        self.tilemap
     }
 
     pub fn clip_move(&mut self, id:SpriteId, new_pos:Vec3) -> Collision {
@@ -101,7 +101,7 @@ impl<'a> World<'a> {
                             let i = i as f32;
                             let cp = Vec2::new(i, i) * rev_dim + d + pos_org.truncate();
                             let np = cp.as_ivec2();
-                            if let Some(cell) = self.grid.get((np.x, np.y)) {
+                            if let Some(cell) = self.tilemap.get((np.x, np.y)) {
                                 if cell.clips {
                                     let s1 =
                                         parry2d::shape::Cuboid::new([e.radius, e.radius].into());

@@ -460,7 +460,7 @@ impl SceneRenderer {
 
         // find wall textures in use
         let mut textures = HashMap::new();
-        scene.grid().for_each(|cell, _| {
+        scene.tilemap().for_each(|cell, _| {
             if let Some(wall) = cell.wall {
                 textures.insert(wall, ());
             }
@@ -471,12 +471,12 @@ impl SceneRenderer {
         // once per texture, prepare walls that can be reached from a spot without a wall
         // i.e. dont prepare walls that are not reachable
         for texture in textures {
-            scene.grid().for_each(|cell, (x,y)| {
+            scene.tilemap().for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
                     let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
                     for n in directions.iter() {
                         let p = ivec2(x, y) - *n;
-                        if let Some(cell) = scene.grid().get((p.x, p.y)) {
+                        if let Some(cell) = scene.tilemap().get((p.x, p.y)) {
                             if let Some(wall_texture) = cell.wall {
                                 if wall_texture == texture {
                                     self.wall(wall_texture, p, -*n);
@@ -489,14 +489,14 @@ impl SceneRenderer {
         }
 
         // draw floor 
-        scene.grid().for_each(|cell, (x,y)| {
+        scene.tilemap().for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
                 self.floor(scene.floor_texture, IVec2::new(x, y));
             }
         });
 
         // draw ceiling
-        scene.grid().for_each(|cell, (x,y)| {
+        scene.tilemap().for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
                 self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
             }
