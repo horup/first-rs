@@ -1,4 +1,4 @@
-use engine_sdk::{Camera, Entities, SpriteId, Sprite, Grid, Cell, Components, World};
+use engine_sdk::{Camera, Entities, SpriteId, Sprite, Grid, Tile, Components, World};
 use serde::{Serialize, Deserialize};
 use crate::{components::*, textures, systems::Flash};
 
@@ -7,7 +7,7 @@ use crate::{components::*, textures, systems::Flash};
 pub struct State {
     pub camera: Camera,
     pub sprites: Entities<SpriteId, Sprite>,
-    pub grid: Grid<Cell>,
+    pub grid: Grid<Tile>,
     pub player_id: Option<SpriteId>,
     pub items: Components<SpriteId, Item>, 
     pub doors: Components<SpriteId, Door>,

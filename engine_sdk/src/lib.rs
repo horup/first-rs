@@ -46,6 +46,9 @@ pub use texture_atlas::*;
 mod spatial_hashmap;
 pub use spatial_hashmap::*;
 
+mod tile;
+pub use tile::*;
+
 pub use glam;
 pub use image;
 pub use egui;

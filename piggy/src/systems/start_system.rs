@@ -36,7 +36,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
             state.players.attach(id, Player::default());
         }
         textures::THING_ITEM_POKEMONCARD => {
-            sprite.clips = falsewwdw;
+            sprite.clips = false;
             state.items.attach(id, Item::PokemonCard);
         }
         textures::THING_ITEM_KEY_BLUE => {
