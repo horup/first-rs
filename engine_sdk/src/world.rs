@@ -125,6 +125,7 @@ impl<'a> World<'a> {
                         }
 
                         e.pos = pos_new;
+                        self.spatial_hashmap.update_pos(id, e.pos.truncate());
                     }
                 }
             }
