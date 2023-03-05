@@ -9,3 +9,6 @@ pub use effector::*;
 
 mod player;
 pub use player::*;
+
+mod activator;
+pub use activator::*;

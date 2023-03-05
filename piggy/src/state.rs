@@ -13,7 +13,8 @@ pub struct State {
     pub doors: Components<SpriteId, Door>,
     pub effectors: Components<SpriteId, Effector>,
     pub flash:Flash,
-    pub players: Components<SpriteId, Player>
+    pub players: Components<SpriteId, Player>,
+    pub activators: Components<SpriteId, Activator>
 }
 
 impl State {

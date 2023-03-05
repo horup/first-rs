@@ -15,3 +15,6 @@ pub use start_system::*;
 
 mod effector_system;
 pub use effector_system::*;
+
+mod activator_system;
+pub use activator_system::*;
