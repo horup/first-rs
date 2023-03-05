@@ -9,7 +9,7 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
             let player_pos = player.pos;
             let _world = state.as_world();
             let mut near = Vec::new();
-            let world = state.as_world();
+            let mut world = state.as_world();
             let radius = 1.0;
             world.query_around(player_pos.truncate(), radius, &mut near);
             for id in near.drain(..) {

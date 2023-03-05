@@ -10,7 +10,7 @@ pub trait Engine {
     fn load_atlas(&mut self, id:u32, image:&DynamicImage, params:LoadAtlasParams);
     fn atlas(&self, id:&u32) -> Option<TextureAtlas>;
     fn atlases(&self) -> Vec<TextureAtlas>;
-    fn draw_scene(&mut self, camera:&Camera, scene:&World);
+    fn draw_scene(&mut self, camera:&Camera, scene:&mut World);
     fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);

@@ -22,7 +22,7 @@ impl Piggy {
         // draw scene
         engine.draw_scene(
             &cam,
-            &self.state.as_world(),
+            &mut self.state.as_world(),
         );
     }
 

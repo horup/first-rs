@@ -6,7 +6,7 @@ use crate::{Grid, Sprite, Entities, SpatialHashmap, Tile};
 new_key_type! {pub struct SpriteId;}
 
 pub struct World<'a> {
-    spatial_hashmap:SpatialHashmap,
+    spatial_hashmap:SpatialHashmap<'a>,
     sprites:&'a Entities<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
@@ -33,11 +33,12 @@ impl<'a> World<'a> {
         }
     }
 
-    pub fn query_around(&self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
+    pub fn query_around(&mut self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
         self.spatial_hashmap.query_around(pos, radius, results);
     }
 
-    pub fn sprites(&self) -> &'a Entities<SpriteId, Sprite> {
+    pub fn sprites(&mut self) -> &'a Entities<SpriteId, Sprite> {
+        self.spatial_hashmap.invalidate();
         self.sprites
     }
 
@@ -125,12 +126,11 @@ impl<'a> World<'a> {
                         }
 
                         e.pos = pos_new;
-                        self.spatial_hashmap.update_pos(id, e.pos.truncate());
+                        self.spatial_hashmap.update_one(id, e.pos.truncate());
                     }
                 }
             }
         }
-        
         col
     }
 }

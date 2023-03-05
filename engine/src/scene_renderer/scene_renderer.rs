@@ -443,7 +443,7 @@ impl SceneRenderer {
             
     }
 
-    pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&World) {
+    pub fn prepare(&mut self, graphics:&mut Graphics, camera:&Camera, scene:&mut World) {
         self.geometry.clear();
         self.sprites.clear();
         self.opaque_sprites.clear();

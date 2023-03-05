@@ -6,7 +6,7 @@ pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
         if let Some(player) = state.sprites.get(player_id) {
             let player_pos = player.pos;
             let pickup_radius = 0.5;
-            let world = state.as_world();
+            let mut world = state.as_world();
             let mut near = Vec::new();
             world.query_around(player_pos.truncate(), pickup_radius, &mut near);
             for id in near.drain(..) {
