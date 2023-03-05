@@ -19,10 +19,7 @@ pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
                                 player.pokemoncards += 1;
                             },
                             crate::components::Item::Key { key_type } => {
-                                match key_type {
-                                    crate::components::KeyType::Gold => player.has_key_gold = true,
-                                    crate::components::KeyType::Blue => player.has_key_blue = true
-                                }
+                               // TODO
                             },
                         }
                     }

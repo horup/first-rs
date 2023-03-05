@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}};
-use crate::{State, textures, components::{Item, Door, Effector, Player, KeyType}};
+use crate::{State, textures, components::{Item, Door, Effector, Player, Activator}};
 
 pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     let sprite = Sprite {
@@ -28,6 +28,9 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
                 pos:sprite.pos,
                 ..Default::default()
             });
+            state.activators.attach(id, Activator::Door {
+                key: if sprite.texture == textures::THING_DOOR_BLUE { Some(textures::THING_ITEM_KEY_BLUE) } else if sprite.texture == textures::THING_DOOR_GOLD { Some(textures::THING_ITEM_KEY_GOLD) } else { None }
+            });
         }
         textures::THING_MARKER_SPAWN_PLAYER => {
             state.player_id = Some(id);
@@ -42,13 +45,13 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         textures::THING_ITEM_KEY_BLUE => {
             sprite.clips = false;
             state.items.attach(id, Item::Key {
-                key_type:KeyType::Blue
+                key_type:sprite.texture
             });
         }
         textures::THING_ITEM_KEY_GOLD => {
             sprite.clips = false;
             state.items.attach(id, Item::Key {
-                key_type:KeyType::Gold
+                key_type:sprite.texture
             });
         }
         _=>{}

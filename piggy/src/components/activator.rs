@@ -1,11 +1,9 @@
 use serde::{Serialize, Deserialize};
 
-use super::KeyType;
-
 #[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum Activator {
     Door {
-        key:Option<KeyType>
+        key:Option<u32>
     }
 }
 

@@ -171,6 +171,7 @@ impl Game for Piggy {
         engine.set_cursor_visible(false);
         systems::player_system(&mut self.state, engine);
         systems::item_system(&mut self.state, engine);
+        systems::activator_system(&mut self.state, engine);
         systems::door_system(&mut self.state, engine);
         systems::effector_system(&mut self.state, engine);
         self.update_scene(engine);

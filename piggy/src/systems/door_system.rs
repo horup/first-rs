@@ -4,22 +4,6 @@ use engine_sdk::{Engine, glam::{vec3}};
 use crate::State;
 
 pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
-    // check proximity to door
-    if let Some(player_id) = state.player_id {
-        if let Some(player) = state.sprites.get(player_id) {
-            let player_pos = player.pos;
-            let mut near = Vec::new();
-            let mut world = state.as_world();
-            let radius = 1.0;
-            world.query_around(player_pos.truncate(), radius, &mut near);
-            for id in near.drain(..) {
-                if let Some(door) = state.doors.get_mut(id) {
-                    door.open();
-                }
-            }
-        }
-    }
-
     // update doors 
     let dt = engine.dt();
     for (id, sprite) in state.sprites.iter_mut() {
