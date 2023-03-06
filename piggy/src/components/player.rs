@@ -6,7 +6,7 @@ pub struct Inventory {
 }
 
 impl Inventory {
-    pub fn get(&self, item_type: u32) -> f32 {
+    pub fn amount(&self, item_type: u32) -> f32 {
         return self.items.iter().find(|(item_type2, _)| {
             if *item_type2 == item_type {
                 return true;
@@ -14,6 +14,11 @@ impl Inventory {
                 return false;
             }
         }).map_or(0.0, |item| item.1);
+    }
+
+    pub fn add(&mut self, item_type: u32, amount:f32) {
+        let current = self.amount(item_type);
+        self.set(item_type, amount + current);
     }
 
     pub fn set(&mut self, item_type: u32, amount:f32) {
@@ -30,8 +35,5 @@ impl Inventory {
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
 pub struct Player {
-    pub pokemoncards: u32,
-    pub has_key_gold: bool,
-    pub has_key_blue: bool,
     pub inventory: Inventory,
 }

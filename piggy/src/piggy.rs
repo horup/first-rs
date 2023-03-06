@@ -90,14 +90,14 @@ impl Piggy {
             if let Some(player) = self.state.players.get(player) {
                 engine.draw_text(DrawTextParams {
                     screen_pos:vec2(16.0, 16.0),
-                    text: format!("Pokemon Cards:{:?}", player.pokemoncards),
+                    text: format!("Pokemon Cards: {:?}", player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),
                     color:Color::WHITE,
                     scale:16.0
                 });
 
                 let size = vec2(32.0, 32.0);
 
-                if player.has_key_blue {
+                if player.inventory.amount(textures::THING_ITEM_KEY_BLUE) > 0.0 {
                     engine.draw_rect(DrawRectParams { 
                         pos: vec2(16.0, 32.0), 
                         size, 
@@ -106,7 +106,7 @@ impl Piggy {
                     });
                 }
 
-                if player.has_key_gold {
+                if player.inventory.amount(textures::THING_ITEM_KEY_GOLD) > 0.0 {
                     engine.draw_rect(DrawRectParams { 
                         pos: vec2(16.0, 32.0 + size.y), 
                         size, 

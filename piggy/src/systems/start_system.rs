@@ -40,19 +40,15 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         }
         textures::THING_ITEM_POKEMONCARD => {
             sprite.clips = false;
-            state.items.attach(id, Item::PokemonCard);
+            state.items.attach(id, Item::new(1.0));
         }
         textures::THING_ITEM_KEY_BLUE => {
             sprite.clips = false;
-            state.items.attach(id, Item::Key {
-                key_type:sprite.texture
-            });
+            state.items.attach(id, Item::new(1.0));
         }
         textures::THING_ITEM_KEY_GOLD => {
             sprite.clips = false;
-            state.items.attach(id, Item::Key {
-                key_type:sprite.texture
-            });
+            state.items.attach(id, Item::new(1.0));
         }
         _=>{}
     }

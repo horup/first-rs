@@ -1,5 +1,5 @@
 use engine_sdk::Engine;
-use crate::{State};
+use crate::{State, textures};
 
 pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
     if let Some(player_id) = state.player_id {
@@ -10,18 +10,12 @@ pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
             let mut near = Vec::new();
             world.query_around(player_pos.truncate(), pickup_radius, &mut near);
             for id in near.drain(..) {
-                if let Some(item) = state.items.get(id) {
+                if let (Some(sprite), Some(item)) = (state.sprites.get(id), state.items.get(id)) {
+                    let texture = sprite.texture;
                     state.sprites.despawn(id);
                     state.flash.flash(0.2, 0.5);
                     if let Some(player) = state.players.get_mut(player_id) {
-                        match item {
-                            crate::components::Item::PokemonCard => {
-                                player.pokemoncards += 1;
-                            },
-                            crate::components::Item::Key { key_type } => {
-                               // TODO
-                            },
-                        }
+                        player.inventory.add(texture, 1.0);
                     }
                 }
             }
