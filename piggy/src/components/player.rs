@@ -6,6 +6,10 @@ pub struct Inventory {
 }
 
 impl Inventory {
+    pub fn has(&self, item_type: u32) -> bool {
+        let amount = self.amount(item_type);
+        amount > 0.0
+    }
     pub fn amount(&self, item_type: u32) -> f32 {
         return self.items.iter().find(|(item_type2, _)| {
             if *item_type2 == item_type {
