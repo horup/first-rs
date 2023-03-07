@@ -33,6 +33,13 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
     let turn_speed = PI / 4.0;
     new_facing += turn_speed * dt * engine.mouse_motion().x;
 
+    let turn_speed = turn_speed * 5.0;
+    if engine.key_down(VirtualKeyCode::Left) {
+        new_facing -= turn_speed * dt;
+    } else if engine.key_down(VirtualKeyCode::Right) {
+        new_facing += turn_speed * dt;
+    }
+
     if let Some(player_id) = state.player_id {
         let mut world = state.as_world();
         world.clip_move(player_id, new_pos);
