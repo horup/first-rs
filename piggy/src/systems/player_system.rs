@@ -11,12 +11,10 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
     let mut old_pos = state.camera.pos;
     let mut new_pos = state.camera.pos;
     let mut new_facing = state.camera.facing;
-    if let Some(player_id) = state.player_id {
-        if let Some(player_sprite) = state.sprites.get_mut(player_id) {
-            old_pos = player_sprite.pos;
-            new_pos = player_sprite.pos;
-            new_facing = player_sprite.facing;
-        }
+    if let Some(player) = state.player_thing() {
+        old_pos = player.sprite.pos;
+        new_pos = player.sprite.pos;
+        new_facing = player.sprite.facing;
     }
 
     if engine.key_down(VirtualKeyCode::A) {
@@ -42,27 +40,18 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
         new_facing += turn_speed * dt;
     }
 
-
-    if let Some(player_id) = state.player_id {
-        if let Some(player_sprite) = state.sprites.get_mut(player_id) {
-            player_sprite.vel = new_pos - old_pos;
-        }
+    if let Some(player) = state.player_thing() {
+        player.sprite.vel = new_pos - old_pos;
     }
 
-
-    if let Some(player_id) = state.player_id {
-        //let mut world = state.as_world();
-        //world.clip_move(player_id, new_pos);
-        match state.sprites.get_mut(player_id) {
-            Some(player_sprite) => {
-                player_sprite.facing = new_facing;
-                state.camera.pos = player_sprite.pos;
-                state.camera.facing = player_sprite.facing;
-            },
-            None => {
-                state.camera.pos = new_pos;
-                state.camera.facing = new_facing;
-            },
-        }
+    if let Some(player) = state.player_thing() {
+        player.sprite.facing = new_facing;
+        let pos = player.sprite.pos;
+        let facing = player.sprite.facing;
+        state.camera.pos = pos;
+        state.camera.facing = facing;
+    } else {
+        state.camera.pos = new_pos;
+        state.camera.facing = new_facing;
     }
 }
