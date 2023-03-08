@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}};
-use crate::{State, textures, components::{Item, Door, Effector, Player, Activator}};
+use crate::{State, textures, components::{Item, Door, Effector, Player, Activator, Mob}};
 
 pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     let sprite = Sprite {
@@ -49,6 +49,9 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         textures::THING_ITEM_KEY_GOLD => {
             sprite.clips = false;
             state.items.attach(id, Item::new(1.0));
+        }
+        textures::THING_MONSTER_PIGGY => {
+            state.mobs.attach(id, Mob::default());
         }
         _=>{}
     }

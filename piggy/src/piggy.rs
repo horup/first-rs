@@ -170,6 +170,7 @@ impl Game for Piggy {
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
         engine.set_cursor_visible(false);
         systems::player_system(&mut self.state, engine);
+        systems::mob_system(&mut self.state, engine);
         systems::item_system(&mut self.state, engine);
         systems::activator_system(&mut self.state, engine);
         systems::door_system(&mut self.state, engine);

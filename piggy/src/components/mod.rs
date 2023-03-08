@@ -12,3 +12,6 @@ pub use player::*;
 
 mod activator;
 pub use activator::*;
+
+mod mob;
+pub use mob::*;

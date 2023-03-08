@@ -18,3 +18,6 @@ pub use effector_system::*;
 
 mod activator_system;
 pub use activator_system::*;
+
+mod mob_system;
+pub use mob_system::*;

@@ -14,7 +14,8 @@ pub struct State {
     pub effectors: Components<SpriteId, Effector>,
     pub flash:Flash,
     pub players: Components<SpriteId, Player>,
-    pub activators: Components<SpriteId, Activator>
+    pub activators: Components<SpriteId, Activator>,
+    pub mobs: Components<SpriteId, Mob>
 }
 
 impl State {
