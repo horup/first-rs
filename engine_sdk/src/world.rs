@@ -152,13 +152,16 @@ impl<'a> World<'a> {
                             let other_e = self.sprites.get(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
                             if *other_id != id && !ignore {
-                                let d = e.pos - other_e.pos;
-                                let r2 = e.radius + other_e.radius;
-                                if d.length() < r2 {
-                                    let r = r2 - d.length();
-                                    let v = d.normalize() * r;
-                                    pos_new += v.truncate().extend(0.0); // ignore z movement
+                                let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);
+                                let s1 = parry2d::shape::Ball::new(e.radius);
+                                let aabb1 = s1.aabb(&s1_pos);
+                                let s2_pos = Isometry2::translation(other_e.pos.x, other_e.pos.y);
+                                let s2 = parry2d::shape::Ball::new(other_e.radius);
+                                let aabb2 = s2.aabb(&s2_pos);
 
+                                if aabb1.intersects(&aabb2) {
+                                    pos_new = pos_org;
+                                    
                                     // FIXME: last collision is saved, even though multiple might exist
                                     col.other_entity = Some(*other_id);
                                 }
