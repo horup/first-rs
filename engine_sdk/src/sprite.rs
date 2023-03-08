@@ -17,6 +17,7 @@ impl Default for SpriteType {
 #[derive(Copy, Clone, Serialize, Deserialize, Default)]
 pub struct Sprite {
     pub pos:Vec3,
+    pub vel:Vec3,
     pub texture:u32,
     pub opacity:Option<f32>,
     pub sprite_type:SpriteType,

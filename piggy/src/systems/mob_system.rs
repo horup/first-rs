@@ -10,7 +10,7 @@ pub fn mob_system(state:&mut State, engine:&mut dyn Engine) -> Option<()> {
         if let Some(mob) = state.mobs.get_mut(id) {
             let dir = (player_sprite.pos - mob_sprite.pos).normalize_or_zero();
             mob.dir = dir.truncate();
-            let new_pos = mob.dir.extend(0.0) * dt;
+            mob_sprite.vel = dir;
         }
     }
 

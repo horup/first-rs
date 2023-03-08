@@ -7,7 +7,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         texture: thing,
         opacity: None,
         facing,
-        radius:0.5,
+        radius:0.3,
         clips:true,
         ..Default::default()
     };
@@ -35,7 +35,6 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         textures::THING_MARKER_SPAWN_PLAYER => {
             state.player_id = Some(id);
             sprite.texture = textures::THING_WILLIAM;
-            sprite.radius = 0.25;
             state.players.attach(id, Player::default());
         }
         textures::THING_ITEM_POKEMONCARD => {

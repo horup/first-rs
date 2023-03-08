@@ -8,26 +8,28 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
     let speed = 3.0;
     let left = state.camera.left();
     let forward = state.camera.forward_body();
+    let mut old_pos = state.camera.pos;
     let mut new_pos = state.camera.pos;
     let mut new_facing = state.camera.facing;
     if let Some(player_id) = state.player_id {
         if let Some(player_sprite) = state.sprites.get_mut(player_id) {
+            old_pos = player_sprite.pos;
             new_pos = player_sprite.pos;
             new_facing = player_sprite.facing;
         }
     }
 
     if engine.key_down(VirtualKeyCode::A) {
-        new_pos += speed * dt * left;
+        new_pos += speed * left;
     }
     if engine.key_down(VirtualKeyCode::D) {
-        new_pos -= speed * dt * left;
+        new_pos -= speed * left;
     }
     if engine.key_down(VirtualKeyCode::W) {
-        new_pos += speed * dt * forward;
+        new_pos += speed * forward;
     }
     if engine.key_down(VirtualKeyCode::S) {
-        new_pos -= speed * dt * forward;
+        new_pos -= speed * forward;
     }
 
     let turn_speed = PI / 4.0;
@@ -40,9 +42,17 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
         new_facing += turn_speed * dt;
     }
 
+
     if let Some(player_id) = state.player_id {
-        let mut world = state.as_world();
-        world.clip_move(player_id, new_pos);
+        if let Some(player_sprite) = state.sprites.get_mut(player_id) {
+            player_sprite.vel = new_pos - old_pos;
+        }
+    }
+
+
+    if let Some(player_id) = state.player_id {
+        //let mut world = state.as_world();
+        //world.clip_move(player_id, new_pos);
         match state.sprites.get_mut(player_id) {
             Some(player_sprite) => {
                 player_sprite.facing = new_facing;

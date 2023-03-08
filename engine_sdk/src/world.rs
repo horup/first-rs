@@ -11,7 +11,8 @@ pub struct World<'a> {
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     tilemap:&'a Grid<Tile>,
-    potential_colliders:Vec<SpriteId>
+    potential_colliders:Vec<SpriteId>,
+    collisions:Vec<Collision>
 }
 
 #[derive(Default)]
@@ -40,7 +41,8 @@ impl<'a> World<'a> {
             ceiling_texture: 0,
             floor_texture: 0,
             tilemap: grid,
-            potential_colliders:Vec::with_capacity(64)
+            potential_colliders:Vec::with_capacity(64),
+            collisions:Vec::with_capacity(64)
         }
     }
 
@@ -105,6 +107,14 @@ impl<'a> World<'a> {
                 }
             }
         } else {
+        }
+    }
+
+    pub fn physics_step(&mut self, dt:f32) {
+        self.spatial_hashmap.invalidate();
+        for (id, sprite) in self.sprites.iter() {
+            let new_pos = sprite.pos + sprite.vel * dt;
+            self.clip_move(id, new_pos);
         }
     }
 

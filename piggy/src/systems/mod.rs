@@ -21,3 +21,6 @@ pub use activator_system::*;
 
 mod mob_system;
 pub use mob_system::*;
+
+mod physics_system;
+pub use physics_system::*;
