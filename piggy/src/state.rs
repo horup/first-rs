@@ -19,7 +19,7 @@ pub struct State {
 }
 
 impl State {
-    pub fn as_world(&mut self) -> World {
+    pub fn as_world(&self) -> World {
         let mut world = World::new(&self.sprites, &self.grid);
         world.ceiling_texture = textures::CEILING_GREY;
         world.floor_texture = textures::FLOOR_GREY;
@@ -44,6 +44,30 @@ impl State {
         let item = self.items.get_mut(id)?;
         Some(ItemThing { id, sprite, item })
     }
+
+    pub fn activator_thing(&self, id:SpriteId) -> Option<ActivatorThing> {
+        let sprite = self.sprites.get_mut(id)?;
+        let activator = self.activators.get_mut(id)?;
+        Some(ActivatorThing { id, sprite, activator })
+    }
+
+    pub fn door_thing(&self, id:SpriteId) -> Option<DoorThing> {
+        let sprite = self.sprites.get_mut(id)?;
+        let door = self.doors.get_mut(id)?;
+        Some(DoorThing { id, sprite, door })
+    }
+
+    pub fn activatee_thing(&self, id:SpriteId) -> Option<ActivateeThing> {
+        let player_thing = self.player_thing()?;
+        let sprite = self.sprites.get_mut(id)?;
+        let player = self.players.get_mut(id);
+        let mob = self.mobs.get_mut(id);
+        if player.is_some() || mob.is_some() {
+            return Some(ActivateeThing { id, sprite, player_thing});
+        }
+        
+        None
+    }
 }
 
 pub struct PlayerThing<'a> {
@@ -62,5 +86,23 @@ pub struct ItemThing<'a> {
     pub id:SpriteId,
     pub sprite:&'a mut Sprite,
     pub item:&'a mut Item
+}
+
+pub struct DoorThing<'a> {
+    pub id:SpriteId,
+    pub sprite:&'a mut Sprite,
+    pub door:&'a mut Door
+}
+
+pub struct ActivatorThing<'a> {
+    pub id:SpriteId,
+    pub sprite:&'a mut Sprite,
+    pub activator:&'a mut Activator
+}
+
+pub struct ActivateeThing<'a> {
+    pub id:SpriteId,
+    pub sprite:&'a mut Sprite,
+    pub player_thing:PlayerThing<'a>
 }
 
