@@ -70,18 +70,6 @@ impl<T : Copy + Clone> CopyComponents<T> {
         self.inner.remove(id);
     }
 
-    pub fn iter_mut(&self) -> IterMut<T, EntityId> {
-        IterMut {
-            iter:self.inner.iter()
-        }
-    }
-
-    pub fn iter(&self) -> Iter<T, EntityId> {
-        Iter {
-            iter:self.inner.iter()
-        }
-    }
-
     pub fn clear(&mut self) {
         self.inner.clear();
     }

@@ -12,7 +12,8 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
         ..Default::default()
     };
     
-    let id = state.sprites.spawn(sprite);
+    let id = state.entities.spawn();
+    state.sprites.attach(id, sprite);
     let sprite = state.sprites.get_mut(id).unwrap();
     match thing {
         textures::THING_MARKER_EXIT => {

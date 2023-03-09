@@ -1,23 +1,24 @@
 use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
 use slotmap::new_key_type;
-use crate::{Grid, Sprite, CopySlotMap, SpatialHashmap, Tile};
+use crate::{Grid, Sprite, CopySlotMap, SpatialHashmap, Tile, Entities, CopyComponents, EntityId};
 
 new_key_type! {pub struct SpriteId;}
 
 pub struct World<'a> {
+    entities:&'a Entities,
     spatial_hashmap:SpatialHashmap<'a>,
-    sprites:&'a CopySlotMap<SpriteId, Sprite>,
+    sprites:&'a CopyComponents<Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     tilemap:&'a Grid<Tile>,
-    potential_colliders:Vec<SpriteId>,
+    potential_colliders:Vec<EntityId>,
     collisions:Vec<Collision>
 }
 
 #[derive(Default)]
 pub struct Collision {
-    pub other_entity:Option<SpriteId>,
+    pub other_entity:Option<EntityId>,
     pub tile:Option<IVec2>
 }
 
@@ -34,9 +35,10 @@ pub struct Visit<'a> {
 }
 
 impl<'a> World<'a> {
-    pub fn new(sprites:&'a CopySlotMap<SpriteId, Sprite>, grid:&'a Grid<Tile>) -> Self {
+    pub fn new(entities:&'a Entities, sprites:&'a CopyComponents<Sprite>, grid:&'a Grid<Tile>) -> Self {
         Self {
-            spatial_hashmap:SpatialHashmap::new(sprites),
+            entities,
+            spatial_hashmap:SpatialHashmap::new(entities, sprites),
             sprites,
             ceiling_texture: 0,
             floor_texture: 0,
@@ -46,11 +48,15 @@ impl<'a> World<'a> {
         }
     }
 
-    pub fn query_around(&mut self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
+    pub fn query_around(&mut self, pos:Vec2, radius:f32, results:&mut Vec<EntityId>) {
         self.spatial_hashmap.query_around(pos, radius, results);
     }
 
-    pub fn sprites(&mut self) -> &'a CopySlotMap<SpriteId, Sprite> {
+    pub fn entities(&self) -> &'a Entities {
+        self.entities
+    }
+
+    pub fn sprites(&mut self) -> &'a CopyComponents<Sprite> {
         self.spatial_hashmap.invalidate();
         self.sprites
     }
@@ -112,13 +118,15 @@ impl<'a> World<'a> {
 
     pub fn physics_step(&mut self, dt:f32) {
         self.spatial_hashmap.invalidate();
-        for (id, sprite) in self.sprites.iter() {
-            let new_pos = sprite.pos + sprite.vel * dt;
-            self.clip_move(id, new_pos);
+        for id in self.entities.iter() {
+            if let Some(sprite) = self.sprites.get(id) {
+                let new_pos = sprite.pos + sprite.vel * dt;
+                self.clip_move(id, new_pos);
+            }
         }
     }
 
-    pub fn clip_move(&mut self, id:SpriteId, new_pos:Vec3) -> Collision {
+    pub fn clip_move(&mut self, id:EntityId, new_pos:Vec3) -> Collision {
         let mut col = Collision::default();
         if let Some(e) = self.sprites.get_mut(id) {
             let v = new_pos - e.pos;

@@ -1,13 +1,14 @@
 
 use glam::{Vec2};
 use slotmap::SlotMap;
-use crate::{SpriteId, CopySlotMap, Sprite};
+use crate::{SpriteId, Sprite, CopyComponents, EntityId, Entities};
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
 
 pub struct SpatialHashmap<'a> {
-    sprites:&'a CopySlotMap<SpriteId, Sprite>,
-    grid:FlatGrid<SpriteId, [f32;2]>,
-    handles:SlotMap<SpriteId, GridHandle>,
+    entities:&'a Entities,
+    sprites:&'a CopyComponents<Sprite>,
+    grid:FlatGrid<EntityId, [f32;2]>,
+    handles:SlotMap<EntityId, GridHandle>,
     max_radius:f32,
     requires_update:bool
 }
@@ -16,10 +17,11 @@ impl<'a> SpatialHashmap<'a> {
     pub fn max_radius(&self) -> f32 {
         self.max_radius
     }
-    pub fn new(sprites:&'a CopySlotMap<SpriteId, Sprite>) -> Self {
+    pub fn new(entities:&'a Entities, sprites:&'a CopyComponents<Sprite>) -> Self {
         let cell_size = 8;
         let grid = FlatGrid::new(cell_size);
         let spatial = Self {
+            entities,
             sprites,
             grid,
             handles:SlotMap::default(),
@@ -31,9 +33,11 @@ impl<'a> SpatialHashmap<'a> {
     }
 
     pub fn update_all(&mut self) {
-        for (sprite_id, sprite) in self.sprites.iter() {
-            self.update_one(sprite_id, sprite.pos.truncate());
-            self.max_radius = if self.max_radius < sprite.radius { sprite.radius } else { self.max_radius };
+        for entity_id in self.entities.iter() {
+            if let Some(sprite) = self.sprites.get(entity_id) {
+                self.update_one(entity_id, sprite.pos.truncate());
+                self.max_radius = if self.max_radius < sprite.radius { sprite.radius } else { self.max_radius };
+            }
         }
 
         self.requires_update = false;
@@ -43,7 +47,7 @@ impl<'a> SpatialHashmap<'a> {
         self.requires_update = true;
     }
 
-    pub fn update_one(&mut self, id:SpriteId, pos:Vec2) {
+    pub fn update_one(&mut self, id:EntityId, pos:Vec2) {
         if let Some(handle) = self.handles.get(id) {
             self.grid.remove_maintain(*handle);
         }
@@ -52,7 +56,7 @@ impl<'a> SpatialHashmap<'a> {
         self.handles.insert(key);
     }
 
-    pub fn query_around(&mut self, pos:Vec2, radius:f32, results:&mut Vec<SpriteId>) {
+    pub fn query_around(&mut self, pos:Vec2, radius:f32, results:&mut Vec<EntityId>) {
         if self.requires_update {
             self.update_all();
         }

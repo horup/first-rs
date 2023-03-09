@@ -11,7 +11,7 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
     let mut old_pos = state.camera.pos;
     let mut new_pos = state.camera.pos;
     let mut new_facing = state.camera.facing;
-    if let Some(player) = state.player_thing() {
+    if let Some(player) = state.player_entity() {
         old_pos = player.sprite.pos;
         new_pos = player.sprite.pos;
         new_facing = player.sprite.facing;
@@ -40,11 +40,11 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
         new_facing += turn_speed * dt;
     }
 
-    if let Some(player) = state.player_thing() {
+    if let Some(player) = state.player_entity() {
         player.sprite.vel = new_pos - old_pos;
     }
 
-    if let Some(player) = state.player_thing() {
+    if let Some(player) = state.player_entity() {
         player.sprite.facing = new_facing;
         let pos = player.sprite.pos;
         let facing = player.sprite.facing;

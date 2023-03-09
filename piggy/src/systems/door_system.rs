@@ -6,8 +6,8 @@ use crate::State;
 pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
     // update doors 
     let dt = engine.dt();
-    for (id, sprite) in state.sprites.iter_mut() {
-        if let Some(door) = state.doors.get_mut(id) {
+    for id in state.entities.iter() {
+        if let (Some(door), Some(sprite)) = (state.doors.get_mut(id), state.sprites.get_mut(id)) {
             let speed = 2.0;
             door.openess += speed * door.direction * dt;
             if door.openess < 0.0 {

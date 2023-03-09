@@ -3,19 +3,19 @@ use slotmap::{SecondaryMap, Key};
 use crate::{CSDUnsafeCell, EntityId};
 
 #[derive(Default, Serialize, Clone)]
-pub struct CopyComponents<T : Copy + Clone> {
+pub struct Components<T : Copy + Clone> {
     inner:SecondaryMap<EntityId, CSDUnsafeCell<T>>
 }
 
 type E<K, T> = SecondaryMap<K, CSDUnsafeCell<T>>;
 
-impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for CopyComponents<T> {
+impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for Components<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
         match E::deserialize(deserializer) {
             Ok(inner) => {
-                Ok(CopyComponents {
+                Ok(Components {
                     inner
                 })
             },
@@ -61,25 +61,13 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
 }
 
 
-impl<T : Copy + Clone> CopyComponents<T> {
+impl<T : Copy + Clone> Components<T> {
     pub fn attach(&mut self, id:EntityId, cmp:T) {
         self.inner.insert(id, CSDUnsafeCell::new(cmp));
     }
 
     pub fn detach(&mut self, id:EntityId) {
         self.inner.remove(id);
-    }
-
-    pub fn iter_mut(&self) -> IterMut<T, EntityId> {
-        IterMut {
-            iter:self.inner.iter()
-        }
-    }
-
-    pub fn iter(&self) -> Iter<T, EntityId> {
-        Iter {
-            iter:self.inner.iter()
-        }
     }
 
     pub fn clear(&mut self) {

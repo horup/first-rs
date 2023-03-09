@@ -2,15 +2,15 @@ use engine_sdk::Engine;
 use crate::State;
 
 pub fn activator_system(state:&mut State, engine:&mut dyn Engine) {
-    for (id, _) in state.sprites.iter() {
-        if let Some(activatee_thing) = state.activatee_thing(id) {
+    for id in state.entities.iter() {
+        if let Some(activatee_thing) = state.activatee_entity(id) {
             let player_pos = activatee_thing.sprite.pos;
             let mut near = Vec::new();
             let mut world = state.as_world();
             let radius = 1.0;
             world.query_around(player_pos.truncate(), radius, &mut near);
             for id in near.drain(..) {
-                if let Some(activator_thing) = state.activator_thing(id) {
+                if let Some(activator_thing) = state.activator_entity(id) {
                     match activator_thing.activator {
                         crate::components::Activator::Door { key } => {
                             let can_open = match key {

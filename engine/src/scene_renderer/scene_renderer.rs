@@ -1,7 +1,7 @@
 use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, World, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas};
+use engine_sdk::{Camera, World, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, SpriteId, Atlas, EntityId};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -11,8 +11,8 @@ pub struct SceneRenderer {
     camera_bind_group:BindGroup,
     geometry_render_pipeline:RenderPipeline,
     sprite_render_pipeline:RenderPipeline,
-    opaque_sprites:Vec<SpriteId>,
-    translucent_sprites:Vec<SpriteId>,
+    opaque_sprites:Vec<EntityId>,
+    translucent_sprites:Vec<EntityId>,
     geometry:Model,
     sprites:Model,
     draw_calls:Vec<DrawCall>,
@@ -505,14 +505,20 @@ impl SceneRenderer {
         // sort sprites into translucent and opaque
         // and find textures in use
         let mut textures = HashMap::new();
-        let visible = |(_, sprite):&(SpriteId, &Sprite)| !sprite.hidden;
-        for (index, sprite) in scene.sprites().iter().filter(visible) {
-            textures.insert(sprite.texture, ());
-            if sprite.opacity.is_none() {
-                self.opaque_sprites.push(index);
-            } else {
-                self.translucent_sprites.push(index)
+        //let visible = |(_, sprite):&(EntityId, &Sprite)| !sprite.hidden;
+        for entity_id in scene.entities().iter() {
+            if let Some(sprite) = scene.sprites().get(entity_id) {
+                if sprite.hidden == false {
+                    textures.insert(sprite.texture, ());
+                    if sprite.opacity.is_none() {
+                        self.opaque_sprites.push(entity_id);
+                    } else {
+                        self.translucent_sprites.push(entity_id)
+                    }
+                }
+                
             }
+            
         }
         let mut textures:Vec<u32> = textures.keys().copied().collect();
         textures.sort();

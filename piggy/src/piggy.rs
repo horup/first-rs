@@ -180,9 +180,11 @@ impl Game for Piggy {
         systems::render_system(&mut self.state, engine);
         self.update_ui(engine);
 
-        for (_, sprite) in self.state.sprites.iter_mut() {
-            if sprite.texture == 6 {
-                sprite.atlas_index += engine.dt() * 2.0;
+        for id in self.state.entities.iter() {
+            if let Some(sprite) = self.state.sprites.get_mut(id) {
+                if sprite.texture == 6 {
+                    sprite.atlas_index += engine.dt() * 2.0;
+                }
             }
         }
     }
