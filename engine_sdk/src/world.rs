@@ -1,7 +1,7 @@
 use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
 use slotmap::new_key_type;
-use crate::{Grid, Sprite, CopySlotMap, SpatialHashmap, Tile, Entities, ComponentsCopy, EntityId};
+use crate::{Grid, Sprite, SpatialHashmap, Tile, Entities, ComponentsCopy, EntityId};
 
 new_key_type! {pub struct SpriteId;}
 

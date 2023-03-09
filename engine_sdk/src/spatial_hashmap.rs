@@ -1,7 +1,7 @@
 
 use glam::{Vec2};
 use slotmap::SlotMap;
-use crate::{SpriteId, Sprite, ComponentsCopy, EntityId, Entities};
+use crate::{Sprite, ComponentsCopy, EntityId, Entities};
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
 
 pub struct SpatialHashmap<'a> {

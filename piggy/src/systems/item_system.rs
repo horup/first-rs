@@ -1,5 +1,5 @@
 use engine_sdk::Engine;
-use crate::{State, textures};
+use crate::{State};
 
 pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
     if let Some(player_thing) = state.player_entity() {

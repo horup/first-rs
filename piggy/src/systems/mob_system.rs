@@ -1,7 +1,7 @@
 use engine_sdk::Engine;
 use crate::State;
 
-pub fn mob_system(state:&mut State, engine:&mut dyn Engine) -> Option<()> {
+pub fn mob_system(state:&mut State, _engine:&mut dyn Engine) -> Option<()> {
     let player = state.player_entity()?;
 
     for id in state.entities.iter() {
