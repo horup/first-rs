@@ -1,48 +1,35 @@
 use serde::{Serialize, Deserialize};
 use slotmap::{new_key_type, SlotMap, basic::Keys};
 
-new_key_type! {pub struct Thing;}
+new_key_type! {pub struct Id;}
 
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct Things {
-    inner:SlotMap<Thing, ()>
+    things:SlotMap<Id, ()>,
 }
 
 impl Things {
-    pub fn spawn(&mut self) -> Thing {
-        self.inner.insert(())
+    pub fn spawn(&mut self) -> Id {
+        self.things.insert(())
     }
 
-    pub fn despawn(&mut self, thing:Thing) {
-        self.inner.remove(thing);
+    pub fn despawn(&mut self, thing:Id) {
+        self.things.remove(thing);
     }
 
-    pub fn iter<'a>(&self) -> Keys<Thing, ()> {
-        self.inner.keys()
+    pub fn iter<'a>(&self) -> Keys<Id, ()> {
+        self.things.keys()
     }
 }
 
 pub struct Iter<'a> {
-    iter:slotmap::basic::Keys<'a, Thing, ()>
+    iter:slotmap::basic::Keys<'a, Id, ()>
 }
 
 impl<'a> Iterator for Iter<'a> {
-    type Item = Thing;
+    type Item = Id;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.iter.next()
-    }
-}
-
-#[test]
-fn test() {
-    let mut things = Things::default();
-    let thing1 = things.spawn();
-    let thing2 = things.spawn();
-
-    things.despawn(thing1);
-    things.spawn();
-    for thing in things.iter() {
-        dbg!(thing);
     }
 }
