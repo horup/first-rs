@@ -1,11 +1,11 @@
 
 use glam::{Vec2};
 use slotmap::SlotMap;
-use crate::{SpriteId, Entities, Sprite};
+use crate::{SpriteId, CopySlotMap, Sprite};
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
 
 pub struct SpatialHashmap<'a> {
-    sprites:&'a Entities<SpriteId, Sprite>,
+    sprites:&'a CopySlotMap<SpriteId, Sprite>,
     grid:FlatGrid<SpriteId, [f32;2]>,
     handles:SlotMap<SpriteId, GridHandle>,
     max_radius:f32,
@@ -16,7 +16,7 @@ impl<'a> SpatialHashmap<'a> {
     pub fn max_radius(&self) -> f32 {
         self.max_radius
     }
-    pub fn new(sprites:&'a Entities<SpriteId, Sprite>) -> Self {
+    pub fn new(sprites:&'a CopySlotMap<SpriteId, Sprite>) -> Self {
         let cell_size = 8;
         let grid = FlatGrid::new(cell_size);
         let spatial = Self {

@@ -1,13 +1,13 @@
 use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
 use slotmap::new_key_type;
-use crate::{Grid, Sprite, Entities, SpatialHashmap, Tile};
+use crate::{Grid, Sprite, CopySlotMap, SpatialHashmap, Tile};
 
 new_key_type! {pub struct SpriteId;}
 
 pub struct World<'a> {
     spatial_hashmap:SpatialHashmap<'a>,
-    sprites:&'a Entities<SpriteId, Sprite>,
+    sprites:&'a CopySlotMap<SpriteId, Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     tilemap:&'a Grid<Tile>,
@@ -34,7 +34,7 @@ pub struct Visit<'a> {
 }
 
 impl<'a> World<'a> {
-    pub fn new(sprites:&'a Entities<SpriteId, Sprite>, grid:&'a Grid<Tile>) -> Self {
+    pub fn new(sprites:&'a CopySlotMap<SpriteId, Sprite>, grid:&'a Grid<Tile>) -> Self {
         Self {
             spatial_hashmap:SpatialHashmap::new(sprites),
             sprites,
@@ -50,7 +50,7 @@ impl<'a> World<'a> {
         self.spatial_hashmap.query_around(pos, radius, results);
     }
 
-    pub fn sprites(&mut self) -> &'a Entities<SpriteId, Sprite> {
+    pub fn sprites(&mut self) -> &'a CopySlotMap<SpriteId, Sprite> {
         self.spatial_hashmap.invalidate();
         self.sprites
     }

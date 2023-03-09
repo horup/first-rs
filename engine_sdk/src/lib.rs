@@ -31,11 +31,11 @@ pub use event::*;
 mod csdunsafecell;
 pub use csdunsafecell::*;
 
-mod entities;
-pub use entities::*;
+mod copy_slot_map;
+pub use copy_slot_map::*;
 
-mod components;
-pub use components::*;
+mod copy_secondary_map;
+pub use copy_secondary_map::*;
 
 mod atlas;
 pub use atlas::*;
@@ -49,8 +49,14 @@ pub use spatial_hashmap::*;
 mod tile;
 pub use tile::*;
 
-mod things;
-pub use things::*;
+mod entities;
+pub use entities::*;
+
+mod copy_components;
+pub use copy_components::*;
+
+mod components;
+pub use components::*;
 
 pub use glam;
 pub use image;

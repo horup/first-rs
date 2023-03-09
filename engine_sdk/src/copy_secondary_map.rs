@@ -1,21 +1,21 @@
 use serde::{Serialize, Deserialize, de::DeserializeOwned};
 use slotmap::{SecondaryMap, Key};
-use crate::{CSDUnsafeCell, EntityId};
+use crate::{CSDUnsafeCell};
 
 #[derive(Default, Serialize, Clone)]
-pub struct CopyComponents<T : Copy + Clone> {
-    inner:SecondaryMap<EntityId, CSDUnsafeCell<T>>
+pub struct CopySecondaryMap<K:Key, T : Copy + Clone> {
+    inner:SecondaryMap<K, CSDUnsafeCell<T>>
 }
 
 type E<K, T> = SecondaryMap<K, CSDUnsafeCell<T>>;
 
-impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for CopyComponents<T> {
+impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>, K:Key> Deserialize<'de> for CopySecondaryMap<K, T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
         match E::deserialize(deserializer) {
             Ok(inner) => {
-                Ok(CopyComponents {
+                Ok(CopySecondaryMap {
                     inner
                 })
             },
@@ -61,22 +61,22 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
 }
 
 
-impl<T : Copy + Clone> CopyComponents<T> {
-    pub fn attach(&mut self, id:EntityId, cmp:T) {
+impl<T : Copy + Clone, K:Key> CopySecondaryMap<K, T> {
+    pub fn attach(&mut self, id:K, cmp:T) {
         self.inner.insert(id, CSDUnsafeCell::new(cmp));
     }
 
-    pub fn detach(&mut self, id:EntityId) {
+    pub fn detach(&mut self, id:K) {
         self.inner.remove(id);
     }
 
-    pub fn iter_mut(&self) -> IterMut<T, EntityId> {
+    pub fn iter_mut(&self) -> IterMut<T, K> {
         IterMut {
             iter:self.inner.iter()
         }
     }
 
-    pub fn iter(&self) -> Iter<T, EntityId> {
+    pub fn iter(&self) -> Iter<T, K> {
         Iter {
             iter:self.inner.iter()
         }
@@ -86,7 +86,7 @@ impl<T : Copy + Clone> CopyComponents<T> {
         self.inner.clear();
     }
 
-    pub fn get(&self, id:EntityId) -> Option<&T> {
+    pub fn get(&self, id:K) -> Option<&T> {
         if let Some(e) = self.inner.get(id) {
             return Some(unsafe {& *e.get()});
         }
@@ -94,7 +94,7 @@ impl<T : Copy + Clone> CopyComponents<T> {
         None
     }
 
-    pub fn get_mut(&self, id:EntityId) -> Option<&mut T> {
+    pub fn get_mut(&self, id:K) -> Option<&mut T> {
         if let Some(e) = self.inner.get(id) {
             return Some(unsafe {&mut *e.get()});
         }

@@ -1,21 +1,21 @@
 use serde::{Serialize, Deserialize, de::DeserializeOwned};
-use slotmap::{SecondaryMap, Key};
-use crate::{CSDUnsafeCell, EntityId};
+use slotmap::{SlotMap, Key};
+use crate::{CSDUnsafeCell};
 
 #[derive(Default, Serialize, Clone)]
-pub struct CopyComponents<T : Copy + Clone> {
-    inner:SecondaryMap<EntityId, CSDUnsafeCell<T>>
+pub struct CopySlotMap<K:Key, T:Copy + Clone + Serialize + DeserializeOwned> {
+    inner:SlotMap<K, CSDUnsafeCell<T>>
 }
 
-type E<K, T> = SecondaryMap<K, CSDUnsafeCell<T>>;
+type E<K, T> = SlotMap<K, CSDUnsafeCell<T>>;
 
-impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for CopyComponents<T> {
+impl<'de, K, T> Deserialize<'de> for CopySlotMap<K, T> where K:Key, T:Copy + Clone + Serialize + DeserializeOwned {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
         match E::deserialize(deserializer) {
             Ok(inner) => {
-                Ok(CopyComponents {
+                Ok(CopySlotMap {
                     inner
                 })
             },
@@ -26,11 +26,11 @@ impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for 
     }
 }
 
-pub struct IterMut<'a, T : Copy + Clone, K:Key> {
-    iter:slotmap::secondary::Iter<'a, K, CSDUnsafeCell<T>>
+pub struct IterMut<'a, K:Key, T:Copy + Clone + Serialize + DeserializeOwned> {
+    iter:slotmap::basic::Iter<'a, K, CSDUnsafeCell<T>>
 }
 
-impl<'a, T : Copy + Clone, K:Key> Iterator for IterMut<'a, T, K> {
+impl<'a, K, T:Copy + Clone + Serialize + DeserializeOwned> Iterator for IterMut<'a, K, T> where K:Key {
     type Item = (K, &'a mut T);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -43,11 +43,11 @@ impl<'a, T : Copy + Clone, K:Key> Iterator for IterMut<'a, T, K> {
     }
 }
 
-pub struct Iter<'a, T : Copy + Clone, K:Key> {
-    iter:slotmap::secondary::Iter<'a, K, CSDUnsafeCell<T>>
+pub struct Iter<'a, K:Key, T:Copy + Clone + Serialize + DeserializeOwned> {
+    iter:slotmap::basic::Iter<'a, K, CSDUnsafeCell<T>>
 }
 
-impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for Iter<'a, T, K> {
+impl<'a, K:Key, T:Copy + Clone + Serialize + DeserializeOwned> Iterator for Iter<'a, K, T> {
     type Item = (K, &'a T);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -61,22 +61,22 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
 }
 
 
-impl<T : Copy + Clone> CopyComponents<T> {
-    pub fn attach(&mut self, id:EntityId, cmp:T) {
-        self.inner.insert(id, CSDUnsafeCell::new(cmp));
+impl<K,T:Copy + Clone + Serialize + DeserializeOwned> CopySlotMap<K, T> where K:Key {
+    pub fn spawn(&mut self, sprite:T) -> K {
+        self.inner.insert(CSDUnsafeCell::new(sprite))
     }
 
-    pub fn detach(&mut self, id:EntityId) {
+    pub fn despawn(&mut self, id:K) {
         self.inner.remove(id);
     }
 
-    pub fn iter_mut(&self) -> IterMut<T, EntityId> {
+    pub fn iter_mut(&self) -> IterMut<K, T> {
         IterMut {
             iter:self.inner.iter()
         }
     }
 
-    pub fn iter(&self) -> Iter<T, EntityId> {
+    pub fn iter(&self) -> Iter<K, T> {
         Iter {
             iter:self.inner.iter()
         }
@@ -86,7 +86,7 @@ impl<T : Copy + Clone> CopyComponents<T> {
         self.inner.clear();
     }
 
-    pub fn get(&self, id:EntityId) -> Option<&T> {
+    pub fn get(&self, id:K) -> Option<&T> {
         if let Some(e) = self.inner.get(id) {
             return Some(unsafe {& *e.get()});
         }
@@ -94,7 +94,7 @@ impl<T : Copy + Clone> CopyComponents<T> {
         None
     }
 
-    pub fn get_mut(&self, id:EntityId) -> Option<&mut T> {
+    pub fn get_mut(&self, id:K) -> Option<&mut T> {
         if let Some(e) = self.inner.get(id) {
             return Some(unsafe {&mut *e.get()});
         }
