@@ -508,7 +508,7 @@ impl SceneRenderer {
         //let visible = |(_, sprite):&(EntityId, &Sprite)| !sprite.hidden;
         for entity_id in scene.entities().iter() {
             if let Some(sprite) = scene.sprites().get(entity_id) {
-                if sprite.hidden == false {
+                if !sprite.hidden {
                     textures.insert(sprite.texture, ());
                     if sprite.opacity.is_none() {
                         self.opaque_sprites.push(entity_id);

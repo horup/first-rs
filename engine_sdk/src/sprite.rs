@@ -31,6 +31,6 @@ pub struct Sprite {
 impl Sprite {
     pub fn tile_index(&self) -> (i32, i32) {
         let index = self.pos.as_ivec3().truncate();
-        return index.into();
+        index.into()
     }
 }

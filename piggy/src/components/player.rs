@@ -12,11 +12,7 @@ impl Inventory {
     }
     pub fn amount(&self, item_type: u32) -> f32 {
         return self.items.iter().find(|(item_type2, _)| {
-            if *item_type2 == item_type {
-                return true;
-            } else {
-                return false;
-            }
+            *item_type2 == item_type
         }).map_or(0.0, |item| item.1);
     }
 

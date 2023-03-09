@@ -20,16 +20,16 @@ impl<'a> SpatialHashmap<'a> {
     pub fn new(entities:&'a Entities, sprites:&'a ComponentsCopy<Sprite>) -> Self {
         let cell_size = 8;
         let grid = FlatGrid::new(cell_size);
-        let spatial = Self {
+        
+
+        Self {
             entities,
             sprites,
             grid,
             handles:SlotMap::default(),
             max_radius:1.0,
             requires_update:true
-        };
-
-        spatial
+        }
     }
 
     pub fn update_all(&mut self) {
