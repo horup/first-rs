@@ -52,8 +52,8 @@ pub use tile::*;
 mod entities;
 pub use entities::*;
 
-mod copy_components;
-pub use copy_components::*;
+mod components_copy;
+pub use components_copy::*;
 
 mod components;
 pub use components::*;

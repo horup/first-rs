@@ -3,19 +3,19 @@ use slotmap::{SecondaryMap, Key};
 use crate::{CSDUnsafeCell, EntityId};
 
 #[derive(Default, Serialize, Clone)]
-pub struct CopyComponents<T : Copy + Clone> {
+pub struct ComponentsCopy<T : Copy + Clone> {
     inner:SecondaryMap<EntityId, CSDUnsafeCell<T>>
 }
 
 type E<K, T> = SecondaryMap<K, CSDUnsafeCell<T>>;
 
-impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for CopyComponents<T> {
+impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for ComponentsCopy<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
         match E::deserialize(deserializer) {
             Ok(inner) => {
-                Ok(CopyComponents {
+                Ok(ComponentsCopy {
                     inner
                 })
             },
@@ -61,7 +61,7 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
 }
 
 
-impl<T : Copy + Clone> CopyComponents<T> {
+impl<T : Copy + Clone> ComponentsCopy<T> {
     pub fn attach(&mut self, id:EntityId, cmp:T) {
         self.inner.insert(id, CSDUnsafeCell::new(cmp));
     }
