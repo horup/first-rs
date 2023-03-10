@@ -126,6 +126,30 @@ impl<'a> World<'a> {
         }
     }
 
+    pub fn astar<F:Fn(&Tile)->bool>(&self, start:IVec2, end:IVec2, visit:F) -> Option<Vec<IVec2>> {
+        let p = pathfinding::directed::astar::astar(&start, |n| {
+            let mut vec:Vec<(IVec2, i32)> = Vec::with_capacity(4);
+            for p in [IVec2::new(n.x - 1, n.y), IVec2::new(n.x + 1, n.y), IVec2::new(n.x, n.y - 1), IVec2::new(n.x, n.y + 1)] {
+                if let Some(tile) = self.tilemap.get((p.x, p.y)) {
+                    if !visit(&tile) {
+                        vec.push((p, 1));
+                    }
+                }
+            }
+            return vec;
+        }, |n|{
+            let v = (*n - end).abs();
+            return v.x + v.y;
+        }, |n|{
+            return n == &end;
+        });
+        if let Some((vec, _)) = p {
+            return Some(vec);
+        }
+
+        None
+    }
+
     pub fn clip_move(&mut self, id:EntityId, new_pos:Vec3) -> Collision {
         let mut col = Collision::default();
         if let Some(e) = self.sprites.get_mut(id) {
