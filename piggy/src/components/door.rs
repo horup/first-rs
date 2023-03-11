@@ -16,7 +16,7 @@ impl Door {
     }
 
     pub fn time_to_start_closing(&self) -> f32 {
-        10.0
+        5.0
     }
 
     pub fn open(&mut self) {
