@@ -1,4 +1,4 @@
-use glam::IVec2;
+use glam::{IVec2, Vec2};
 use serde::{Serialize, Deserialize};
 
 
@@ -13,6 +13,15 @@ impl<T> Default for Grid<T> where T:Default+Clone {
         Self::new(64)
     }
 }
+#[allow(dead_code)]
+pub struct Visit<'a, T> {
+    pub index:(i32, i32),
+    pub cell:&'a T,
+    pub x:f32,
+    pub y:f32,
+    pub d:f32
+}
+
 
 impl<T> Grid<T> where T:Default+Clone {
     pub fn new(size:usize) -> Self {
@@ -88,5 +97,57 @@ impl<T> Grid<T> where T:Default+Clone {
         }
 
         None
+    }
+
+    pub fn cast_ray<F:FnMut(Visit<T>)->bool>(&self, start:Vec2, end:Vec2, mut f:F) {
+        fn get_helper(cell_size:f32, pos:f32, dir:f32) -> (f32, f32, f32, f32) {
+            let tile = (pos / cell_size).floor();// + 1.0;
+            let dtile;
+            let dt;
+            if dir > 0.0 {
+                dtile = 1.0;
+                dt = ((tile + 1.0) * cell_size - pos) / dir;
+            } else {
+                dtile = -1.0;
+                dt = (tile  * cell_size - pos) / dir;
+                // dt = ((tile + 1.0 ) * cell_size - pos) / dir;
+            }
+    
+            (tile, dtile, dt, dtile * cell_size / dir)
+        }
+        let dir = (end - start).normalize_or_zero();
+        if dir.length() == 0.0 {
+            return;
+        }
+        let (mut tile_x, dtile_x, mut dt_x, ddt_x) = get_helper(1.0, start.x, dir.x);
+        let (mut tile_y, dtile_y, mut dt_y, ddt_y) = get_helper(1.0, start.y, dir.y);
+    
+        let mut t = 0.0;
+        if dir.x*dir.x + dir.y*dir.y > 0.0 {
+            loop {
+                let index = (tile_x as i32, tile_y as i32);
+                if let Some(cell) = self.get(index) {
+                    if f(Visit {index:index, cell: cell, d:t, x:tile_x, y:tile_y }) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+                if dt_x < dt_y {
+                    tile_x += dtile_x;
+                    let dt = dt_x;
+                    t += dt;
+                    dt_x = dt_x + ddt_x - dt;
+                    dt_y -= dt;
+                } else {
+                    tile_y += dtile_y;
+                    let dt = dt_y;
+                    t += dt;
+                    dt_x -= dt;
+                    dt_y = dt_y + ddt_y - dt;
+                }
+            }
+        } else {
+        }
     }
 }
