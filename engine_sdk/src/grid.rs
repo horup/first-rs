@@ -115,7 +115,8 @@ impl<T> Grid<T> where T:Default+Clone {
     
             (tile, dtile, dt, dtile * cell_size / dir)
         }
-        let dir = (end - start).normalize_or_zero();
+        let v = end - start;
+        let dir = v.normalize_or_zero();
         if dir.length() == 0.0 {
             return;
         }
@@ -125,6 +126,9 @@ impl<T> Grid<T> where T:Default+Clone {
         let mut t = 0.0;
         if dir.x*dir.x + dir.y*dir.y > 0.0 {
             loop {
+                if v.length() < t {
+                    break;
+                }
                 let index = (tile_x as i32, tile_y as i32);
                 if let Some(cell) = self.get(index) {
                     if f(Visit {index:index, cell: cell, d:t, x:tile_x, y:tile_y }) {
