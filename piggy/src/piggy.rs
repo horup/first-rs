@@ -176,17 +176,9 @@ impl Game for Piggy {
         systems::activator_system(&mut self.state, engine);
         systems::door_system(&mut self.state, engine);
         systems::effector_system(&mut self.state, engine);
-        self.update_scene(engine);
-        systems::render_system(&mut self.state, engine);
-        self.update_ui(engine);
-
-        for id in self.state.entities.iter() {
-            if let Some(sprite) = self.state.sprites.get_mut(id) {
-                if sprite.texture == 6 {
-                    sprite.atlas_index += engine.dt() * 2.0;
-                }
-            }
-        }
+        systems::render_world_system(&mut self.state, engine);
+        systems::render_flash_system(&mut self.state, engine);
+        systems::ui_system(&mut self.state, engine);
     }
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {

@@ -28,7 +28,7 @@ impl Flash {
     }
 }
 
-pub fn render_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn render_flash_system(state:&mut State, engine:&mut dyn Engine) {
     let screen = engine.screen_size();
     let alpha = state.flash.alpha();
     if alpha > 0.0 {
