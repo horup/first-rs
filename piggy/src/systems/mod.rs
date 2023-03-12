@@ -30,3 +30,6 @@ pub use render_world_system::*;
 
 mod ui_system;
 pub use ui_system::*;
+
+mod init_system;
+pub use init_system::*;
