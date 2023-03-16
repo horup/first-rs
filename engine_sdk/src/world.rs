@@ -1,5 +1,6 @@
 use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
+use serde::{Serialize, Deserialize};
 use slotmap::new_key_type;
 use crate::{Grid, Sprite, SpatialHashmap, Tile, Entities, ComponentsCopy, EntityId};
 
@@ -13,10 +14,9 @@ pub struct World<'a> {
     pub floor_texture:u32,
     tilemap:&'a Grid<Tile>,
     potential_colliders:Vec<EntityId>,
-    collisions:Vec<Collision>
 }
 
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
     pub other_entity:Option<EntityId>,
     pub tile:Option<IVec2>
@@ -32,7 +32,6 @@ impl<'a> World<'a> {
             floor_texture: 0,
             tilemap: grid,
             potential_colliders:Vec::with_capacity(64),
-            collisions:Vec::with_capacity(64)
         }
     }
 
@@ -53,12 +52,14 @@ impl<'a> World<'a> {
         self.tilemap
     }
 
-    pub fn physics_step(&mut self, dt:f32) {
+    pub fn physics_step(&mut self, dt:f32, collisions:&mut Vec<Collision>)  {
+        collisions.clear();
         self.spatial_hashmap.invalidate();
         for id in self.entities.iter() {
             if let Some(sprite) = self.sprites.get(id) {
                 let new_pos = sprite.pos + sprite.vel * dt;
-                self.clip_move(id, new_pos);
+                let collision = self.clip_move(id, new_pos);
+                collisions.push(collision);
             }
         }
     }
