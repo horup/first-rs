@@ -15,3 +15,6 @@ pub use activator::*;
 
 mod mob;
 pub use mob::*;
+
+mod health;
+pub use health::*;

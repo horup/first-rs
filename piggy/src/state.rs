@@ -17,7 +17,8 @@ pub struct State {
     pub players: ComponentsCopy<Player>,
     pub activators: ComponentsCopy<Activator>,
     pub mobs: ComponentsCopy<Mob>,
-    pub collisions:Vec<Collision>
+    pub collisions:Vec<Collision>,
+    pub healths:ComponentsCopy<Health>
 }
 
 impl State {
@@ -32,7 +33,8 @@ impl State {
         let id = self.player_id?;
         let player = self.players.get_mut(id)?;
         let sprite = self.sprites.get_mut(id)?;
-        Some(PlayerEntity { id, sprite, player })
+        let health = self.healths.get_mut(id)?;
+        Some(PlayerEntity { id, sprite, player, health })
     }
 
     pub fn mob_entity(&self, id:EntityId) -> Option<MobEntity> {
@@ -74,6 +76,7 @@ impl State {
 
 pub struct PlayerEntity<'a> {
     pub id:EntityId,
+    pub health:&'a mut Health,
     pub sprite:&'a mut Sprite,
     pub player:&'a mut Player
 }

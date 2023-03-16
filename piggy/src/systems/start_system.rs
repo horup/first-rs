@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}};
-use crate::{State, textures, components::{Item, Door, Effector, Player, Activator, Mob}};
+use crate::{State, textures, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
 
 pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     let sprite = Sprite {
@@ -38,6 +38,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
             sprite.texture = textures::THING_WILLIAM;
             sprite.hidden = true;
             state.players.attach(id, Player::default());
+            state.healths.attach(id, Health::default());
         }
         textures::THING_ITEM_POKEMONCARD => {
             sprite.clips = false;

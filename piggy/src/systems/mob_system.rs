@@ -54,7 +54,7 @@ pub fn mob_system(state:&mut State, _engine:&mut dyn Engine) -> Option<()> {
                     if let Some(player_entity) = state.player_entity() {
                         if player_entity.id == other_entity {
                             if mob_entity.mob.is_killer {
-                                
+                                player_entity.health.kill(Some(mob_entity.id));
                             }
                         }
                     }
