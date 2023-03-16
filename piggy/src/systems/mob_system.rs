@@ -50,5 +50,7 @@ pub fn mob_system(state:&mut State, _engine:&mut dyn Engine) -> Option<()> {
         }
     }
 
+    dbg!(state.collisions.len());
+
     None
 }

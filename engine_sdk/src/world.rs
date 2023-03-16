@@ -59,7 +59,9 @@ impl<'a> World<'a> {
             if let Some(sprite) = self.sprites.get(id) {
                 let new_pos = sprite.pos + sprite.vel * dt;
                 let collision = self.clip_move(id, new_pos);
-                collisions.push(collision);
+                if collision.other_entity.is_some() || collision.tile.is_some() {
+                    collisions.push(collision);
+                }
             }
         }
     }
