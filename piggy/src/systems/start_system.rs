@@ -52,7 +52,10 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
             state.items.attach(id, Item::new(1.0));
         }
         textures::THING_MONSTER_PIGGY => {
-            state.mobs.attach(id, Mob::default());
+            state.mobs.attach(id, Mob {
+                is_killer:true,
+                ..Default::default()
+            });
         }
         _=>{}
     }

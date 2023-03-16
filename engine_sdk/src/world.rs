@@ -18,6 +18,7 @@ pub struct World<'a> {
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
+    pub entity:EntityId,
     pub other_entity:Option<EntityId>,
     pub tile:Option<IVec2>
 }
@@ -92,6 +93,7 @@ impl<'a> World<'a> {
 
     pub fn clip_move(&mut self, id:EntityId, new_pos:Vec3) -> Collision {
         let mut col = Collision::default();
+        col.entity = id;
         if let Some(e) = self.sprites.get_mut(id) {
             let v = new_pos - e.pos;
             if v.length() > 0.0 {

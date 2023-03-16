@@ -47,10 +47,21 @@ pub fn mob_system(state:&mut State, _engine:&mut dyn Engine) -> Option<()> {
                 // todo implement patrol
                 mob_entity.sprite.vel = Vec3::default();
             }
+
+            // check if touching player
+            state.collisions.iter().filter(|collision|collision.entity == id).for_each(|collision|{
+                if let Some(other_entity) = collision.other_entity {
+                    if let Some(player_entity) = state.player_entity() {
+                        if player_entity.id == other_entity {
+                            if mob_entity.mob.is_killer {
+                                
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
-
-    dbg!(state.collisions.len());
 
     None
 }

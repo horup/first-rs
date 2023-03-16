@@ -5,5 +5,6 @@ use serde::{Serialize, Deserialize};
 pub struct Mob {
     pub last_known_pos:Option<Vec3>,
     pub can_see_player:bool,
-    pub dir:Vec2
+    pub dir:Vec2,
+    pub is_killer:bool
 }
