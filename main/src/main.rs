@@ -1,10 +1,10 @@
-
+use std::{path::PathBuf, str::FromStr};
 use engine::{Engine};
 use piggy::Piggy;
 
 async fn init() -> Engine {
     let mut engine = Engine::new().await;
-    engine.window.borrow_mut().set_title("First-RS Editor");
+    engine.window.borrow_mut().set_title("Piggy");
     engine.set_game(Box::<Piggy>::default());
     engine
 }
@@ -18,8 +18,8 @@ fn main() {
             engine.show_editor = false;
             #[cfg(debug_assertions)]
             {
-                // let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
-                // engine.set_game_hotreload(lib_path);
+                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
+                engine.set_game_hotreload(lib_path);
             }
             engine.run().await;  
         }); 
