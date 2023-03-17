@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, VirtualKeyCode};
+use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2};
 use crate::State;
 
 pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
@@ -42,6 +42,14 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
             }
         } else {
             // player is not alive, ensure player is facing the killar
+            if let Some(killer) = player.health.killer {
+                if let Some(killer) = state.sprites.get(killer) {
+                    let v = killer.pos - player.sprite.pos;
+                    let v = v.normalize_or_zero().truncate();
+                    let facing = v.angle_between(Vec2::X);
+                    new_facing = facing;
+                }
+            }
         }
     }
 
