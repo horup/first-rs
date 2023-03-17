@@ -46,8 +46,10 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
                 if let Some(killer) = state.sprites.get(killer) {
                     let v = killer.pos - player.sprite.pos;
                     let v = v.normalize_or_zero().truncate();
-                    let facing = v.angle_between(Vec2::X);
+                    let facing = v.y.atan2(v.x);//v.angle_between(Vec2::X);
                     new_facing = facing;
+
+                   // f32::atan2(self, other)
                 }
             }
         }
