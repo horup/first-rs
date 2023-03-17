@@ -188,7 +188,7 @@ impl Engine {
 
                     match event {
                         WindowEvent::CloseRequested
-                        | WindowEvent::KeyboardInput {
+                        /*| WindowEvent::KeyboardInput {
                             input:
                                 KeyboardInput {
                                     state: ElementState::Pressed,
@@ -196,7 +196,7 @@ impl Engine {
                                     ..
                                 },
                             ..
-                        } => *control_flow = ControlFlow::Exit,
+                        } */ => *control_flow = ControlFlow::Exit,
                         WindowEvent::Resized(new_size) => {
                             self.graphics.config.width = new_size.width.max(1);
                             self.graphics.config.height = new_size.height.max(1);
