@@ -18,6 +18,9 @@ impl Game for Piggy {
         if engine.key_just_pressed(engine_sdk::VirtualKeyCode::Escape) {
             engine.set_cursor_visible(true);
         }
+        if engine.mouse_down(0) {
+            engine.set_cursor_visible(false);
+        }
         systems::player_system(&mut self.state, engine);
         systems::mob_system(&mut self.state, engine);
         systems::physics_system(&mut self.state, engine);
