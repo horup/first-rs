@@ -13,6 +13,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
 
 pub struct Engine {
+    pub cursor_visible:bool,
     pub scene_renderer:SceneRenderer,
     pub new_events:Vec<engine_sdk::Event>,
     pub show_editor:bool,
@@ -60,6 +61,7 @@ impl Engine {
         let canvas = Canvas::new(&graphics);
 
         Engine {
+            cursor_visible:false,
             scene_renderer:SceneRenderer::new(&graphics),
             new_events:Vec::new(),
             show_editor: true,

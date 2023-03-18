@@ -27,6 +27,7 @@ pub trait Engine {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
     fn set_cursor_visible(&mut self, visible:bool);
+    fn cursor_visible(&self) -> bool;
 }
 
 

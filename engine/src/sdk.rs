@@ -109,6 +109,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn set_cursor_visible(&mut self, visible:bool) {
+        self.cursor_visible = visible;
         let window = self.window.borrow_mut();
         window.set_cursor_visible(visible);
         match visible {
@@ -124,5 +125,9 @@ impl engine_sdk::Engine for Engine {
 
     fn mouse_motion(&self) -> Vec2 {
         self.input.mouse_motion
+    }
+
+    fn cursor_visible(&self) -> bool {
+        self.cursor_visible
     }
 }
