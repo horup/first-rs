@@ -217,7 +217,10 @@ impl Engine {
                                 ElementState::Released => self.input.mouse_pressed[button] = false,
                             }
                         }
-                        
+                        WindowEvent::Focused(focused) => {
+                            dbg!(focused);
+                            self.new_events.push(engine_sdk::Event::Focused(*focused));
+                        }
                         WindowEvent::MouseWheel { delta, .. } =>{
                             match delta {
                                 winit::event::MouseScrollDelta::LineDelta(x, y) => {

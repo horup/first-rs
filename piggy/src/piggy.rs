@@ -16,10 +16,8 @@ impl Game for Piggy {
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
         if engine.key_just_pressed(engine_sdk::VirtualKeyCode::Escape) {
-            dbg!(8);
             engine.set_cursor_visible(true);
         }
-        engine.set_cursor_visible(false);
         systems::player_system(&mut self.state, engine);
         systems::mob_system(&mut self.state, engine);
         systems::physics_system(&mut self.state, engine);
@@ -37,6 +35,9 @@ impl Game for Piggy {
             Event::Map { map } => {
                 systems::start_system(&mut self.state, engine, map);
             }
+            Event::Focused(focused) => {
+                engine.set_cursor_visible(!*focused);
+            },
         }
     }
 }

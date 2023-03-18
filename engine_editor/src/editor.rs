@@ -274,6 +274,7 @@ impl Game for Editor {
             engine_sdk::Event::Map { map } => {
                 self.map = map.clone();
             },
+            _ => {},
         }
     }
 } 

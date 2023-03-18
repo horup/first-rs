@@ -4,5 +4,6 @@ use crate::Map;
 pub enum Event {
     Map {
         map:Map
-    }
+    },
+    Focused(bool)
 }
