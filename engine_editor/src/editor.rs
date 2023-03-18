@@ -15,7 +15,7 @@ pub struct Editor {
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
-        engine.set_cursor_visible(true);
+        engine.set_cursor_grabbed(true);
         self.camera.update(engine);
         self.edit_map(engine);
         self.draw_map(engine);

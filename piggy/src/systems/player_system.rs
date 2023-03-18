@@ -19,7 +19,7 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
 
     if let Some(player) = state.player_entity() {
         if player.health.is_alive() {
-            if !engine.cursor_visible() {
+            if !engine.cursor_grabbed() {
                 if engine.key_down(VirtualKeyCode::A) {
                     new_pos += speed * left;
                 }

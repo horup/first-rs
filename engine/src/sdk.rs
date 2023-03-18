@@ -108,7 +108,7 @@ impl engine_sdk::Engine for Engine {
         self.new_events.push(event);
     }
 
-    fn set_cursor_visible(&mut self, visible:bool) {
+    fn set_cursor_grabbed(&mut self, visible:bool) {
         self.cursor_visible = visible;
         let window = self.window.borrow_mut();
         window.set_cursor_visible(visible);
@@ -127,7 +127,7 @@ impl engine_sdk::Engine for Engine {
         self.input.mouse_motion
     }
 
-    fn cursor_visible(&self) -> bool {
+    fn cursor_grabbed(&self) -> bool {
         self.cursor_visible
     }
 }

@@ -26,8 +26,8 @@ pub trait Engine {
     fn key_just_pressed(&self, key_code:VirtualKeyCode) -> bool {
         self.keys_just_pressed().iter().any(|kc| kc == &key_code)
     }
-    fn set_cursor_visible(&mut self, visible:bool);
-    fn cursor_visible(&self) -> bool;
+    fn set_cursor_grabbed(&mut self, grabbed:bool);
+    fn cursor_grabbed(&self) -> bool;
 }
 
 
