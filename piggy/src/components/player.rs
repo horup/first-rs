@@ -41,15 +41,46 @@ pub struct Player {
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum PlayerState {
-    Alive,
-    Cought,
-    FadingOut {
-        
+    Ready,
+    Cought {
+        timer_sec:f32,
+    },
+    CanRespawn
+}
+
+impl PlayerState {
+    pub fn cought(&mut self) {
+        match self {
+            PlayerState::Ready => *self = Self::Cought {
+                timer_sec: 2.0,
+            },
+            _ => {}
+        }
+    }
+
+    pub fn ready(&mut self) {
+        *self = PlayerState::Ready;
+    }
+
+    pub fn to_ready_to_respawn(&mut self) {
+        match self {
+            PlayerState::Ready => {},
+            _=> {}
+        }
+    }
+
+    pub fn can_respawn(&mut self) {
+        match  self {
+            PlayerState::Cought { .. } => {
+                *self = PlayerState::CanRespawn;
+            },
+            _ => {},
+        }
     }
 }
 
 impl Default for PlayerState {
     fn default() -> Self {
-        Self::Alive
+        Self::Ready
     }
 }

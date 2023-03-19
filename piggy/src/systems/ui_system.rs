@@ -1,6 +1,6 @@
 use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams};
 
-use crate::{State, textures};
+use crate::{State, textures, components::PlayerState};
 
 pub fn ui_system(state:&mut State, engine:&mut dyn Engine) {
     // draw ui
@@ -52,7 +52,46 @@ pub fn ui_system(state:&mut State, engine:&mut dyn Engine) {
                     ..Default::default()
                 });
             }
-            
+
+
+
+            fn draw_cought(engine:&mut dyn Engine) {
+                let size = engine.screen_size();
+                engine.draw_text(DrawTextParams {
+                    screen_pos: vec2(size.x / 2.0, size.y / 2.0),
+                    text: format!("You were cought!!!!"),
+                    scale: 32.0,
+                    color: Color::RED,
+                });
+            }
+
+            fn draw_can_respawn(engine:&mut dyn Engine) {
+                let size = engine.screen_size();
+                engine.draw_text(DrawTextParams {
+                    screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
+                    text: format!("Click to respawn..."),
+                    scale: 32.0,
+                    color: Color::WHITE,
+                });
+            }
+
+            //draw_cought(engine);
+            //draw_can_respawn(engine);
+
+            match player.state {
+                PlayerState::Cought { timer_sec } => {
+                    if timer_sec < 1.0 {
+                        draw_cought(engine);
+                    }
+                },
+                PlayerState::CanRespawn => {
+                    draw_cought(engine);
+                    draw_can_respawn(engine);
+                },
+                _ => {
+
+                }
+            }
         }
     }
 }

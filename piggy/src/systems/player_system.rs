@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2};
-use crate::State;
+use crate::{State, components::PlayerState};
 
 pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
     let dt = engine.dt();
@@ -59,10 +59,24 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
 
                     if angle < 0.1 {
                         // is looking straight towards killer
-                        // start blackout countdown
+                        // transition to cought if possible
+                        player.player.state.cought();
                     }
                 }
             }
+        }
+
+        match &mut player.player.state {
+            PlayerState::Cought { timer_sec } => {
+                *timer_sec -= dt;
+                if *timer_sec <= 0.0 {
+                    player.player.state.can_respawn();
+                }
+            },
+            PlayerState::CanRespawn => {
+                dbg!("can respawn");
+            }
+            _ => {}
         }
     }
 
