@@ -49,10 +49,18 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
                     let facing_towards_killer = killer.pos - player.sprite.pos;
                     let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
                     let facing = player.sprite.facing_as_vec2(); 
+
+                    let angle = facing_towards_killer.angle_between(facing);
+                    // turn player towards killer
                     let alpha = 10.0;
                     let facing = facing + facing_towards_killer * alpha * dt;
                     let facing = facing.normalize_or_zero();
                     new_facing = facing.y.atan2(facing.x);
+
+                    if angle < 0.1 {
+                        // is looking straight towards killer
+                        // start blackout countdown
+                    }
                 }
             }
         }

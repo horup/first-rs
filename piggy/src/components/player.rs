@@ -33,7 +33,23 @@ impl Inventory {
     }
 }
 
-#[derive(Default, Clone, Copy, Serialize, Deserialize)]
+#[derive(Default, Copy, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub inventory: Inventory,
+    pub state:PlayerState
+}
+
+#[derive(Clone, Copy, Serialize, Deserialize)]
+pub enum PlayerState {
+    Alive,
+    Cought,
+    FadingOut {
+        
+    }
+}
+
+impl Default for PlayerState {
+    fn default() -> Self {
+        Self::Alive
+    }
 }
