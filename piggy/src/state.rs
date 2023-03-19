@@ -31,41 +31,41 @@ impl State {
 
     pub fn player_entity(&self) -> Option<PlayerEntity> {
         let id = self.player_id?;
-        let player = self.players.get_mut(id)?;
-        let sprite = self.sprites.get_mut(id)?;
-        let health = self.healths.get_mut(id)?;
+        let player = self.players.get_mut2(id)?;
+        let sprite = self.sprites.get_mut2(id)?;
+        let health = self.healths.get_mut2(id)?;
         Some(PlayerEntity { id, sprite, player, health })
     }
 
     pub fn mob_entity(&self, id:EntityId) -> Option<MobEntity> {
-        let sprite = self.sprites.get_mut(id)?;
-        let mob = self.mobs.get_mut(id)?;
+        let sprite = self.sprites.get_mut2(id)?;
+        let mob = self.mobs.get_mut2(id)?;
         Some(MobEntity { id, sprite, mob })
     }
 
     pub fn item_entity(&self, id:EntityId) -> Option<ItemEntity> {
-        let sprite = self.sprites.get_mut(id)?;
-        let item = self.items.get_mut(id)?;
+        let sprite = self.sprites.get_mut2(id)?;
+        let item = self.items.get_mut2(id)?;
         Some(ItemEntity { id, sprite, item })
     }
 
     pub fn activator_entity(&self, id:EntityId) -> Option<ActivatorEntity> {
-        let sprite = self.sprites.get_mut(id)?;
-        let activator = self.activators.get_mut(id)?;
+        let sprite = self.sprites.get_mut2(id)?;
+        let activator = self.activators.get_mut2(id)?;
         Some(ActivatorEntity { id, sprite, activator })
     }
 
     pub fn door_entity(&self, id:EntityId) -> Option<DoorEntity> {
-        let sprite = self.sprites.get_mut(id)?;
-        let door = self.doors.get_mut(id)?;
+        let sprite = self.sprites.get_mut2(id)?;
+        let door = self.doors.get_mut2(id)?;
         Some(DoorEntity { id, sprite, door })
     }
 
     pub fn activatee_entity(&self, id:EntityId) -> Option<ActivateeEntity> {
         let player_thing = self.player_entity()?;
-        let sprite = self.sprites.get_mut(id)?;
-        let player = self.players.get_mut(id);
-        let mob = self.mobs.get_mut(id);
+        let sprite = self.sprites.get_mut2(id)?;
+        let player = self.players.get_mut2(id);
+        let mob = self.mobs.get_mut2(id);
         if player.is_some() || mob.is_some() {
             return Some(ActivateeEntity { id, sprite, player_thing});
         }

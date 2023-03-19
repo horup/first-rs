@@ -25,7 +25,7 @@ pub fn activator_system(state:&mut State, _engine:&mut dyn Engine) {
                                 None => true,
                             };
                             if can_open {
-                                if let Some(door) = state.doors.get_mut(id) {
+                                if let Some(door) = state.doors.get_mut2(id) {
                                     door.open();
                                 }
                             }

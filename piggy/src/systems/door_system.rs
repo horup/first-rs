@@ -7,7 +7,7 @@ pub fn door_system(state:&mut State, engine:&mut dyn Engine) {
     // update doors 
     let dt = engine.dt();
     for id in state.entities.iter() {
-        if let (Some(door), Some(sprite)) = (state.doors.get_mut(id), state.sprites.get_mut(id)) {
+        if let (Some(door), Some(sprite)) = (state.doors.get_mut2(id), state.sprites.get_mut2(id)) {
             let speed = 2.0;
             door.openess += speed * door.direction * dt;
             if door.openess < 0.0 {

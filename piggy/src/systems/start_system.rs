@@ -14,7 +14,7 @@ pub fn spawn_thing(state:&mut State, thing:u32, index:(i32, i32), facing:f32) {
     
     let id = state.entities.spawn();
     state.sprites.attach(id, sprite);
-    let sprite = state.sprites.get_mut(id).unwrap();
+    let sprite = state.sprites.get_mut2(id).unwrap();
     match thing {
         textures::THING_MARKER_EXIT => {
             sprite.hidden = true;

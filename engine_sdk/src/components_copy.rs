@@ -60,6 +60,15 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
     }
 }
 
+impl<T : Copy + Clone> ComponentsCopy<T> {
+    pub fn get_mut2(&self, id:EntityId) -> Option<&mut T> {
+        if let Some(e) = self.inner.get(id) {
+            return Some(unsafe {&mut *e.get()});
+        }
+
+        None
+    } 
+}
 
 impl<T : Copy + Clone> ComponentsCopy<T> {
     pub fn attach(&mut self, id:EntityId, cmp:T) {
@@ -81,14 +90,6 @@ impl<T : Copy + Clone> ComponentsCopy<T> {
 
         None
     }
-
-    pub fn get_mut(&self, id:EntityId) -> Option<&mut T> {
-        if let Some(e) = self.inner.get(id) {
-            return Some(unsafe {&mut *e.get()});
-        }
-
-        None
-    } 
 
     pub fn len(&self) -> usize {
         self.inner.len()
