@@ -3,19 +3,19 @@ use slotmap::{SecondaryMap, Key};
 use crate::{CSDUnsafeCell, EntityId};
 
 #[derive(Default, Serialize, Clone)]
-pub struct ComponentsCopy<T : Copy + Clone> {
+pub struct Components<T : Clone> {
     inner:SecondaryMap<EntityId, CSDUnsafeCell<T>>
 }
 
 type E<K, T> = SecondaryMap<K, CSDUnsafeCell<T>>;
 
-impl<'de, T : Copy + Clone + Serialize + Deserialize<'de>> Deserialize<'de> for ComponentsCopy<T> {
+impl<'de, T : Clone + Serialize + Deserialize<'de>> Deserialize<'de> for Components<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de> {
         match E::deserialize(deserializer) {
             Ok(inner) => {
-                Ok(ComponentsCopy {
+                Ok(Components {
                     inner
                 })
             },
@@ -60,7 +60,7 @@ impl<'a, T : Serialize + DeserializeOwned + Copy + Clone, K:Key> Iterator for It
     }
 }
 
-impl<T : Copy + Clone> ComponentsCopy<T> {
+impl<T : Copy + Clone> Components<T> {
     pub fn get_mut2(&self, id:EntityId) -> Option<&mut T> {
         if let Some(e) = self.inner.get(id) {
             return Some(unsafe {&mut *e.get()});
@@ -70,7 +70,15 @@ impl<T : Copy + Clone> ComponentsCopy<T> {
     } 
 }
 
-impl<T : Copy + Clone> ComponentsCopy<T> {
+impl<T : Clone> Components<T> {
+    pub fn get_mut(&mut self, id:EntityId) -> Option<&mut T> {
+        if let Some(e) = self.inner.get(id) {
+            return Some(unsafe {&mut *e.get()});
+        }
+
+        None
+    } 
+
     pub fn attach(&mut self, id:EntityId, cmp:T) {
         self.inner.insert(id, CSDUnsafeCell::new(cmp));
     }

@@ -52,8 +52,8 @@ pub use tile::*;
 mod entities;
 pub use entities::*;
 
-mod components_copy;
-pub use components_copy::*;
+mod components;
+pub use components::*;
 
 pub use glam;
 pub use image;

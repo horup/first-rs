@@ -2,14 +2,14 @@ use glam::{Vec3, IVec2, Vec2};
 use parry2d::{bounding_volume::BoundingVolume, na::Isometry2};
 use serde::{Serialize, Deserialize};
 use slotmap::new_key_type;
-use crate::{Grid, Sprite, SpatialHashmap, Tile, Entities, ComponentsCopy, EntityId};
+use crate::{Grid, Sprite, SpatialHashmap, Tile, Entities, Components, EntityId};
 
 new_key_type! {pub struct SpriteId;}
 
 pub struct World<'a> {
     entities:&'a Entities,
     spatial_hashmap:SpatialHashmap<'a>,
-    sprites:&'a ComponentsCopy<Sprite>,
+    sprites:&'a Components<Sprite>,
     pub ceiling_texture:u32,
     pub floor_texture:u32,
     tilemap:&'a Grid<Tile>,
@@ -24,7 +24,7 @@ pub struct Collision {
 }
 
 impl<'a> World<'a> {
-    pub fn new(entities:&'a Entities, sprites:&'a ComponentsCopy<Sprite>, grid:&'a Grid<Tile>) -> Self {
+    pub fn new(entities:&'a Entities, sprites:&'a Components<Sprite>, grid:&'a Grid<Tile>) -> Self {
         Self {
             entities,
             spatial_hashmap:SpatialHashmap::new(entities, sprites),
@@ -44,7 +44,7 @@ impl<'a> World<'a> {
         self.entities
     }
 
-    pub fn sprites(&mut self) -> &'a ComponentsCopy<Sprite> {
+    pub fn sprites(&mut self) -> &'a Components<Sprite> {
         self.spatial_hashmap.invalidate();
         self.sprites
     }

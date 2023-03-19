@@ -1,4 +1,4 @@
-use engine_sdk::{Camera, Sprite, Grid, Tile, World, ComponentsCopy, Entities, EntityId, Collision};
+use engine_sdk::{Camera, Sprite, Grid, Tile, World, Components, Entities, EntityId, Collision};
 use serde::{Serialize, Deserialize};
 use crate::{components::*, textures, systems::Flash};
 
@@ -7,18 +7,18 @@ use crate::{components::*, textures, systems::Flash};
 pub struct State {
     pub entities: Entities,
     pub camera: Camera,
-    pub sprites: ComponentsCopy<Sprite>,
+    pub sprites: Components<Sprite>,
     pub grid: Grid<Tile>,
     pub player_id: Option<EntityId>,
-    pub items: ComponentsCopy<Item>, 
-    pub doors: ComponentsCopy<Door>,
-    pub effectors: ComponentsCopy<Effector>,
+    pub items: Components<Item>, 
+    pub doors: Components<Door>,
+    pub effectors: Components<Effector>,
     pub flash:Flash,
-    pub players: ComponentsCopy<Player>,
-    pub activators: ComponentsCopy<Activator>,
-    pub mobs: ComponentsCopy<Mob>,
+    pub players: Components<Player>,
+    pub activators: Components<Activator>,
+    pub mobs: Components<Mob>,
     pub collisions:Vec<Collision>,
-    pub healths:ComponentsCopy<Health>
+    pub healths:Components<Health>
 }
 
 impl State {
