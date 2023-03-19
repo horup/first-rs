@@ -33,15 +33,18 @@ impl Game for Piggy {
         systems::render_flash_system(&mut self.state, engine);
         systems::ui_system(&mut self.state, engine);
 
-        let autosave = "autosave.sav";
-        if engine.key_just_pressed(VirtualKeyCode::F5) {
-            let serialized = bincode::serialize(&self.state).unwrap();
-            std::fs::write(autosave, serialized).unwrap();
-        }
-        if engine.key_just_pressed(VirtualKeyCode::F6) {
-            if let Ok(serialized) = std::fs::read(autosave) {
-                let state:State = bincode::deserialize(&serialized).unwrap();
-                self.state = state;
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let autosave = "autosave.sav";
+            if engine.key_just_pressed(VirtualKeyCode::F5) {
+                let serialized = bincode::serialize(&self.state).unwrap();
+                std::fs::write(autosave, serialized).unwrap();
+            }
+            if engine.key_just_pressed(VirtualKeyCode::F6) {
+                if let Ok(serialized) = std::fs::read(autosave) {
+                    let state:State = bincode::deserialize(&serialized).unwrap();
+                    self.state = state;
+                }
             }
         }
     }
