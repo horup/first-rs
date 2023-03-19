@@ -46,10 +46,13 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
             // player is not alive, ensure player is facing the killar
             if let Some(killer) = player.health.killer {
                 if let Some(killer) = state.sprites.get(killer) {
-                    let v = killer.pos - player.sprite.pos;
-                    let v = v.normalize_or_zero().truncate();
-                    let facing = v.y.atan2(v.x);
-                    new_facing = facing;
+                    let facing_towards_killer = killer.pos - player.sprite.pos;
+                    let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
+                    let facing = player.sprite.facing_as_vec2(); 
+                    let alpha = 10.0;
+                    let facing = facing + facing_towards_killer * alpha * dt;
+                    let facing = facing.normalize_or_zero();
+                    new_facing = facing.y.atan2(facing.x);
                 }
             }
         }

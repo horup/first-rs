@@ -1,5 +1,5 @@
 
-use engine_sdk::{Map, Game, Event};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode};
 use serde::{Deserialize, Serialize};
 use crate::{State, systems};
 
@@ -21,6 +21,7 @@ impl Game for Piggy {
         if engine.mouse_down(0) {
             engine.set_cursor_grabbed(false);
         }
+        
         systems::player_system(&mut self.state, engine);
         systems::mob_system(&mut self.state, engine);
         systems::physics_system(&mut self.state, engine);
@@ -31,6 +32,18 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.state, engine);
         systems::render_flash_system(&mut self.state, engine);
         systems::ui_system(&mut self.state, engine);
+
+        let autosave = "autosave.sav";
+        if engine.key_just_pressed(VirtualKeyCode::F5) {
+            let serialized = bincode::serialize(&self.state).unwrap();
+            std::fs::write(autosave, serialized).unwrap();
+        }
+        if engine.key_just_pressed(VirtualKeyCode::F6) {
+            if let Ok(serialized) = std::fs::read(autosave) {
+                let state:State = bincode::deserialize(&serialized).unwrap();
+                self.state = state;
+            }
+        }
     }
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {

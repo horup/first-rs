@@ -1,4 +1,5 @@
-use glam::Vec3;
+use glam::vec2;
+use glam::{Vec3, Vec2};
 use serde::{Serialize, Deserialize};
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -32,5 +33,9 @@ impl Sprite {
     pub fn tile_index(&self) -> (i32, i32) {
         let index = self.pos.as_ivec3().truncate();
         index.into()
+    }
+
+    pub fn facing_as_vec2(&self) -> Vec2 {
+        vec2(self.facing.cos(), self.facing.sin())
     }
 }
