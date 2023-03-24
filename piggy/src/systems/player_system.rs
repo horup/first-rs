@@ -80,10 +80,10 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
             }
     
         e.sprite.vel = new_pos - old_pos;
-        player.sprite.facing = new_facing;
-        let pos = player.sprite.pos;
-        let facing = player.sprite.facing;
-        state.camera.pos = pos;
-        state.camera.facing = facing;
+        e.sprite.facing = new_facing;
+        let pos = e.sprite.pos;
+        let facing = e.sprite.facing;
+        global.camera.pos = pos;
+        global.camera.facing = facing;
     }
 }
