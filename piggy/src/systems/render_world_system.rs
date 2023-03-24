@@ -1,10 +1,12 @@
 use engine_sdk::{Engine, world::World, Camera};
 
+use crate::Global;
+
 pub fn render_world_system(world:&mut World, engine:&mut dyn Engine) {
-    let cam = world.singleton::<Camera>().unwrap();
+    let global = world.singleton::<Global>().unwrap();
     // draw scene
     engine.draw_scene(
-        &cam,
+        &global.camera,
         world,
     );
 }

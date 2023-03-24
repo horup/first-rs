@@ -1,24 +1,24 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2};
-use crate::{State, components::PlayerState};
+use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2, world::World, Sprite};
+use crate::{components::PlayerState, Global, PlayerEntity};
 
-pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
+    let global = world.singleton_mut::<Global>().unwrap();
     let dt = engine.dt();
     let speed = 3.0;
-    let left = state.camera.left();
-    let forward = state.camera.forward_body();
-    let mut old_pos = state.camera.pos;
-    let mut new_pos = state.camera.pos;
-    let mut new_facing = state.camera.facing;
-    if let Some(player) = state.player_entity() {
-        old_pos = player.sprite.pos;
-        new_pos = player.sprite.pos;
-        new_facing = player.sprite.facing;
-    }
+    let left = global.camera.left();
+    let forward = global.camera.forward_body();
+    let mut old_pos = global.camera.pos;
+    let mut new_pos = global.camera.pos;
+    let mut new_facing = global.camera.facing;
 
-    if let Some(player) = state.player_entity() {
-        if player.health.is_alive() {
+    for e in world.query::<PlayerEntity>() {
+        old_pos = e.sprite.pos;
+        new_pos = e.sprite.pos;
+        new_facing = e.sprite.facing;
+    
+        if e.health.is_alive() {
             if !engine.cursor_grabbed() {
                 if engine.key_down(VirtualKeyCode::A) {
                     new_pos += speed * left;
@@ -44,11 +44,11 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
             }
         } else {
             // player is not alive, ensure player is facing the killar
-            if let Some(killer) = player.health.killer {
-                if let Some(killer) = state.sprites.get(killer) {
-                    let facing_towards_killer = killer.pos - player.sprite.pos;
+            if let Some(killer) = e.health.killer {
+                if let Some(killer) = world.get::<Sprite>(killer) {
+                    let facing_towards_killer = killer.pos - e.sprite.pos;
                     let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
-                    let facing = player.sprite.facing_as_vec2(); 
+                    let facing = e.sprite.facing_as_vec2(); 
 
                     let angle = facing_towards_killer.angle_between(facing);
                     // turn player towards killer
@@ -60,38 +60,30 @@ pub fn player_system(state:&mut State, engine:&mut dyn Engine) {
                     if angle < 0.1 {
                         // is looking straight towards killer
                         // transition to cought if possible
-                        player.player.state.cought();
+                        e.player.state.cought();
                     }
                 }
             }
         }
-
-        match &mut player.player.state {
-            PlayerState::Cought { timer_sec } => {
-                *timer_sec -= dt;
-                if *timer_sec <= 0.0 {
-                    player.player.state.can_respawn();
+    
+            match &mut e.player.state {
+                PlayerState::Cought { timer_sec } => {
+                    *timer_sec -= dt;
+                    if *timer_sec <= 0.0 {
+                        e.player.state.can_respawn();
+                    }
+                },
+                PlayerState::CanRespawn => {
+                    dbg!("can respawn");
                 }
-            },
-            PlayerState::CanRespawn => {
-                dbg!("can respawn");
+                _ => {}
             }
-            _ => {}
-        }
-    }
-
-    if let Some(player) = state.player_entity() {
-        player.sprite.vel = new_pos - old_pos;
-    }
-
-    if let Some(player) = state.player_entity() {
+    
+        e.sprite.vel = new_pos - old_pos;
         player.sprite.facing = new_facing;
         let pos = player.sprite.pos;
         let facing = player.sprite.facing;
         state.camera.pos = pos;
         state.camera.facing = facing;
-    } else {
-        state.camera.pos = new_pos;
-        state.camera.facing = new_facing;
     }
 }

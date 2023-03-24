@@ -9,7 +9,6 @@ pub struct Camera {
 }
 
 impl Camera {
-  
     /// Calculates the forward vector of the camera body, ignoring pitch
     pub fn forward_body(&self) -> Vec3 {
         vec3(self.facing.cos(), self.facing.sin(), 0.0)
@@ -19,11 +18,5 @@ impl Camera {
     pub fn left(&self) -> Vec3 {
         let forward = self.forward_body();
         -vec3(-forward.y, forward.x, 0.0)
-    }
-}
-
-impl Singleton for Camera {
-    fn id() -> world::SingletonId {
-        2
     }
 }
