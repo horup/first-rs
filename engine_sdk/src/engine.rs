@@ -62,7 +62,7 @@ pub trait Engine {
         let mut col = Collision::default();
         let tilemap = world.singleton::<Grid<Tile>>().unwrap();
         col.entity = id;
-        if let Some(e) = world.get_mut::<Sprite>(id) {
+        if let Some(mut e) = world.get_mut::<Sprite>(id) {
             let v = new_pos - e.pos;
             if v.length() > 0.0 {
                 let mut left = v.length();
