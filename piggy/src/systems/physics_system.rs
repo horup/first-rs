@@ -1,9 +1,8 @@
-use std::mem::take;
+use engine_sdk::{Engine, world::World};
 
-use engine_sdk::Engine;
+use crate::Global;
 
 pub fn physics_system(world:&mut World, engine:&mut dyn Engine) {
-    let mut collisions = take(&mut state.collisions);
-    //world.physics_step(engine.dt(), &mut collisions);
-    //state.collisions = collisions;
+    let mut global = world.singleton::<Global>().unwrap();
+    engine.physics_step(world, &mut global.collisions);
 }
