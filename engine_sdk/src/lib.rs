@@ -4,8 +4,8 @@ pub use game::*;
 mod engine;
 pub use engine::*;
 
-mod world;
-pub use world::*;
+mod worldy;
+pub use worldy::*;
 
 mod sprite;
 pub use sprite::*;
@@ -60,3 +60,4 @@ pub use image;
 pub use egui;
 pub use winit::event::VirtualKeyCode;
 pub use winit::window::CursorGrabMode;
+pub use world;

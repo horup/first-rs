@@ -648,6 +648,7 @@ dependencies = [
  "serde",
  "slotmap",
  "winit",
+ "world",
 ]
 
 [[package]]
@@ -2866,6 +2867,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d129932f4644ac2396cb456385cbf9e63b5b30c6e8dc4820bdca4eb082037a5"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "world"
+version = "0.1.0"
+source = "git+https://github.com/horup/world-rs.git#e08f1616be6d3f9e13784b7afb30a223df0bffb7"
+dependencies = [
+ "bincode",
+ "serde",
+ "slotmap",
 ]
 
 [[package]]
