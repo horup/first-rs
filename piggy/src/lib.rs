@@ -5,6 +5,9 @@ pub use piggy::*;
 mod defs;
 pub use defs::*;
 
+mod global;
+pub use global::*;
+
 mod world_ext;
 pub use world_ext::*;
 

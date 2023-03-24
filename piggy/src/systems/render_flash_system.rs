@@ -1,6 +1,7 @@
-use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2};
+use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, world::{World, Singleton}};
 use serde::{Serialize, Deserialize};
-use crate::State;
+
+use crate::Global;
 
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
@@ -28,9 +29,10 @@ impl Flash {
     }
 }
 
-pub fn render_flash_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn render_flash_system(world:&mut World, engine:&mut dyn Engine) {
+    let global = world.singleton_mut::<Global>().unwrap();
     let screen = engine.screen_size();
-    let alpha = state.flash.alpha();
+    let alpha = global.flash.alpha();
     if alpha > 0.0 {
         engine.draw_rect(DrawRectParams {
             pos: vec2(0.0, 0.0),
@@ -45,6 +47,6 @@ pub fn render_flash_system(state:&mut State, engine:&mut dyn Engine) {
         });
     }
 
-    state.flash.flash_timer_sec -= engine.dt();
-    state.flash.flash_timer_sec = state.flash.flash_timer_sec.max(0.0);
+    global.flash.flash_timer_sec -= engine.dt();
+    global.flash.flash_timer_sec = global.flash.flash_timer_sec.max(0.0);
 }
