@@ -1,23 +1,21 @@
-use crate::State;
-use engine_sdk::Engine;
+use engine_sdk::{Engine, world::World};
 
-pub fn effector_system(state: &mut State, _engine: &mut dyn Engine) {
-    if let Some(player_id) = state.player_id {
-        if let Some(player) = state.sprites.get(player_id) {
-            let mut near = Vec::new();
-            let player_pos = player.pos;
-            let mut world = state.as_world();
-            let radius = 1.0;
-            world.query_around(player_pos.truncate(), radius, &mut near);
-            for id in near.drain(..) {
-                if let Some(effector) = state.effectors.get(id) {
-                    match effector {
-                        crate::components::Effector::ExitMarker => {
-                            panic!("you won!");
-                        }
+use crate::PlayerEntity;
+
+pub fn effector_system(world: &mut World, _engine: &mut dyn Engine) {
+    for player_entity in world.query::<PlayerEntity>() {
+        // mut near = Vec::new();
+        let player_pos = player_entity.sprite.pos;
+        let radius = 1.0;
+       /* world.query_around(player_pos.truncate(), radius, &mut near);
+        for id in near.drain(..) {
+            if let Some(effector) = world.effectors.get(id) {
+                match effector {
+                    crate::components::Effector::ExitMarker => {
+                        panic!("you won!");
                     }
                 }
             }
-        }
+        }*/
     }
 }
