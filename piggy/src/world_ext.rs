@@ -1,6 +1,23 @@
 use std::cell::RefMut;
 use engine_sdk::{world::{EntityId, Query}, Sprite};
-use crate::components::{Player, Health, Item, Mob};
+use crate::components::{Player, Health, Item, Mob, Door};
+
+pub struct DoorEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>,
+    pub door:RefMut<'a, Door>
+}
+impl<'a> Query<'a> for DoorEntity<'a> {
+    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
+        let sprite = world.get_mut::<Sprite>(id)?;
+        let door = world.get_mut::<Door>(id)?;
+        Some(DoorEntity {
+            id,
+            sprite,
+            door
+        })
+    }
+}
 
 pub struct PlayerEntity<'a> {
     pub id:EntityId,
