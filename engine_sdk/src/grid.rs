@@ -1,11 +1,20 @@
 use glam::{IVec2, Vec2};
 use serde::{Serialize, Deserialize};
+use world::Singleton;
+
+use crate::Tile;
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Grid<T:Clone + Default> {
     size:usize,
     cells:Vec<T>
+}
+
+impl Singleton for Grid<Tile> {
+    fn id() -> world::ComponentId {
+        1
+    }
 }
 
 impl<T> Default for Grid<T> where T:Default+Clone {

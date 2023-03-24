@@ -1,8 +1,8 @@
 use glam::Vec2;
 use image::DynamicImage;
 use winit::{event::VirtualKeyCode};
-
-use crate::{Camera, World, Color, Event, Atlas, TextureAtlas, EditorProps};
+use crate::world::World;
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps};
 
 pub trait Engine {
     fn egui(&self) -> &egui::Context;

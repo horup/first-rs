@@ -4,8 +4,8 @@ pub use game::*;
 mod engine;
 pub use engine::*;
 
-mod worldy;
-pub use worldy::*;
+//mod worldy;
+//pub use worldy::*;
 
 mod sprite;
 pub use sprite::*;
@@ -28,32 +28,17 @@ pub use map::*;
 mod event;
 pub use event::*;
 
-mod csdunsafecell;
-pub use csdunsafecell::*;
-
-mod copy_slot_map;
-pub use copy_slot_map::*;
-
-mod copy_secondary_map;
-pub use copy_secondary_map::*;
-
 mod atlas;
 pub use atlas::*;
 
 mod texture_atlas;
 pub use texture_atlas::*;
 
-mod spatial_hashmap;
-pub use spatial_hashmap::*;
+//mod spatial_hashmap;
+//pub use spatial_hashmap::*;
 
 mod tile;
 pub use tile::*;
-
-mod entities;
-pub use entities::*;
-
-mod components;
-pub use components::*;
 
 pub use glam;
 pub use image;

@@ -2,7 +2,7 @@ use engine_sdk::{Camera, Sprite, Grid, Tile, World, Components, Entities, Entity
 use serde::{Serialize, Deserialize};
 use crate::{components::*, textures, systems::Flash};
 
-
+/* */
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct State {
     pub entities: Entities,

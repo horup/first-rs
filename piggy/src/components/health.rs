@@ -1,4 +1,4 @@
-use engine_sdk::EntityId;
+use engine_sdk::world::EntityId;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]

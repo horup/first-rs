@@ -1,6 +1,7 @@
 use glam::vec2;
 use glam::{Vec3, Vec2};
 use serde::{Serialize, Deserialize};
+use world::Component;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub enum SpriteType {
@@ -27,6 +28,12 @@ pub struct Sprite {
     pub radius:f32,
     pub clips:bool,
     pub hidden:bool
+}
+
+impl  Component for Sprite {
+    fn id() -> world::ComponentId {
+        1
+    }
 }
 
 impl Sprite {

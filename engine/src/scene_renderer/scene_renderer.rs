@@ -1,7 +1,7 @@
 use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, World, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, EntityId};
+use engine_sdk::{Camera, world::{World, EntityId}, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, Grid, Tile};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -449,6 +449,7 @@ impl SceneRenderer {
         self.opaque_sprites.clear();
         self.translucent_sprites.clear();
         self.draw_calls.push(DrawCall::Clear {  });
+        let tilemap = scene.singleton::<Grid<Tile>>().expect("were unable to get grid from world");
 
         // update camera
         let camera_uniform = CameraUniform::new_scene_camera(camera, graphics.config.width as f32, graphics.config.height as f32);
@@ -460,7 +461,7 @@ impl SceneRenderer {
 
         // find wall textures in use
         let mut textures = HashMap::new();
-        scene.tilemap().for_each(|cell, _| {
+        tilemap.for_each(|cell, _| {
             if let Some(wall) = cell.wall {
                 textures.insert(wall, ());
             }
@@ -471,12 +472,12 @@ impl SceneRenderer {
         // once per texture, prepare walls that can be reached from a spot without a wall
         // i.e. dont prepare walls that are not reachable
         for texture in textures {
-            scene.tilemap().for_each(|cell, (x,y)| {
+            tilemap.for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
                     let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
                     for n in directions.iter() {
                         let p = ivec2(x, y) - *n;
-                        if let Some(cell) = scene.tilemap().get((p.x, p.y)) {
+                        if let Some(cell) = tilemap.get((p.x, p.y)) {
                             if let Some(wall_texture) = cell.wall {
                                 if wall_texture == texture {
                                     self.wall(wall_texture, p, -*n);
@@ -489,16 +490,16 @@ impl SceneRenderer {
         }
 
         // draw floor 
-        scene.tilemap().for_each(|cell, (x,y)| {
+        tilemap.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                self.floor(scene.floor_texture, IVec2::new(x, y));
+                //self.floor(scene.floor_texture, IVec2::new(x, y));
             }
         });
 
         // draw ceiling
-        scene.tilemap().for_each(|cell, (x,y)| {
+        tilemap.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
+                //self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
             }
         });
 
@@ -506,14 +507,14 @@ impl SceneRenderer {
         // and find textures in use
         let mut textures = HashMap::new();
         //let visible = |(_, sprite):&(EntityId, &Sprite)| !sprite.hidden;
-        for entity_id in scene.entities().iter() {
-            if let Some(sprite) = scene.sprites().get(entity_id) {
+        for entity in scene.entities() {
+            if let Some(sprite) = entity.get::<Sprite>() {
                 if !sprite.hidden {
                     textures.insert(sprite.texture, ());
                     if sprite.opacity.is_none() {
-                        self.opaque_sprites.push(entity_id);
+                        self.opaque_sprites.push(entity.id());
                     } else {
-                        self.translucent_sprites.push(entity_id)
+                        self.translucent_sprites.push(entity.id())
                     }
                 }
                 
@@ -527,10 +528,10 @@ impl SceneRenderer {
         // draw opaque sprites
         for texture in textures {
             for sprite in sprites.iter() {
-                if let Some(sprite) = scene.sprites().get(*sprite) {
+                if let Some(sprite) = scene.get::<Sprite>(*sprite) {
                     if sprite.texture == texture {
                         if let Some(texture) = graphics.textures.get(&texture) {
-                            self.sprite(camera, sprite, &texture.atlas);
+                            self.sprite(camera, &sprite, &texture.atlas);
                         }
                     }
                 }
@@ -541,7 +542,7 @@ impl SceneRenderer {
         let mut sprites = std::mem::take(&mut self.translucent_sprites);
         // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.sprites().get(*a), scene.sprites().get(*b)) {
+            if let (Some(a), Some(b)) = (scene.get::<Sprite>(*a), scene.get::<Sprite>(*b)) {
                 if a.texture < b.texture {
                     return Ordering::Greater;
                 } else if a.texture > b.texture {
@@ -553,7 +554,7 @@ impl SceneRenderer {
 
         // then sort sprites based upon distance to camera
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.sprites().get(*a), scene.sprites().get(*b)) {
+            if let (Some(a), Some(b)) = (scene.get::<Sprite>(*a), scene.get::<Sprite>(*b)) {
                 let a = (a.pos - camera.pos).length_squared();
                 let b = (b.pos - camera.pos).length_squared();
                 if a < b {
@@ -568,9 +569,9 @@ impl SceneRenderer {
 
         // and draw
         for sprite in sprites.iter() {
-            if let Some(sprite) = scene.sprites().get(*sprite) {
+            if let Some(sprite) = scene.get::<Sprite>(*sprite) {
                 if let Some(texture) = graphics.textures.get(&sprite.texture) {
-                    self.sprite(camera, sprite, &texture.atlas);
+                    self.sprite(camera, &sprite, &texture.atlas);
                 }
             }
         }
