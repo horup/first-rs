@@ -5,10 +5,10 @@ use engine_sdk::{Engine, glam::{vec3}, world::World, Grid, Tile};
 use crate::DoorEntity;
 
 pub fn door_system(world:&mut World, engine:&mut dyn Engine) {
-    let tilemap = world.singleton_mut::<Grid<Tile>>().unwrap();
+    let mut tilemap = world.singleton_mut::<Grid<Tile>>().unwrap();
     // update doors 
     let dt = engine.dt();
-    for e in world.query::<DoorEntity>() {
+    for mut e in world.query::<DoorEntity>() {
         let speed = 2.0;
         e.door.openess += speed * e.door.direction * dt;
         if e.door.openess < 0.0 {

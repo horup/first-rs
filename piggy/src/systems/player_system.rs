@@ -4,7 +4,7 @@ use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2, world::World, Sprite};
 use crate::{components::PlayerState, Global, PlayerEntity};
 
 pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
-    let global = world.singleton_mut::<Global>().unwrap();
+    let mut global = world.singleton_mut::<Global>().unwrap();
     let dt = engine.dt();
     let speed = 3.0;
     let left = global.camera.left();
@@ -13,7 +13,7 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
     let mut new_pos = global.camera.pos;
     let mut new_facing = global.camera.facing;
 
-    for e in world.query::<PlayerEntity>() {
+    for mut e in world.query::<PlayerEntity>() {
         old_pos = e.sprite.pos;
         new_pos = e.sprite.pos;
         new_facing = e.sprite.facing;

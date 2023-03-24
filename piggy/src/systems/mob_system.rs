@@ -4,9 +4,9 @@ use crate::{PlayerEntity, MobEntity, Global};
 pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
     let global = world.singleton::<Global>().unwrap();
     let tilemap = world.singleton::<Grid<Tile>>().unwrap();
-    let player_entity = world.query::<PlayerEntity>().next()?;
+    let mut player_entity = world.query::<PlayerEntity>().next()?;
 
-    for mob_entity in world.query::<MobEntity>() {
+    for mut mob_entity in world.query::<MobEntity>() {
         let v = player_entity.sprite.pos - mob_entity.sprite.pos;
         let dir = v.normalize_or_zero();
         let mob_speed = 2.0;

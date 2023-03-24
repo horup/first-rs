@@ -30,7 +30,7 @@ impl Flash {
 }
 
 pub fn render_flash_system(world:&mut World, engine:&mut dyn Engine) {
-    let global = world.singleton_mut::<Global>().unwrap();
+    let mut global = world.singleton_mut::<Global>().unwrap();
     let screen = engine.screen_size();
     let alpha = global.flash.alpha();
     if alpha > 0.0 {

@@ -12,9 +12,9 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
         ..Default::default()
     };
     
-    let e = world.spawn();
+    let mut e = world.spawn();
     e.attach(sprite);
-    let sprite = e.get_mut::<Sprite>().unwrap();
+    let mut sprite = e.get_mut::<Sprite>().unwrap();
     match thing {
         textures::THING_MARKER_EXIT => {
             sprite.hidden = true;

@@ -2,7 +2,7 @@ use engine_sdk::{Engine, world::World};
 use crate::{PlayerEntity, ItemEntity};
 
 pub fn item_system(world:&mut World, _engine:&mut dyn Engine) {
-    for player in world.query::<PlayerEntity>() {
+    for mut player in world.query::<PlayerEntity>() {
         let pickup_radius = 0.5;
 
         for item in world.query::<ItemEntity>() {
