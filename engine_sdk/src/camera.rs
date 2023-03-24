@@ -1,5 +1,6 @@
 use glam::{Vec3, vec3};
 use serde::{Deserialize, Serialize};
+use world::Singleton;
 
 #[derive(Default, Deserialize, Serialize, Clone, Copy)]
 pub struct Camera {
@@ -18,5 +19,11 @@ impl Camera {
     pub fn left(&self) -> Vec3 {
         let forward = self.forward_body();
         -vec3(-forward.y, forward.x, 0.0)
+    }
+}
+
+impl Singleton for Camera {
+    fn id() -> world::SingletonId {
+        2
     }
 }
