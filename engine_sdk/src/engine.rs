@@ -1,10 +1,12 @@
-use glam::{Vec2, IVec2};
+use glam::{Vec2, IVec2, Vec3};
 use image::DynamicImage;
+use parry2d::bounding_volume::BoundingVolume;
+use parry2d::na::Isometry2;
 use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use world::EntityId;
 use crate::world::World;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Grid, Tile};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
@@ -42,12 +44,13 @@ pub trait Engine {
     fn physics_step(&mut self, world:&World, collisions:&mut Vec<Collision>)  {
         let dt = self.dt();
         collisions.clear();
-        let spatial_hashmap = SpatialHashmap::new(world);
+        let mut spatial_hashmap = SpatialHashmap::new(world);
+        let mut potential_colliders = Vec::with_capacity(1024);
         
         for e in world.entities() {
             if let Some(sprite) = e.get_mut::<Sprite>() {
                 let new_pos = sprite.pos + sprite.vel * dt;
-                let collision = self.clip_move(e.id(), new_pos, &mut spatial_hashmap);
+                let collision = self.clip_move(world, e.id(), new_pos, &mut spatial_hashmap, &mut potential_colliders);
                 if collision.other_entity.is_some() || collision.tile.is_some() {
                     collisions.push(collision);
                 }
@@ -55,10 +58,11 @@ pub trait Engine {
         }
     }
 
-    fn clip_move(&mut self, id:EntityId, new_pos:Vec3, spatial_hashmap:&mut SpatialHashmap) -> Collision {
+    fn clip_move(&mut self, world:&World, id:EntityId, new_pos:Vec3, spatial_hashmap:&mut SpatialHashmap, potential_colliders:&mut Vec<EntityId>) -> Collision {
         let mut col = Collision::default();
+        let tilemap = world.singleton::<Grid<Tile>>().unwrap();
         col.entity = id;
-        if let Some(e) = self.sprites.get_mut2(id) {
+        if let Some(e) = world.get_mut::<Sprite>(id) {
             let v = new_pos - e.pos;
             if v.length() > 0.0 {
                 let mut left = v.length();
@@ -85,9 +89,9 @@ pub trait Engine {
                         let mut pos_new = pos_org + v.extend(0.0);
 
                         // collision handling between entities
-                        self.spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + self.spatial_hashmap.max_radius(), &mut self.potential_colliders);
-                        for other_id in self.potential_colliders.iter() {
-                            let other_e = self.sprites.get(*other_id).unwrap();
+                        spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + spatial_hashmap.max_radius(),potential_colliders);
+                        for other_id in potential_colliders.iter() {
+                            let other_e = world.get::<Sprite>(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
                             if *other_id != id && !ignore {
                                 let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);
@@ -115,7 +119,7 @@ pub trait Engine {
                             let i = i as f32;
                             let cp = Vec2::new(i, i) * rev_dim + d + pos_org.truncate();
                             let np = cp.as_ivec2();
-                            if let Some(cell) = self.tilemap.get((np.x, np.y)) {
+                            if let Some(cell) = tilemap.get((np.x, np.y)) {
                                 if cell.clips {
                                     let s1 =
                                         parry2d::shape::Cuboid::new([e.radius, e.radius].into());
@@ -139,7 +143,7 @@ pub trait Engine {
                         }
 
                         e.pos = pos_new;
-                        self.spatial_hashmap.update_one(id, e.pos.truncate());
+                        spatial_hashmap.update_one(id, e.pos.truncate());
                     }
                 }
             }
