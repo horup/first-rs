@@ -1,4 +1,4 @@
-use engine_sdk::world::EntityId;
+use engine_sdk::world::{EntityId, Component};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -16,6 +16,12 @@ impl Health {
     pub fn kill(&mut self, killer:Option<EntityId>) {
         self.current = 0.0;
         self.killer = killer;
+    }
+}
+
+impl Component for Health {
+    fn id() -> engine_sdk::world::ComponentId {
+        11
     }
 }
 

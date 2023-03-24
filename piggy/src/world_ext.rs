@@ -1,4 +1,48 @@
-use engine_sdk::{Camera, Sprite, Grid, Tile, World, Components, Entities, EntityId, Collision};
+use std::cell::RefMut;
+use engine_sdk::{world::{EntityId, Query}, Sprite};
+use crate::components::{Player, Health, Item};
+
+pub struct PlayerEntity<'a> {
+    pub id:EntityId,
+    pub player:RefMut<'a, Player>,
+    pub sprite:RefMut<'a, Sprite>,
+    pub health:RefMut<'a, Health>
+}
+
+impl<'a> Query<'a> for PlayerEntity<'a> {
+    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
+        let player = world.get_mut(id)?;
+        let health = world.get_mut(id)?;
+        let sprite = world.get_mut(id)?;
+
+        Some(Self {
+            id,
+            player,
+            sprite,
+            health
+        })
+    }
+}
+
+pub struct ItemEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>,
+    pub item:RefMut<'a, Item>
+}
+
+impl<'a> Query<'a> for ItemEntity<'a> {
+    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
+        let sprite = world.get_mut(id)?;
+        let item = world.get_mut(id)?;
+        Some(Self {
+            id,
+            sprite,
+            item
+        })
+    }
+}
+
+/*use engine_sdk::{Camera, Sprite, Grid, Tile, World, Components, Entities, EntityId, Collision};
 use serde::{Serialize, Deserialize};
 use crate::{components::*, textures, systems::Flash};
 
@@ -111,3 +155,4 @@ pub struct ActivateeEntity<'a> {
     pub player_thing:PlayerEntity<'a>
 }
 
+*/

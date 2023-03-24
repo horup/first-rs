@@ -1,3 +1,4 @@
+use engine_sdk::world::Component;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
@@ -37,6 +38,12 @@ impl Inventory {
 pub struct Player {
     pub inventory: Inventory,
     pub state:PlayerState
+}
+
+impl Component for Player {
+    fn id() -> engine_sdk::world::ComponentId {
+        10
+    }
 }
 
 #[derive(Clone, Copy, Serialize, Deserialize)]

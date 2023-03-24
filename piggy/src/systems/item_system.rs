@@ -1,22 +1,19 @@
-use engine_sdk::Engine;
-use crate::{State};
+use engine_sdk::{Engine, world::World};
+use crate::{PlayerEntity, ItemEntity};
 
-pub fn item_system(state:&mut State, _engine:&mut dyn Engine) {
-    if let Some(player_thing) = state.player_entity() {
-        let player_pos = player_thing.sprite.pos;
+pub fn item_system(world:&mut World, _engine:&mut dyn Engine) {
+    for player in world.query::<PlayerEntity>() {
         let pickup_radius = 0.5;
-        let mut world = state.as_world();
-        let mut near = Vec::new();
-        world.query_around(player_pos.truncate(), pickup_radius, &mut near);
-        for id in near.drain(..) {
-            if let Some(item_thing) = state.item_entity(id) {
-                let texture = item_thing.sprite.texture;
-                state.entities.despawn(id);
-                state.flash.flash(0.2, 0.5);
-                if let Some(player_thing) = state.player_entity() {
-                    player_thing.player.inventory.add(texture, 1.0);
-                }
+
+        for item in world.query::<ItemEntity>() {
+            let v = player.sprite.pos - item.sprite.pos;
+            if v.length() < pickup_radius {
+                let texture = item.sprite.texture;
+                world.despawn(item.id);
+                player.player.inventory.add(texture, 1.0);
+                // state.flash.flash(0.2, 0.5);
             }
         }
     }
+
 }

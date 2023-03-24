@@ -5,8 +5,8 @@ pub use piggy::*;
 mod defs;
 pub use defs::*;
 
-mod state;
-pub use state::*;
+mod world_ext;
+pub use world_ext::*;
 
 pub mod systems;
 pub mod components;

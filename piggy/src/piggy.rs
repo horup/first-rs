@@ -1,17 +1,23 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode};
-use serde::{Deserialize, Serialize};
-use crate::{State, systems};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World};
+use crate::{systems};
 
-#[derive(Default, Serialize, Deserialize)]
 pub struct Piggy {
     pub current_map: Map,
-    pub state:State
+    pub world:World
+}
+
+impl Default for Piggy {
+    fn default() -> Self {
+        let mut world = World::new();
+
+        Self { current_map: Default::default(), world }
+    }
 }
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        systems::init_system(&mut self.state, engine);
+        systems::init_system(&mut self.world, engine);
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -22,28 +28,28 @@ impl Game for Piggy {
             engine.set_cursor_grabbed(false);
         }
         
-        systems::player_system(&mut self.state, engine);
-        systems::mob_system(&mut self.state, engine);
-        systems::physics_system(&mut self.state, engine);
-        systems::item_system(&mut self.state, engine);
-        systems::activator_system(&mut self.state, engine);
-        systems::door_system(&mut self.state, engine);
-        systems::effector_system(&mut self.state, engine);
-        systems::render_world_system(&mut self.state, engine);
-        systems::render_flash_system(&mut self.state, engine);
-        systems::ui_system(&mut self.state, engine);
+        systems::player_system(&mut self.world, engine);
+        systems::mob_system(&mut self.world, engine);
+        systems::physics_system(&mut self.world, engine);
+        systems::item_system(&mut self.world, engine);
+        systems::activator_system(&mut self.world, engine);
+        systems::door_system(&mut self.world, engine);
+        systems::effector_system(&mut self.world, engine);
+        systems::render_world_system(&mut self.world, engine);
+        systems::render_flash_system(&mut self.world, engine);
+        systems::ui_system(&mut self.world, engine);
 
         #[cfg(not(target_arch = "wasm32"))]
         {
             let autosave = "autosave.sav";
             if engine.key_just_pressed(VirtualKeyCode::F5) {
-                let serialized = bincode::serialize(&self.state).unwrap();
-                std::fs::write(autosave, serialized).unwrap();
+                let mut bytes = Vec::new();
+                self.world.serialize(&mut bytes);
+                std::fs::write(autosave, bytes).unwrap();
             }
             if engine.key_just_pressed(VirtualKeyCode::F6) {
                 if let Ok(serialized) = std::fs::read(autosave) {
-                    let state:State = bincode::deserialize(&serialized).unwrap();
-                    self.state = state;
+                    self.world.deserialize(&serialized);
                 }
             }
         }
@@ -52,7 +58,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
             Event::Map { map } => {
-                systems::start_system(&mut self.state, engine, map);
+                systems::start_system(&mut self.world, engine, map);
             }
             Event::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

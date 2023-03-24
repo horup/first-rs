@@ -1,8 +1,15 @@
+use engine_sdk::world::Component;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Item {
     pub amount:f32
+}
+
+impl Component for Item {
+    fn id() -> engine_sdk::world::ComponentId {
+        12
+    }
 }
 
 impl Item {
