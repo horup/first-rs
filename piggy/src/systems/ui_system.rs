@@ -1,8 +1,8 @@
-use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams};
+use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, world::World};
 
-use crate::{State, textures, components::PlayerState};
+use crate::{textures, components::PlayerState, PlayerEntity};
 
-pub fn ui_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn ui_system(world:&mut World, engine:&mut dyn Engine) {
     // draw ui
     let _margin = vec2(16.0, 16.0);
     let center = engine.screen_size() / 2.0;
@@ -24,73 +24,71 @@ pub fn ui_system(state:&mut State, engine:&mut dyn Engine) {
     });
 
 
-    if let Some(player) = state.player_id {
-        if let Some(player) = state.players.get(player) {
-            engine.draw_text(DrawTextParams {
-                screen_pos:vec2(16.0, 16.0),
-                text: format!("Pokemon Cards: {:?}", player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),
-                color:Color::WHITE,
-                scale:16.0
+    for e in world.query::<PlayerEntity>() {
+        engine.draw_text(DrawTextParams {
+            screen_pos:vec2(16.0, 16.0),
+            text: format!("Pokemon Cards: {:?}", e.player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),
+            color:Color::WHITE,
+            scale:16.0
+        });
+
+        let size = vec2(32.0, 32.0);
+
+        if e.player.inventory.amount(textures::THING_ITEM_KEY_BLUE) > 0.0 {
+            engine.draw_rect(DrawRectParams { 
+                pos: vec2(16.0, 32.0), 
+                size, 
+                texture: Some(textures::THING_ITEM_KEY_BLUE), 
+                ..Default::default()
             });
+        }
 
-            let size = vec2(32.0, 32.0);
-
-            if player.inventory.amount(textures::THING_ITEM_KEY_BLUE) > 0.0 {
-                engine.draw_rect(DrawRectParams { 
-                    pos: vec2(16.0, 32.0), 
-                    size, 
-                    texture: Some(textures::THING_ITEM_KEY_BLUE), 
-                    ..Default::default()
-                });
-            }
-
-            if player.inventory.amount(textures::THING_ITEM_KEY_GOLD) > 0.0 {
-                engine.draw_rect(DrawRectParams { 
-                    pos: vec2(16.0, 32.0 + size.y), 
-                    size, 
-                    texture: Some(textures::THING_ITEM_KEY_GOLD), 
-                    ..Default::default()
-                });
-            }
+        if e.player.inventory.amount(textures::THING_ITEM_KEY_GOLD) > 0.0 {
+            engine.draw_rect(DrawRectParams { 
+                pos: vec2(16.0, 32.0 + size.y), 
+                size, 
+                texture: Some(textures::THING_ITEM_KEY_GOLD), 
+                ..Default::default()
+            });
+        }
 
 
 
-            fn draw_cought(engine:&mut dyn Engine) {
-                let size = engine.screen_size();
-                engine.draw_text(DrawTextParams {
-                    screen_pos: vec2(size.x / 2.0, size.y / 2.0),
-                    text: format!("You were cought!!!!"),
-                    scale: 32.0,
-                    color: Color::RED,
-                });
-            }
+        fn draw_cought(engine:&mut dyn Engine) {
+            let size = engine.screen_size();
+            engine.draw_text(DrawTextParams {
+                screen_pos: vec2(size.x / 2.0, size.y / 2.0),
+                text: format!("You were cought!!!!"),
+                scale: 32.0,
+                color: Color::RED,
+            });
+        }
 
-            fn draw_can_respawn(engine:&mut dyn Engine) {
-                let size = engine.screen_size();
-                engine.draw_text(DrawTextParams {
-                    screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
-                    text: format!("Click to respawn..."),
-                    scale: 32.0,
-                    color: Color::WHITE,
-                });
-            }
+        fn draw_can_respawn(engine:&mut dyn Engine) {
+            let size = engine.screen_size();
+            engine.draw_text(DrawTextParams {
+                screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
+                text: format!("Click to respawn..."),
+                scale: 32.0,
+                color: Color::WHITE,
+            });
+        }
 
-            //draw_cought(engine);
-            //draw_can_respawn(engine);
+        //draw_cought(engine);
+        //draw_can_respawn(engine);
 
-            match player.state {
-                PlayerState::Cought { timer_sec } => {
-                    if timer_sec < 1.0 {
-                        draw_cought(engine);
-                    }
-                },
-                PlayerState::CanRespawn => {
+        match e.player.state {
+            PlayerState::Cought { timer_sec } => {
+                if timer_sec < 1.0 {
                     draw_cought(engine);
-                    draw_can_respawn(engine);
-                },
-                _ => {
-
                 }
+            },
+            PlayerState::CanRespawn => {
+                draw_cought(engine);
+                draw_can_respawn(engine);
+            },
+            _ => {
+
             }
         }
     }

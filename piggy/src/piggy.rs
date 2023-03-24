@@ -10,7 +10,6 @@ pub struct Piggy {
 impl Default for Piggy {
     fn default() -> Self {
         let mut world = World::new();
-
         Self { current_map: Default::default(), world }
     }
 }

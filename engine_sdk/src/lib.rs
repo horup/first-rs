@@ -34,8 +34,8 @@ pub use atlas::*;
 mod texture_atlas;
 pub use texture_atlas::*;
 
-//mod spatial_hashmap;
-//pub use spatial_hashmap::*;
+mod spatial_hashmap;
+pub use spatial_hashmap::*;
 
 mod tile;
 pub use tile::*;
