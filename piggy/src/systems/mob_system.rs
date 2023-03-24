@@ -1,16 +1,19 @@
-use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, world::World};
+use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, world::World, Grid, Tile};
+use crate::{PlayerEntity, MobEntity, Global};
 
 pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
-    let player = world.player_entity()?;
+    let global = world.singleton::<Global>().unwrap();
+    let tilemap = world.singleton::<Grid<Tile>>().unwrap();
+    let player_entity = world.query::<PlayerEntity>().next()?;
 
-    for e in world.query::<MobEntity>() {
-        let v = player.sprite.pos - mob_entity.sprite.pos;
+    for mob_entity in world.query::<MobEntity>() {
+        let v = player_entity.sprite.pos - mob_entity.sprite.pos;
         let dir = v.normalize_or_zero();
         let mob_speed = 2.0;
 
         // check visibility to player
         let mut player_visible = true;
-        world.grid.cast_ray(mob_entity.sprite.pos.truncate(), player.sprite.pos.truncate(), |visit|{
+        tilemap.cast_ray(mob_entity.sprite.pos.truncate(), player_entity.sprite.pos.truncate(), |visit|{
             if visit.cell.clips {
                 player_visible = false;
             }
@@ -21,14 +24,14 @@ pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
         mob_entity.mob.can_see_player = player_visible;
         
         if mob_entity.mob.can_see_player {
-            mob_entity.mob.last_known_pos = Some(player.sprite.pos);
+            mob_entity.mob.last_known_pos = Some(player_entity.sprite.pos);
             mob_entity.sprite.vel = dir * mob_speed;
         }
         
         if let Some(last_known_pos) = mob_entity.mob.last_known_pos {
             let start = mob_entity.sprite.pos.truncate().as_ivec2();
             let end = last_known_pos.truncate().as_ivec2();
-            if let Some(path) = world.grid.astar(start.into(), end.into(), |_, tile| {
+            if let Some(path) = tilemap.astar(start.into(), end.into(), |_, tile| {
                 tile.clips
             }) {
                 let path = path.iter().skip(1);
@@ -47,13 +50,11 @@ pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
         }
 
         // check if touching player
-        world.collisions.iter().filter(|collision|collision.entity == id).for_each(|collision|{
+        global.collisions.iter().filter(|collision|collision.entity == mob_entity.id).for_each(|collision|{
             if let Some(other_entity) = collision.other_entity {
-                if let Some(player_entity) = world.player_entity() {
-                    if player_entity.id == other_entity {
-                        if mob_entity.mob.is_killer {
-                            player_entity.health.kill(Some(mob_entity.id));
-                        }
+                if player_entity.id == other_entity {
+                    if mob_entity.mob.is_killer {
+                        player_entity.health.kill(Some(mob_entity.id));
                     }
                 }
             }
