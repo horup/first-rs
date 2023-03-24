@@ -1,7 +1,7 @@
-use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, Map, Event};
-use crate::{textures, State};
+use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, Map, Event, world::World};
+use crate::{textures};
 
-pub fn init_system(state:&mut State, engine:&mut dyn Engine) {
+pub fn init_system(world:&mut World, engine:&mut dyn Engine) {
     macro_rules! wall {
         ($id:expr, $path:expr) => {
             engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
