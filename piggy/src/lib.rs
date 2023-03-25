@@ -16,5 +16,5 @@ pub mod components;
 
 #[no_mangle]
 pub fn create() -> Box<dyn Game> {
-    Box::new(Piggy::default())
+    Box::<piggy::Piggy>::default()
 }

@@ -18,7 +18,7 @@ pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
                 player_visible = false;
             }
 
-            return visit.cell.clips;
+            visit.cell.clips
         });
 
         mob_entity.mob.can_see_player = player_visible;
@@ -52,10 +52,8 @@ pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
         // check if touching player
         global.collisions.iter().filter(|collision|collision.entity == mob_entity.id).for_each(|collision|{
             if let Some(other_entity) = collision.other_entity {
-                if player_entity.id == other_entity {
-                    if mob_entity.mob.is_killer {
-                        player_entity.health.kill(Some(mob_entity.id));
-                    }
+                if player_entity.id == other_entity && mob_entity.mob.is_killer {
+                    player_entity.health.kill(Some(mob_entity.id));
                 }
             }
         });

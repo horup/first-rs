@@ -83,17 +83,17 @@ impl<T> Grid<T> where T:Default+Clone {
             let mut vec:Vec<((i32, i32), i32)> = Vec::with_capacity(4);
             for p in [(nx - 1, ny), (nx + 1, ny), (nx, ny - 1), (nx, ny + 1)] {
                 if let Some(tile) = self.get(p) {
-                    if !visit(p, &tile) {
+                    if !visit(p, tile) {
                         vec.push((p, 1));
                     }
                 }
             }
-            return vec;
+            vec
         }, |(nx, ny)|{
             let (vx, vy) = ((nx - end.0).abs(), (ny - end.1).abs());
-            return vx + vy;
+            vx + vy
         }, |n|{
-            return n == &end;
+            n == &end
         });
         if let Some((vec, _)) = p {
             return Some(vec);
@@ -134,7 +134,7 @@ impl<T> Grid<T> where T:Default+Clone {
                 }
                 let index = (tile_x as i32, tile_y as i32);
                 if let Some(cell) = self.get(index) {
-                    if f(Visit {index:index, cell: cell, d:t, x:tile_x, y:tile_y }) {
+                    if f(Visit {index, cell, d:t, x:tile_x, y:tile_y }) {
                         break;
                     }
                 } else {

@@ -58,7 +58,7 @@ pub fn ui_system(world:&mut World, engine:&mut dyn Engine) {
             let size = engine.screen_size();
             engine.draw_text(DrawTextParams {
                 screen_pos: vec2(size.x / 2.0, size.y / 2.0),
-                text: format!("You were cought!!!!"),
+                text: "You were cought!!!!".to_string(),
                 scale: 32.0,
                 color: Color::RED,
             });
@@ -68,7 +68,7 @@ pub fn ui_system(world:&mut World, engine:&mut dyn Engine) {
             let size = engine.screen_size();
             engine.draw_text(DrawTextParams {
                 screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
-                text: format!("Click to respawn..."),
+                text: "Click to respawn...".to_string(),
                 scale: 32.0,
                 color: Color::WHITE,
             });
