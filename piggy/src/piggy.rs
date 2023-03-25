@@ -1,6 +1,6 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World};
-use crate::{systems};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tile, Grid};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
 
 pub struct Piggy {
     pub current_map: Map,
@@ -10,6 +10,17 @@ pub struct Piggy {
 impl Default for Piggy {
     fn default() -> Self {
         let mut world = World::new();
+        world.register_component::<Sprite>();
+        world.register_component::<Player>();
+        world.register_component::<Door>();
+        world.register_component::<Mob>();
+        world.register_component::<Activator>();
+        world.register_component::<Health>();
+        world.register_component::<Item>();
+        world.register_component::<Effector>();
+
+        world.register_singleton::<Grid<Tile>>();
+        world.register_singleton::<Global>();
         Self { current_map: Default::default(), world }
     }
 }
