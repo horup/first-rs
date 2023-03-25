@@ -9,15 +9,11 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
     let speed = 3.0;
     let left = global.camera.left();
     let forward = global.camera.forward_body();
-    let mut old_pos = global.camera.pos;
-    let mut new_pos = global.camera.pos;
-    let mut new_facing = global.camera.facing;
-
 
     for mut e in world.query::<PlayerEntity>() {
-        old_pos = e.sprite.pos;
-        new_pos = e.sprite.pos;
-        new_facing = e.sprite.facing;
+        let old_pos = e.sprite.pos;
+        let mut new_pos = e.sprite.pos;
+        let mut new_facing = e.sprite.facing;
     
         if e.health.is_alive() {
             if !engine.cursor_grabbed() {
