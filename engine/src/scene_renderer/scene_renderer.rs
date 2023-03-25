@@ -1,7 +1,7 @@
 use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, world::{World, EntityId}, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, Grid, Tile};
+use engine_sdk::{Camera, world::{World, EntityId}, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, Grid, Tile, Tilemap};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -449,7 +449,7 @@ impl SceneRenderer {
         self.opaque_sprites.clear();
         self.translucent_sprites.clear();
         self.draw_calls.push(DrawCall::Clear {  });
-        let tilemap = scene.singleton::<Grid<Tile>>().expect("were unable to get grid from world");
+        let tilemap = scene.singleton::<Tilemap>().unwrap();
 
         // update camera
         let camera_uniform = CameraUniform::new_scene_camera(camera, graphics.config.width as f32, graphics.config.height as f32);
@@ -461,7 +461,7 @@ impl SceneRenderer {
 
         // find wall textures in use
         let mut textures = HashMap::new();
-        tilemap.for_each(|cell, _| {
+        tilemap.grid.for_each(|cell, _| {
             if let Some(wall) = cell.wall {
                 textures.insert(wall, ());
             }
@@ -472,12 +472,12 @@ impl SceneRenderer {
         // once per texture, prepare walls that can be reached from a spot without a wall
         // i.e. dont prepare walls that are not reachable
         for texture in textures {
-            tilemap.for_each(|cell, (x,y)| {
+            tilemap.grid.for_each(|cell, (x,y)| {
                 if cell.wall.is_none() {
                     let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
                     for n in directions.iter() {
                         let p = ivec2(x, y) - *n;
-                        if let Some(cell) = tilemap.get((p.x, p.y)) {
+                        if let Some(cell) = tilemap.grid.get((p.x, p.y)) {
                             if let Some(wall_texture) = cell.wall {
                                 if wall_texture == texture {
                                     self.wall(wall_texture, p, -*n);
@@ -490,16 +490,16 @@ impl SceneRenderer {
         }
 
         // draw floor 
-        tilemap.for_each(|cell, (x,y)| {
+        tilemap.grid.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                //self.floor(scene.floor_texture, IVec2::new(x, y));
+                self.floor(tilemap.floor_texture, IVec2::new(x, y));
             }
         });
 
         // draw ceiling
-        tilemap.for_each(|cell, (x,y)| {
+        tilemap.grid.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                //self.ceiling(scene.ceiling_texture, IVec2::new(x, y));
+                self.ceiling(tilemap.ceiling_texture, IVec2::new(x, y));
             }
         });
 
