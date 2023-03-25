@@ -1,5 +1,5 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tile, Grid};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tile, Grid, Tilemap};
 use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
 
 pub struct Piggy {
@@ -19,7 +19,7 @@ impl Default for Piggy {
         world.register_component::<Item>();
         world.register_component::<Effector>();
 
-        world.register_singleton::<Grid<Tile>>();
+        world.register_singleton::<Tilemap>();
         world.register_singleton::<Global>();
         Self { current_map: Default::default(), world }
     }

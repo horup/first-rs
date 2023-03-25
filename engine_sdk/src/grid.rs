@@ -11,12 +11,6 @@ pub struct Grid<T:Clone + Default> {
     cells:Vec<T>
 }
 
-impl Singleton for Grid<Tile> {
-    fn id() -> world::ComponentId {
-        1
-    }
-}
-
 impl<T> Default for Grid<T> where T:Default+Clone {
     fn default() -> Self {
         Self::new(64)

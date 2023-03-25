@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use world::EntityId;
 use crate::world::World;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Grid, Tile};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Grid, Tile, Tilemap};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
@@ -60,7 +60,7 @@ pub trait Engine {
 
     fn clip_move(&mut self, world:&World, id:EntityId, new_pos:Vec3, spatial_hashmap:&mut SpatialHashmap, potential_colliders:&mut Vec<EntityId>) -> Collision {
         let mut col = Collision::default();
-        let tilemap = world.singleton::<Grid<Tile>>().unwrap();
+        let tilemap = world.singleton::<Tilemap>().unwrap();
         col.entity = id;
         if let Some(mut e) = world.component_mut::<Sprite>(id) {
             let v = new_pos - e.pos;
@@ -119,7 +119,7 @@ pub trait Engine {
                             let i = i as f32;
                             let cp = Vec2::new(i, i) * rev_dim + d + pos_org.truncate();
                             let np = cp.as_ivec2();
-                            if let Some(cell) = tilemap.get((np.x, np.y)) {
+                            if let Some(cell) = tilemap.grid.get((np.x, np.y)) {
                                 if cell.clips {
                                     let s1 =
                                         parry2d::shape::Cuboid::new([e.radius, e.radius].into());

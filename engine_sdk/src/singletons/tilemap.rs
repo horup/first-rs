@@ -6,7 +6,7 @@ use crate::{Grid, Tile};
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Tilemap {
-    pub tilemap:Grid<Tile>,
+    pub grid:Grid<Tile>,
     pub floor_texture:u32,
     pub ceiling_texture:u32
 }

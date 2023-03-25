@@ -1,5 +1,5 @@
-use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::World, Tile};
-use crate::{textures, components::{Item, Door, Effector, Player, Activator, Mob, Health}, PlayerEntity};
+use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::World, Tile, Tilemap};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, PlayerEntity};
 
 pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -77,5 +77,9 @@ pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
         }
     });
 
-    *world.singleton_mut::<Grid<Tile>>().unwrap() = grid;
+
+    let mut tilemap = world.singleton_mut::<Tilemap>().unwrap();
+    tilemap.grid = grid;
+    tilemap.floor_texture = FLOOR_GREY;
+    tilemap.ceiling_texture = CEILING_GREY;
 }

@@ -1,9 +1,9 @@
-use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, world::World, Grid, Tile};
+use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, world::World, Grid, Tile, Tilemap};
 use crate::{PlayerEntity, MobEntity, Global};
 
 pub fn mob_system(world:&mut World, _engine:&mut dyn Engine) -> Option<()> {
     let global = world.singleton::<Global>().unwrap();
-    let tilemap = world.singleton::<Grid<Tile>>().unwrap();
+    let tilemap = &world.singleton::<Tilemap>().unwrap().grid;
     let mut player_entity = world.query::<PlayerEntity>().next()?;
 
     for mut mob_entity in world.query::<MobEntity>() {
