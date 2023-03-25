@@ -15,8 +15,6 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
 
 
     for mut e in world.query::<PlayerEntity>() {
-    dbg!("funny");
-
         old_pos = e.sprite.pos;
         new_pos = e.sprite.pos;
         new_facing = e.sprite.facing;
