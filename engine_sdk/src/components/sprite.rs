@@ -32,7 +32,7 @@ pub struct Sprite {
 
 impl  Component for Sprite {
     fn id() -> world::ComponentId {
-        1
+        crate::SPRITE_ID
     }
 }
 

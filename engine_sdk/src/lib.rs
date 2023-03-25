@@ -4,11 +4,11 @@ pub use game::*;
 mod engine;
 pub use engine::*;
 
-//mod worldy;
-//pub use worldy::*;
+mod singletons;
+pub use singletons::*;
 
-mod sprite;
-pub use sprite::*;
+mod components;
+pub use components::*;
 
 mod camera;
 pub use camera::*;
