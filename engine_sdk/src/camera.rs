@@ -1,6 +1,6 @@
 use glam::{Vec3, vec3};
 use serde::{Deserialize, Serialize};
-use world::Singleton;
+
 
 #[derive(Default, Deserialize, Serialize, Clone, Copy)]
 pub struct Camera {

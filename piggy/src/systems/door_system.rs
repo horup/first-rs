@@ -1,11 +1,11 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, glam::{vec3}, world::World, Grid, Tile, Tilemap};
+use engine_sdk::{Engine, glam::{vec3}, world::World, Tilemap};
 
 use crate::DoorEntity;
 
 pub fn door_system(world:&mut World, engine:&mut dyn Engine) {
-    let mut tilemap = &mut world.singleton_mut::<Tilemap>().unwrap().grid;
+    let tilemap = &mut world.singleton_mut::<Tilemap>().unwrap().grid;
     // update doors 
     let dt = engine.dt();
     for mut e in world.query::<DoorEntity>() {

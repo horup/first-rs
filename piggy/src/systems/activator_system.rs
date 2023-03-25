@@ -1,6 +1,6 @@
 use engine_sdk::{Engine, world::World};
 
-pub fn activator_system(world:&mut World, _engine:&mut dyn Engine) {
+pub fn activator_system(_world:&mut World, _engine:&mut dyn Engine) {
    /* for id in state.entities.iter() {
         if let Some(activatee_thing) = state.activatee_entity(id) {
             let player_pos = activatee_thing.sprite.pos;

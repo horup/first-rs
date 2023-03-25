@@ -1,4 +1,4 @@
-use engine_sdk::{Engine, world::{World, Entity}};
+use engine_sdk::{Engine, world::{World}};
 use crate::{PlayerEntity, ItemEntity};
 
 pub fn item_system(world:&mut World, _engine:&mut dyn Engine) {

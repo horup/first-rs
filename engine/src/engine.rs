@@ -5,7 +5,7 @@ use engine_sdk::{glam::vec2, Game, TextureAtlas};
 use std::{collections::HashMap, cell::{RefCell}};
 
 use winit::{
-    event::{ElementState, KeyboardInput, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
+    event::{ElementState, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
     event_loop::{ControlFlow, EventLoop},
     window::{WindowBuilder}
 };

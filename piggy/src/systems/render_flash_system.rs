@@ -1,4 +1,4 @@
-use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, world::{World, Singleton}};
+use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, world::{World}};
 use serde::{Serialize, Deserialize};
 
 use crate::Global;

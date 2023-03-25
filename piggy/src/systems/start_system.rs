@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::World, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, PlayerEntity};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
 
 pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {

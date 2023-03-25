@@ -1,5 +1,5 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tile, Grid, Tilemap};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tilemap};
 use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
 
 pub struct Piggy {

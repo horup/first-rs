@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, VirtualKeyCode, glam::Vec2, world::World, Sprite};
+use engine_sdk::{Engine, VirtualKeyCode, world::World, Sprite};
 use crate::{components::PlayerState, Global, PlayerEntity};
 
 pub fn player_system(world:&mut World, engine:&mut dyn Engine) {

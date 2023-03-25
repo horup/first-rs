@@ -6,7 +6,7 @@ use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use world::EntityId;
 use crate::world::World;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Grid, Tile, Tilemap};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Tilemap};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
