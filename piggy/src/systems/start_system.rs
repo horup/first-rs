@@ -2,7 +2,7 @@ use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::Wor
 use crate::{textures, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
 
 pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
-    let sprite = Sprite {
+    let mut sprite = Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         texture: thing,
         opacity: None,
@@ -13,8 +13,6 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
     };
     
     let mut e = world.spawn();
-    e.attach(sprite);
-    let mut sprite = e.get_mut::<Sprite>().unwrap();
     match thing {
         textures::THING_MARKER_EXIT => {
             sprite.hidden = true;
@@ -60,12 +58,13 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
         }
         _=>{}
     }
+
+    e.attach(sprite);
 }
 
 pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
     world.clear();
-    let grid = world.singleton_mut::<Grid<Tile>>().unwrap();
-    *grid = Grid::new(map.grid.size());
+    let mut grid:Grid<Tile> = Grid::new(map.grid.size());
     map.grid.for_each(|cell, index| {
         if let Some(wall) = cell.wall {
             let tile = grid.get_mut(index).unwrap();
@@ -76,4 +75,6 @@ pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
             spawn_thing(world, thing, index, cell.thing_facing);
         }
     });
+
+    *world.singleton_mut::<Grid<Tile>>().unwrap() = grid;
 }
