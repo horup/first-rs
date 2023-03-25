@@ -62,7 +62,7 @@ pub trait Engine {
         let mut col = Collision::default();
         let tilemap = world.singleton::<Grid<Tile>>().unwrap();
         col.entity = id;
-        if let Some(mut e) = world.get_mut::<Sprite>(id) {
+        if let Some(mut e) = world.component_mut::<Sprite>(id) {
             let v = new_pos - e.pos;
             if v.length() > 0.0 {
                 let mut left = v.length();
@@ -91,7 +91,7 @@ pub trait Engine {
                         // collision handling between entities
                         spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + spatial_hashmap.max_radius(),potential_colliders);
                         for other_id in potential_colliders.iter() {
-                            let other_e = world.get::<Sprite>(*other_id).unwrap();
+                            let other_e = world.component::<Sprite>(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
                             if *other_id != id && !ignore {
                                 let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);

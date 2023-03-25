@@ -9,8 +9,8 @@ pub struct DoorEntity<'a> {
 }
 impl<'a> Query<'a> for DoorEntity<'a> {
     fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.get_mut::<Sprite>(id)?;
-        let door = world.get_mut::<Door>(id)?;
+        let sprite = world.component_mut::<Sprite>(id)?;
+        let door = world.component_mut::<Door>(id)?;
         Some(DoorEntity {
             id,
             sprite,
@@ -28,9 +28,9 @@ pub struct PlayerEntity<'a> {
 
 impl<'a> Query<'a> for PlayerEntity<'a> {
     fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let player = world.get_mut(id)?;
-        let health = world.get_mut(id)?;
-        let sprite = world.get_mut(id)?;
+        let player = world.component_mut(id)?;
+        let health = world.component_mut(id)?;
+        let sprite = world.component_mut(id)?;
 
         Some(Self {
             id,
@@ -49,8 +49,8 @@ pub struct ItemEntity<'a> {
 
 impl<'a> Query<'a> for ItemEntity<'a> {
     fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.get_mut(id)?;
-        let item = world.get_mut(id)?;
+        let sprite = world.component_mut(id)?;
+        let item = world.component_mut(id)?;
         Some(Self {
             id,
             sprite,
@@ -67,8 +67,8 @@ pub struct MobEntity<'a> {
 
 impl<'a> Query<'a> for MobEntity<'a>{
     fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.get_mut::<Sprite>(id)?;
-        let mob = world.get_mut::<Mob>(id)?;
+        let sprite = world.component_mut::<Sprite>(id)?;
+        let mob = world.component_mut::<Mob>(id)?;
         Some(Self {
             id,
             sprite,

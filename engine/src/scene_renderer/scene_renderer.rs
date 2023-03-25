@@ -528,7 +528,7 @@ impl SceneRenderer {
         // draw opaque sprites
         for texture in textures {
             for sprite in sprites.iter() {
-                if let Some(sprite) = scene.get::<Sprite>(*sprite) {
+                if let Some(sprite) = scene.component::<Sprite>(*sprite) {
                     if sprite.texture == texture {
                         if let Some(texture) = graphics.textures.get(&texture) {
                             self.sprite(camera, &sprite, &texture.atlas);
@@ -542,7 +542,7 @@ impl SceneRenderer {
         let mut sprites = std::mem::take(&mut self.translucent_sprites);
         // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.get::<Sprite>(*a), scene.get::<Sprite>(*b)) {
+            if let (Some(a), Some(b)) = (scene.component::<Sprite>(*a), scene.component::<Sprite>(*b)) {
                 if a.texture < b.texture {
                     return Ordering::Greater;
                 } else if a.texture > b.texture {
@@ -554,7 +554,7 @@ impl SceneRenderer {
 
         // then sort sprites based upon distance to camera
         sprites.sort_by(|a, b|{
-            if let (Some(a), Some(b)) = (scene.get::<Sprite>(*a), scene.get::<Sprite>(*b)) {
+            if let (Some(a), Some(b)) = (scene.component::<Sprite>(*a), scene.component::<Sprite>(*b)) {
                 let a = (a.pos - camera.pos).length_squared();
                 let b = (b.pos - camera.pos).length_squared();
                 if a < b {
@@ -569,7 +569,7 @@ impl SceneRenderer {
 
         // and draw
         for sprite in sprites.iter() {
-            if let Some(sprite) = scene.get::<Sprite>(*sprite) {
+            if let Some(sprite) = scene.component::<Sprite>(*sprite) {
                 if let Some(texture) = graphics.textures.get(&sprite.texture) {
                     self.sprite(camera, &sprite, &texture.atlas);
                 }

@@ -45,7 +45,7 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
         } else {
             // player is not alive, ensure player is facing the killar
             if let Some(killer) = e.health.killer {
-                if let Some(killer) = world.get::<Sprite>(killer) {
+                if let Some(killer) = world.component::<Sprite>(killer) {
                     let facing_towards_killer = killer.pos - e.sprite.pos;
                     let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
                     let facing = e.sprite.facing_as_vec2(); 
