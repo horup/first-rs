@@ -2912,7 +2912,7 @@ dependencies = [
 [[package]]
 name = "world"
 version = "0.1.0"
-source = "git+https://github.com/horup/world-rs.git#3dbc66dddff3a36eb3993c26ec1461569e401e81"
+source = "git+https://github.com/horup/world-rs.git#f2184ad26c07c89e3342d9d2c9b53d3738d84add"
 dependencies = [
  "bincode",
  "serde",

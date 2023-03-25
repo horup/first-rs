@@ -13,7 +13,10 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
     let mut new_pos = global.camera.pos;
     let mut new_facing = global.camera.facing;
 
+
     for mut e in world.query::<PlayerEntity>() {
+    dbg!("funny");
+
         old_pos = e.sprite.pos;
         new_pos = e.sprite.pos;
         new_facing = e.sprite.facing;
@@ -66,18 +69,18 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
             }
         }
     
-            match &mut e.player.state {
-                PlayerState::Cought { timer_sec } => {
-                    *timer_sec -= dt;
-                    if *timer_sec <= 0.0 {
-                        e.player.state.can_respawn();
-                    }
-                },
-                PlayerState::CanRespawn => {
-                    dbg!("can respawn");
+        match &mut e.player.state {
+            PlayerState::Cought { timer_sec } => {
+                *timer_sec -= dt;
+                if *timer_sec <= 0.0 {
+                    e.player.state.can_respawn();
                 }
-                _ => {}
+            },
+            PlayerState::CanRespawn => {
+                dbg!("can respawn");
             }
+            _ => {}
+        }
     
         e.sprite.vel = new_pos - old_pos;
         e.sprite.facing = new_facing;

@@ -31,7 +31,6 @@ impl<'a> Query<'a> for PlayerEntity<'a> {
         let player = world.component_mut(id)?;
         let health = world.component_mut(id)?;
         let sprite = world.component_mut(id)?;
-
         Some(Self {
             id,
             player,

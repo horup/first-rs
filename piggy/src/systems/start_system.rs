@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::World, Tile};
-use crate::{textures, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
+use crate::{textures, components::{Item, Door, Effector, Player, Activator, Mob, Health}, PlayerEntity};
 
 pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -60,6 +60,7 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
     }
 
     e.attach(sprite);
+
 }
 
 pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
