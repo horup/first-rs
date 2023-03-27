@@ -45,4 +45,4 @@ pub use image;
 pub use egui;
 pub use winit::event::VirtualKeyCode;
 pub use winit::window::CursorGrabMode;
-pub use world;
+pub use registry;

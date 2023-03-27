@@ -16,4 +16,4 @@ slotmap = { version = "1.0", features = ["serde"] }
 parry2d = "0.10.0"
 flat_spatial = "0.5.0"
 pathfinding = "4.1.1"
-world = { git = "https://github.com/horup/world-rs.git" }
+registry = { git = "https://github.com/horup/registry-rs.git" }
