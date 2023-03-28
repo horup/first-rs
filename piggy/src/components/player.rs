@@ -1,4 +1,4 @@
-use engine_sdk::registry::Component;
+use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
@@ -41,8 +41,8 @@ pub struct Player {
 }
 
 impl Component for Player {
-    fn id() -> engine_sdk::registry::ComponentId {
-        10
+    fn type_id() -> Uuid {
+        uuid!("0fd10bc1-9587-466b-9576-e4672d397530")
     }
 }
 

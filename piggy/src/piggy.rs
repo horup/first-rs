@@ -1,5 +1,5 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, registry::Registry, Sprite, Tilemap};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
 use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
 
 pub struct Piggy {
@@ -24,6 +24,7 @@ impl Default for Piggy {
         Self { current_map: Default::default(), registry }
     }
 }
+
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {

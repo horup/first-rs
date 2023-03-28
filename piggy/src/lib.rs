@@ -8,8 +8,8 @@ pub use defs::*;
 mod global;
 pub use global::*;
 
-mod registry_ext;
-pub use registry_ext::*;
+mod facade;
+pub use facade::*;
 
 pub mod systems;
 pub mod components;

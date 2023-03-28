@@ -1,4 +1,4 @@
-use engine_sdk::{glam::Vec3, registry::Component};
+use engine_sdk::{glam::Vec3, registry::{Component, uuid::{uuid, Uuid}}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
@@ -10,8 +10,8 @@ pub struct Door {
 }
 
 impl Component for Door {
-    fn id() -> engine_sdk::registry::ComponentId {
-        14
+    fn type_id() -> Uuid {
+        uuid!("cb502ab6-c152-4c03-8c5f-2aa039979166")
     }
 }
 

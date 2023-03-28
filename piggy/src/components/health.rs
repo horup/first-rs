@@ -1,4 +1,4 @@
-use engine_sdk::registry::{EntityId, Component};
+use engine_sdk::registry::{EntityId, Component, uuid::{Uuid, uuid}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -20,8 +20,8 @@ impl Health {
 }
 
 impl Component for Health {
-    fn id() -> engine_sdk::registry::ComponentId {
-        11
+    fn type_id() -> Uuid {
+        uuid!("f5e29883-d9cc-480f-8c80-dba9e721bac3")
     }
 }
 

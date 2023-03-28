@@ -1,4 +1,4 @@
-use engine_sdk::registry::Component;
+use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -9,8 +9,8 @@ pub enum Activator {
 }
 
 impl Component for Activator {
-    fn id() -> engine_sdk::registry::ComponentId {
-        15
+    fn type_id() -> Uuid{
+        uuid!("2ca7d324-0665-4afd-a98f-199e6d529aab")
     }
 }
 

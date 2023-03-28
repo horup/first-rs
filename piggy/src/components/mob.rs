@@ -1,4 +1,4 @@
-use engine_sdk::{glam::Vec3, glam::Vec2, registry::Component};
+use engine_sdk::{glam::Vec3, glam::Vec2, registry::{Component, uuid::{uuid, Uuid}}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone, Copy, Default)]
@@ -10,7 +10,7 @@ pub struct Mob {
 }
 
 impl Component for Mob {
-    fn id() -> engine_sdk::registry::ComponentId {
-        16
+    fn type_id() -> Uuid {
+        uuid!("d7b2f167-0b77-4a7b-aeb6-77ae0ebae15b")
     }
 }

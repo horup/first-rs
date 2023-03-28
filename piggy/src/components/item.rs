@@ -1,4 +1,4 @@
-use engine_sdk::registry::Component;
+use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
@@ -7,8 +7,8 @@ pub struct Item {
 }
 
 impl Component for Item {
-    fn id() -> engine_sdk::registry::ComponentId {
-        12
+    fn type_id() -> Uuid {
+        uuid!("4d30694e-759a-4efb-92d7-c0b1ddcb8c4e")
     }
 }
 
