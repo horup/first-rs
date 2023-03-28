@@ -1,15 +1,15 @@
-use engine_sdk::{Engine, world::World};
+use engine_sdk::{Engine, registry::Registry};
 
 use crate::PlayerEntity;
 
-pub fn effector_system(world: &mut World, _engine: &mut dyn Engine) {
-    for player_entity in world.query::<PlayerEntity>() {
+pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
+    for player_entity in registry.query::<PlayerEntity>() {
         // mut near = Vec::new();
         let _player_pos = player_entity.sprite.pos;
         let _radius = 1.0;
-       /* world.query_around(player_pos.truncate(), radius, &mut near);
+       /* registry.query_around(player_pos.truncate(), radius, &mut near);
         for id in near.drain(..) {
-            if let Some(effector) = world.effectors.get(id) {
+            if let Some(effector) = registry.effectors.get(id) {
                 match effector {
                     crate::components::Effector::ExitMarker => {
                         panic!("you won!");

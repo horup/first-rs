@@ -1,4 +1,4 @@
-use engine_sdk::world::Component;
+use engine_sdk::registry::Component;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
@@ -41,7 +41,7 @@ pub struct Player {
 }
 
 impl Component for Player {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         10
     }
 }

@@ -6,7 +6,7 @@ use crate::{Grid, Sprite, SpatialHashmap, Tile, Entities, Components, EntityId};
 
 new_key_type! {pub struct SpriteId;}
 
-pub struct World<'a> {
+pub struct Registry<'a> {
     entities:&'a Entities,
     spatial_hashmap:SpatialHashmap<'a>,
     sprites:&'a Components<Sprite>,
@@ -23,7 +23,7 @@ pub struct Collision {
     pub tile:Option<IVec2>
 }
 
-impl<'a> World<'a> {
+impl<'a> Registry<'a> {
     pub fn new(entities:&'a Entities, sprites:&'a Components<Sprite>, grid:&'a Grid<Tile>) -> Self {
         Self {
             entities,

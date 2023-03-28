@@ -1,14 +1,14 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, glam::{vec3}, world::World, Tilemap};
+use engine_sdk::{Engine, glam::{vec3}, registry::Registry, Tilemap};
 
 use crate::DoorEntity;
 
-pub fn door_system(world:&mut World, engine:&mut dyn Engine) {
-    let tilemap = &mut world.singleton_mut::<Tilemap>().unwrap().grid;
+pub fn door_system(registry:&mut Registry, engine:&mut dyn Engine) {
+    let tilemap = &mut registry.singleton_mut::<Tilemap>().unwrap().grid;
     // update doors 
     let dt = engine.dt();
-    for mut e in world.query::<DoorEntity>() {
+    for mut e in registry.query::<DoorEntity>() {
         let speed = 2.0;
         e.door.openess += speed * e.door.direction * dt;
         if e.door.openess < 0.0 {

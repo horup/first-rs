@@ -1,4 +1,4 @@
-use engine_sdk::{glam::Vec3, glam::Vec2, world::Component};
+use engine_sdk::{glam::Vec3, glam::Vec2, registry::Component};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone, Copy, Default)]
@@ -10,7 +10,7 @@ pub struct Mob {
 }
 
 impl Component for Mob {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         16
     }
 }

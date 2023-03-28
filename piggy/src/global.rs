@@ -1,4 +1,4 @@
-use engine_sdk::{world::Singleton, Camera, Collision};
+use engine_sdk::{registry::Singleton, Camera, Collision};
 use serde::{Serialize, Deserialize};
 
 use crate::systems::Flash;
@@ -11,7 +11,7 @@ pub struct Global {
 }
 
 impl Singleton for Global {
-    fn id() -> engine_sdk::world::SingletonId {
+    fn id() -> engine_sdk::registry::SingletonId {
         20
     }
 }

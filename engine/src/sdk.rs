@@ -18,7 +18,7 @@ impl engine_sdk::Engine for Engine {
         );
     }
 
-    fn draw_scene(&mut self, camera: &engine_sdk::Camera, scene: &engine_sdk::world::World) {
+    fn draw_scene(&mut self, camera: &engine_sdk::Camera, scene: &engine_sdk::registry::Registry) {
         self.scene_renderer.prepare(&mut self.graphics, camera, scene);
     }
 

@@ -1,4 +1,4 @@
-use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, world::{World}};
+use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, registry::{Registry}};
 use serde::{Serialize, Deserialize};
 
 use crate::Global;
@@ -29,8 +29,8 @@ impl Flash {
     }
 }
 
-pub fn render_flash_system(world:&mut World, engine:&mut dyn Engine) {
-    let mut global = world.singleton_mut::<Global>().unwrap();
+pub fn render_flash_system(registry:&mut Registry, engine:&mut dyn Engine) {
+    let mut global = registry.singleton_mut::<Global>().unwrap();
     let screen = engine.screen_size();
     let alpha = global.flash.alpha();
     if alpha > 0.0 {

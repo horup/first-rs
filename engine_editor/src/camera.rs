@@ -14,7 +14,7 @@ impl EditorCamera {
     pub fn to_screen(&self, p:&Vec2) -> Vec2 {
         *p * self.zoom - self.pos * self.zoom + self.screen_size / 2.0
     }
-    pub fn to_world(&self, p:&Vec2) -> Vec2 {
+    pub fn to_registry(&self, p:&Vec2) -> Vec2 {
         if self.zoom > 0.0 {
             let mut p = *p - self.screen_size / 2.0;
             p /= self.zoom;
@@ -58,7 +58,7 @@ impl EditorCamera {
         self.pos += self.dir * engine.dt() * move_speed;
 
         let mouse_pos = engine.mouse_pos();
-        let grid_cursor = self.to_world(&mouse_pos).floor();
+        let grid_cursor = self.to_registry(&mouse_pos).floor();
         self.grid_cursor = grid_cursor.as_ivec2();
        
     }

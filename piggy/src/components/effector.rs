@@ -1,4 +1,4 @@
-use engine_sdk::world::Component;
+use engine_sdk::registry::Component;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -13,7 +13,7 @@ impl Default for Effector {
 }
 
 impl Component for Effector {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         13
     }
 }

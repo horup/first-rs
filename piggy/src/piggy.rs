@@ -1,33 +1,33 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, world::World, Sprite, Tilemap};
+use engine_sdk::{Map, Game, Event, VirtualKeyCode, registry::Registry, Sprite, Tilemap};
 use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
 
 pub struct Piggy {
     pub current_map: Map,
-    pub world:World
+    pub registry:Registry
 }
 
 impl Default for Piggy {
     fn default() -> Self {
-        let mut world = World::new();
-        world.register_component::<Sprite>();
-        world.register_component::<Player>();
-        world.register_component::<Door>();
-        world.register_component::<Mob>();
-        world.register_component::<Activator>();
-        world.register_component::<Health>();
-        world.register_component::<Item>();
-        world.register_component::<Effector>();
+        let mut registry = Registry::new();
+        registry.register_component::<Sprite>();
+        registry.register_component::<Player>();
+        registry.register_component::<Door>();
+        registry.register_component::<Mob>();
+        registry.register_component::<Activator>();
+        registry.register_component::<Health>();
+        registry.register_component::<Item>();
+        registry.register_component::<Effector>();
 
-        world.register_singleton::<Tilemap>();
-        world.register_singleton::<Global>();
-        Self { current_map: Default::default(), world }
+        registry.register_singleton::<Tilemap>();
+        registry.register_singleton::<Global>();
+        Self { current_map: Default::default(), registry }
     }
 }
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        systems::init_system(&mut self.world, engine);
+        systems::init_system(&mut self.registry, engine);
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -38,28 +38,28 @@ impl Game for Piggy {
             engine.set_cursor_grabbed(false);
         }
         
-        systems::player_system(&mut self.world, engine);
-        systems::mob_system(&mut self.world, engine);
-        systems::physics_system(&mut self.world, engine);
-        systems::item_system(&mut self.world, engine);
-        systems::activator_system(&mut self.world, engine);
-        systems::door_system(&mut self.world, engine);
-        systems::effector_system(&mut self.world, engine);
-        systems::render_world_system(&mut self.world, engine);
-        systems::render_flash_system(&mut self.world, engine);
-        systems::ui_system(&mut self.world, engine);
+        systems::player_system(&mut self.registry, engine);
+        systems::mob_system(&mut self.registry, engine);
+        systems::physics_system(&mut self.registry, engine);
+        systems::item_system(&mut self.registry, engine);
+        systems::activator_system(&mut self.registry, engine);
+        systems::door_system(&mut self.registry, engine);
+        systems::effector_system(&mut self.registry, engine);
+        systems::render_registry_system(&mut self.registry, engine);
+        systems::render_flash_system(&mut self.registry, engine);
+        systems::ui_system(&mut self.registry, engine);
 
         #[cfg(not(target_arch = "wasm32"))]
         {
             let autosave = "autosave.sav";
             if engine.key_just_pressed(VirtualKeyCode::F5) {
                 let mut bytes = Vec::new();
-                self.world.serialize(&mut bytes);
+                self.registry.serialize(&mut bytes);
                 std::fs::write(autosave, bytes).unwrap();
             }
             if engine.key_just_pressed(VirtualKeyCode::F6) {
                 if let Ok(serialized) = std::fs::read(autosave) {
-                    self.world.deserialize(&serialized);
+                    self.registry.deserialize(&serialized);
                 }
             }
         }
@@ -68,7 +68,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
         match event {
             Event::Map { map } => {
-                systems::start_system(&mut self.world, engine, map);
+                systems::start_system(&mut self.registry, engine, map);
             }
             Event::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

@@ -1,7 +1,7 @@
-use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, world::World, Tile, Tilemap};
+use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, registry::Registry, Tile, Tilemap};
 use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
 
-pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
+pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         texture: thing,
@@ -12,7 +12,7 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
         ..Default::default()
     };
     
-    let mut e = world.spawn();
+    let mut e = registry.spawn();
     match thing {
         textures::THING_MARKER_EXIT => {
             sprite.hidden = true;
@@ -32,7 +32,7 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
             });
         }
         textures::THING_MARKER_SPAWN_PLAYER => {
-            //world.player_id = Some(id);
+            //registry.player_id = Some(id);
             sprite.texture = textures::THING_WILLIAM;
             sprite.hidden = true;
             e.attach(Player::default());
@@ -63,8 +63,8 @@ pub fn spawn_thing(world:&mut World, thing:u32, index:(i32, i32), facing:f32) {
 
 }
 
-pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
-    world.clear();
+pub fn start_system(registry:&mut Registry, _engine:&mut dyn Engine, map:&Map) {
+    registry.clear();
     let mut grid:Grid<Tile> = Grid::new(map.grid.size());
     map.grid.for_each(|cell, index| {
         if let Some(wall) = cell.wall {
@@ -73,12 +73,12 @@ pub fn start_system(world:&mut World, _engine:&mut dyn Engine, map:&Map) {
             tile.clips = true;
         }
         if let Some(thing) = cell.thing {
-            spawn_thing(world, thing, index, cell.thing_facing);
+            spawn_thing(registry, thing, index, cell.thing_facing);
         }
     });
 
 
-    let mut tilemap = world.singleton_mut::<Tilemap>().unwrap();
+    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
     tilemap.grid = grid;
     tilemap.floor_texture = FLOOR_GREY;
     tilemap.ceiling_texture = CEILING_GREY;

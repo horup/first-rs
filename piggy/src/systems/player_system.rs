@@ -1,16 +1,16 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Engine, VirtualKeyCode, world::World, Sprite};
+use engine_sdk::{Engine, VirtualKeyCode, registry::Registry, Sprite};
 use crate::{components::PlayerState, Global, PlayerEntity};
 
-pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
-    let mut global = world.singleton_mut::<Global>().unwrap();
+pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
+    let mut global = registry.singleton_mut::<Global>().unwrap();
     let dt = engine.dt();
     let speed = 3.0;
     let left = global.camera.left();
     let forward = global.camera.forward_body();
 
-    for mut e in world.query::<PlayerEntity>() {
+    for mut e in registry.query::<PlayerEntity>() {
         let old_pos = e.sprite.pos;
         let mut new_pos = e.sprite.pos;
         let mut new_facing = e.sprite.facing;
@@ -42,7 +42,7 @@ pub fn player_system(world:&mut World, engine:&mut dyn Engine) {
         } else {
             // player is not alive, ensure player is facing the killar
             if let Some(killer) = e.health.killer {
-                if let Some(killer) = world.component::<Sprite>(killer) {
+                if let Some(killer) = registry.component::<Sprite>(killer) {
                     let facing_towards_killer = killer.pos - e.sprite.pos;
                     let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
                     let facing = e.sprite.facing_as_vec2(); 

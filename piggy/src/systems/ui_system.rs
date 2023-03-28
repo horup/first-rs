@@ -1,8 +1,8 @@
-use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, world::World};
+use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, registry::Registry};
 
 use crate::{textures, components::PlayerState, PlayerEntity};
 
-pub fn ui_system(world:&mut World, engine:&mut dyn Engine) {
+pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
     // draw ui
     let _margin = vec2(16.0, 16.0);
     let center = engine.screen_size() / 2.0;
@@ -24,7 +24,7 @@ pub fn ui_system(world:&mut World, engine:&mut dyn Engine) {
     });
 
 
-    for e in world.query::<PlayerEntity>() {
+    for e in registry.query::<PlayerEntity>() {
         engine.draw_text(DrawTextParams {
             screen_pos:vec2(16.0, 16.0),
             text: format!("Pokemon Cards: {:?}", e.player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),

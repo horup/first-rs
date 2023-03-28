@@ -1,5 +1,5 @@
 use std::cell::RefMut;
-use engine_sdk::{world::{EntityId, Query}, Sprite};
+use engine_sdk::{registry::{EntityId, Query}, Sprite};
 use crate::components::{Player, Health, Item, Mob, Door};
 
 pub struct DoorEntity<'a> {
@@ -8,9 +8,9 @@ pub struct DoorEntity<'a> {
     pub door:RefMut<'a, Door>
 }
 impl<'a> Query<'a> for DoorEntity<'a> {
-    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.component_mut::<Sprite>(id)?;
-        let door = world.component_mut::<Door>(id)?;
+    fn query(registry:&'a engine_sdk::registry::Registry, id:EntityId) -> Option<Self> {
+        let sprite = registry.component_mut::<Sprite>(id)?;
+        let door = registry.component_mut::<Door>(id)?;
         Some(DoorEntity {
             id,
             sprite,
@@ -27,10 +27,10 @@ pub struct PlayerEntity<'a> {
 }
 
 impl<'a> Query<'a> for PlayerEntity<'a> {
-    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let player = world.component_mut(id)?;
-        let health = world.component_mut(id)?;
-        let sprite = world.component_mut(id)?;
+    fn query(registry:&'a engine_sdk::registry::Registry, id:EntityId) -> Option<Self> {
+        let player = registry.component_mut(id)?;
+        let health = registry.component_mut(id)?;
+        let sprite = registry.component_mut(id)?;
         Some(Self {
             id,
             player,
@@ -47,9 +47,9 @@ pub struct ItemEntity<'a> {
 }
 
 impl<'a> Query<'a> for ItemEntity<'a> {
-    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.component_mut(id)?;
-        let item = world.component_mut(id)?;
+    fn query(registry:&'a engine_sdk::registry::Registry, id:EntityId) -> Option<Self> {
+        let sprite = registry.component_mut(id)?;
+        let item = registry.component_mut(id)?;
         Some(Self {
             id,
             sprite,
@@ -65,9 +65,9 @@ pub struct MobEntity<'a> {
 }
 
 impl<'a> Query<'a> for MobEntity<'a>{
-    fn query(world:&'a engine_sdk::world::World, id:EntityId) -> Option<Self> {
-        let sprite = world.component_mut::<Sprite>(id)?;
-        let mob = world.component_mut::<Mob>(id)?;
+    fn query(registry:&'a engine_sdk::registry::Registry, id:EntityId) -> Option<Self> {
+        let sprite = registry.component_mut::<Sprite>(id)?;
+        let mob = registry.component_mut::<Mob>(id)?;
         Some(Self {
             id,
             sprite,
@@ -76,7 +76,7 @@ impl<'a> Query<'a> for MobEntity<'a>{
     }
 }
 
-/*use engine_sdk::{Camera, Sprite, Grid, Tile, World, Components, Entities, EntityId, Collision};
+/*use engine_sdk::{Camera, Sprite, Grid, Tile, Registry, Components, Entities, EntityId, Collision};
 use serde::{Serialize, Deserialize};
 use crate::{components::*, textures, systems::Flash};
 
@@ -100,11 +100,11 @@ pub struct State {
 }
 
 impl State {
-    pub fn as_world(&self) -> World {
-        let mut world = World::new(&self.entities, &self.sprites, &self.grid);
-        world.ceiling_texture = textures::CEILING_GREY;
-        world.floor_texture = textures::FLOOR_GREY;
-        world
+    pub fn as_registry(&self) -> Registry {
+        let mut registry = Registry::new(&self.entities, &self.sprites, &self.grid);
+        registry.ceiling_texture = textures::CEILING_GREY;
+        registry.floor_texture = textures::FLOOR_GREY;
+        registry
     }
 
     pub fn player_entity(&self) -> Option<PlayerEntity> {

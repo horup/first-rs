@@ -4,8 +4,8 @@ use parry2d::bounding_volume::BoundingVolume;
 use parry2d::na::Isometry2;
 use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
-use world::EntityId;
-use crate::world::World;
+use registry::EntityId;
+use crate::registry::Registry;
 use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Tilemap};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
@@ -22,7 +22,7 @@ pub trait Engine {
     fn load_atlas(&mut self, id:u32, image:&DynamicImage, params:LoadAtlasParams);
     fn atlas(&self, id:&u32) -> Option<TextureAtlas>;
     fn atlases(&self) -> Vec<TextureAtlas>;
-    fn draw_scene(&mut self, camera:&Camera, scene:&World);
+    fn draw_scene(&mut self, camera:&Camera, scene:&Registry);
     fn dt(&self) -> f32;
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);
@@ -41,16 +41,17 @@ pub trait Engine {
     fn set_cursor_grabbed(&mut self, grabbed:bool);
     fn cursor_grabbed(&self) -> bool;
 
-    fn physics_step(&mut self, world:&World, collisions:&mut Vec<Collision>)  {
+    fn physics_step(&mut self, registry:&Registry, collisions:&mut Vec<Collision>)  {
         let dt = self.dt();
         collisions.clear();
-        let mut spatial_hashmap = SpatialHashmap::new(world);
+        let mut spatial_hashmap = SpatialHashmap::new(registry);
         let mut potential_colliders = Vec::with_capacity(1024);
         
-        for e in world.entities() {
-            if let Some(sprite) = e.get_mut::<Sprite>() {
+        let sprites = registry.components::<Sprite>();
+        for id in registry.iter() {
+            if let Some(sprite) = sprites.get_mut(id) {
                 let new_pos = sprite.pos + sprite.vel * dt;
-                let collision = self.clip_move(world, e.id(), new_pos, &mut spatial_hashmap, &mut potential_colliders);
+                let collision = self.clip_move(registry, id, new_pos, &mut spatial_hashmap, &mut potential_colliders);
                 if collision.other_entity.is_some() || collision.tile.is_some() {
                     collisions.push(collision);
                 }
@@ -58,11 +59,11 @@ pub trait Engine {
         }
     }
 
-    fn clip_move(&mut self, world:&World, id:EntityId, new_pos:Vec3, spatial_hashmap:&mut SpatialHashmap, potential_colliders:&mut Vec<EntityId>) -> Collision {
+    fn clip_move(&mut self, registry:&Registry, id:EntityId, new_pos:Vec3, spatial_hashmap:&mut SpatialHashmap, potential_colliders:&mut Vec<EntityId>) -> Collision {
         let mut col = Collision::default();
-        let tilemap = world.singleton::<Tilemap>().unwrap();
+        let tilemap = registry.singleton::<Tilemap>().unwrap();
         col.entity = id;
-        if let Some(mut e) = world.component_mut::<Sprite>(id) {
+        if let Some(mut e) = registry.component_mut::<Sprite>(id) {
             let v = new_pos - e.pos;
             if v.length() > 0.0 {
                 let mut left = v.length();
@@ -91,7 +92,7 @@ pub trait Engine {
                         // collision handling between entities
                         spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + spatial_hashmap.max_radius(),potential_colliders);
                         for other_id in potential_colliders.iter() {
-                            let other_e = world.component::<Sprite>(*other_id).unwrap();
+                            let other_e = registry.component::<Sprite>(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
                             if *other_id != id && !ignore {
                                 let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);

@@ -1,12 +1,12 @@
-use engine_sdk::{Engine, world::{World}};
+use engine_sdk::{Engine, registry::{Registry}};
 use crate::{PlayerEntity, ItemEntity};
 
-pub fn item_system(world:&mut World, _engine:&mut dyn Engine) {
+pub fn item_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let mut despawns = Vec::new();
-    for mut player in world.query::<PlayerEntity>() {
+    for mut player in registry.query::<PlayerEntity>() {
         let pickup_radius = 0.5;
 
-        for item in world.query::<ItemEntity>() {
+        for item in registry.query::<ItemEntity>() {
             let v = player.sprite.pos - item.sprite.pos;
             if v.length() < pickup_radius {
                 let texture = item.sprite.texture;
@@ -17,5 +17,5 @@ pub fn item_system(world:&mut World, _engine:&mut dyn Engine) {
         }
     }
 
-    despawns.iter_mut().for_each(|id|world.despawn(*id));
+    despawns.iter_mut().for_each(|id|registry.despawn(*id));
 }

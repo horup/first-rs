@@ -1,4 +1,4 @@
-use engine_sdk::world::{EntityId, Component};
+use engine_sdk::registry::{EntityId, Component};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -20,7 +20,7 @@ impl Health {
 }
 
 impl Component for Health {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         11
     }
 }

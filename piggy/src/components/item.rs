@@ -1,4 +1,4 @@
-use engine_sdk::world::Component;
+use engine_sdk::registry::Component;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
@@ -7,7 +7,7 @@ pub struct Item {
 }
 
 impl Component for Item {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         12
     }
 }

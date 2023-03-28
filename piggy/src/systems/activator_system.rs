@@ -1,13 +1,13 @@
-use engine_sdk::{Engine, world::World};
+use engine_sdk::{Engine, registry::Registry};
 
-pub fn activator_system(_world:&mut World, _engine:&mut dyn Engine) {
+pub fn activator_system(_registry:&mut Registry, _engine:&mut dyn Engine) {
    /* for id in state.entities.iter() {
         if let Some(activatee_thing) = state.activatee_entity(id) {
             let player_pos = activatee_thing.sprite.pos;
             let mut near = Vec::new();
-            let mut world = state.as_world();
+            let mut registry = state.as_registry();
             let radius = 1.0;
-            world.query_around(player_pos.truncate(), radius, &mut near);
+            registry.query_around(player_pos.truncate(), radius, &mut near);
             for id in near.drain(..) {
                 if let Some(activator_thing) = state.activator_entity(id) {
                     match activator_thing.activator {

@@ -1,4 +1,4 @@
-use engine_sdk::{glam::Vec3, world::Component};
+use engine_sdk::{glam::Vec3, registry::Component};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize, Default)]
@@ -10,7 +10,7 @@ pub struct Door {
 }
 
 impl Component for Door {
-    fn id() -> engine_sdk::world::ComponentId {
+    fn id() -> engine_sdk::registry::ComponentId {
         14
     }
 }

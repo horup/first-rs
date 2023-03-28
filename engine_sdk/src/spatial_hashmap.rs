@@ -1,11 +1,11 @@
 use glam::{Vec2};
 use slotmap::SlotMap;
 use flat_spatial::{Grid as FlatGrid, grid::GridHandle};
-use world::{EntityId, World};
+use registry::{EntityId, Registry};
 use crate::Sprite;
 
 pub struct SpatialHashmap<'a> {
-    world:&'a World,
+    registry:&'a Registry,
     handles:SlotMap<EntityId, GridHandle>,
     max_radius:f32,
     requires_update:bool,
@@ -16,13 +16,13 @@ impl<'a> SpatialHashmap<'a> {
     pub fn max_radius(&self) -> f32 {
         self.max_radius
     }
-    pub fn new(world:&'a World) -> Self {
+    pub fn new(registry:&'a Registry) -> Self {
         let cell_size = 8;
         let grid = FlatGrid::new(cell_size);
 
         Self {
             grid,
-            world,
+            registry,
             handles:SlotMap::default(),
             max_radius:1.0,
             requires_update:true
@@ -30,7 +30,7 @@ impl<'a> SpatialHashmap<'a> {
     }
 
     pub fn update_all(&mut self) {
-        for e in self.world.entities() {
+        for e in self.registry.entities() {
             if let Some(sprite) = e.get::<Sprite>() {
                 self.update_one(e.id(), sprite.pos.truncate());
                 self.max_radius = if self.max_radius < sprite.radius { sprite.radius } else { self.max_radius };

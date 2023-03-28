@@ -1,7 +1,8 @@
 use glam::vec2;
 use glam::{Vec3, Vec2};
+use registry::uuid::{Uuid, uuid};
 use serde::{Serialize, Deserialize};
-use world::Component;
+use registry::Component;
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub enum SpriteType {
@@ -30,9 +31,9 @@ pub struct Sprite {
     pub hidden:bool
 }
 
-impl  Component for Sprite {
-    fn id() -> world::ComponentId {
-        crate::SPRITE_ID
+impl Component for Sprite {
+    fn type_id() -> Uuid {
+        uuid!("f9e8d901-e8dd-483b-9666-6306df63ad01")
     }
 }
 
