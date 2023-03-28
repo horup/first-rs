@@ -30,9 +30,10 @@ impl<'a> SpatialHashmap<'a> {
     }
 
     pub fn update_all(&mut self) {
-        for e in self.registry.entities() {
-            if let Some(sprite) = e.get::<Sprite>() {
-                self.update_one(e.id(), sprite.pos.truncate());
+        let sprites = self.registry.components::<Sprite>();
+        for id in self.registry.iter() {
+            if let Some(sprite) = sprites.get(id) {
+                self.update_one(id, sprite.pos.truncate());
                 self.max_radius = if self.max_radius < sprite.radius { sprite.radius } else { self.max_radius };
             }
         }
