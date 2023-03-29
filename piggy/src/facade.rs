@@ -42,10 +42,10 @@ pub struct DoorEntity<'a> {
     pub sprite:RefMut<'a, Sprite>,
     pub door:RefMut<'a, Door>
 }
-impl<'a> EntityFacade<'a> for DoorEntity<'a> {
-    fn query(registry:&'a engine_sdk::registry::Registry, id:EntityId) -> Option<Self> {
-        let sprite = registry.component_mut::<Sprite>(id)?;
-        let door = registry.component_mut::<Door>(id)?;
+impl<'a> EntityFacade<'a, PiggyFacade<'a>> for DoorEntity<'a> {
+    fn query(facade:&PiggyFacade<'a>, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        let door = facade.doors.get_mut(id)?;
         Some(DoorEntity {
             id,
             sprite,

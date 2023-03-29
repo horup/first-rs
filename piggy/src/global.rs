@@ -1,4 +1,4 @@
-use engine_sdk::{registry::Singleton, Camera, Collision};
+use engine_sdk::{registry::{uuid::{uuid, Uuid}, Component}, Camera, Collision};
 use serde::{Serialize, Deserialize};
 
 use crate::systems::Flash;
@@ -10,8 +10,8 @@ pub struct Global {
     pub collisions:Vec<Collision>
 }
 
-impl Singleton for Global {
-    fn id() -> engine_sdk::registry::SingletonId {
-        20
+impl Component for Global {
+    fn type_id() -> Uuid {
+        uuid!("3555ae54-18b6-4c72-a740-3ff6ee4102ae")
     }
 }
