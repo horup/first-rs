@@ -1,8 +1,9 @@
-use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, registry::Registry};
+use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, registry::{Registry, Facade}};
 
-use crate::{textures, components::PlayerState, PlayerEntity};
+use crate::{textures, components::PlayerState, PlayerEntity, PiggyFacade};
 
 pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
+    let facade = registry.facade::<PiggyFacade>();
     // draw ui
     let _margin = vec2(16.0, 16.0);
     let center = engine.screen_size() / 2.0;
@@ -24,7 +25,7 @@ pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
     });
 
 
-    for e in registry.query::<PlayerEntity>() {
+    for e in facade.query::<PlayerEntity>() {
         engine.draw_text(DrawTextParams {
             screen_pos:vec2(16.0, 16.0),
             text: format!("Pokemon Cards: {:?}", e.player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),

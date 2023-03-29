@@ -1,12 +1,13 @@
-use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::Registry, Tilemap};
-use crate::{PlayerEntity, MobEntity, Global};
+use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::{Registry, Facade}, Tilemap};
+use crate::{PlayerEntity, MobEntity, Global, PiggyFacade};
 
 pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()> {
+    let facade = registry.facade::<PiggyFacade>();
     let global = registry.singleton::<Global>().unwrap();
     let tilemap = &registry.singleton::<Tilemap>().unwrap().grid;
-    let mut player_entity = registry.query::<PlayerEntity>().next()?;
+    let mut player_entity = facade.query::<PlayerEntity>().next()?;
 
-    for mut mob_entity in registry.query::<MobEntity>() {
+    for mut mob_entity in facade.query::<MobEntity>() {
         let v = player_entity.sprite.pos - mob_entity.sprite.pos;
         let dir = v.normalize_or_zero();
         let mob_speed = 2.0;

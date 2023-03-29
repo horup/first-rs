@@ -42,7 +42,8 @@ pub struct DoorEntity<'a> {
     pub sprite:RefMut<'a, Sprite>,
     pub door:RefMut<'a, Door>
 }
-impl<'a> EntityFacade<'a, PiggyFacade<'a>> for DoorEntity<'a> {
+impl<'a> EntityFacade<'a> for DoorEntity<'a> {
+    type Facade = PiggyFacade<'a>;
     fn query(facade:&PiggyFacade<'a>, id:EntityId) -> Option<Self> {
         let sprite = facade.sprites.get_mut(id)?;
         let door = facade.doors.get_mut(id)?;
@@ -50,6 +51,71 @@ impl<'a> EntityFacade<'a, PiggyFacade<'a>> for DoorEntity<'a> {
             id,
             sprite,
             door
+        })
+    }
+}
+
+pub struct PlayerEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>,
+    pub player:RefMut<'a, Player>,
+    pub health:RefMut<'a, Health>
+}
+
+impl<'a> EntityFacade<'a> for PlayerEntity<'a> {
+    type Facade = PiggyFacade<'a>;
+
+    fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        let player = facade.players.get_mut(id)?;
+        let health = facade.healths.get_mut(id)?;
+        Some(Self {
+            id,
+            sprite,
+            player,
+            health,
+        })
+    }
+}
+
+pub struct ItemEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>,
+    pub item:RefMut<'a, Item>
+}
+
+impl<'a> EntityFacade<'a> for ItemEntity<'a> {
+    type Facade = PiggyFacade<'a>;
+
+
+    fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        let item = facade.items.get_mut(id)?;
+        Some(Self {
+            id,
+            sprite,
+            item
+        })
+    }
+}
+
+
+pub struct MobEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>,
+    pub mob:RefMut<'a, Mob>
+}
+
+impl<'a> EntityFacade<'a> for MobEntity<'a> {
+    type Facade = PiggyFacade<'a>;
+
+    fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        let mob = facade.mobs.get_mut(id)?;
+        Some(Self {
+            id, 
+            sprite,
+            mob
         })
     }
 }

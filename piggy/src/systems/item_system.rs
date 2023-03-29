@@ -1,12 +1,13 @@
-use engine_sdk::{Engine, registry::{Registry}};
-use crate::{PlayerEntity, ItemEntity};
+use engine_sdk::{Engine, registry::{Registry, Facade}};
+use crate::{PlayerEntity, ItemEntity, PiggyFacade};
 
 pub fn item_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let mut despawns = Vec::new();
-    for mut player in registry.query::<PlayerEntity>() {
+    let facade = registry.facade::<PiggyFacade>();
+    for mut player in facade.query::<PlayerEntity>() {
         let pickup_radius = 0.5;
 
-        for item in registry.query::<ItemEntity>() {
+        for item in facade.query::<ItemEntity>() {
             let v = player.sprite.pos - item.sprite.pos;
             if v.length() < pickup_radius {
                 let texture = item.sprite.texture;

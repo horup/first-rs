@@ -1999,7 +1999,7 @@ checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
 [[package]]
 name = "registry"
 version = "0.1.0"
-source = "git+https://github.com/horup/registry-rs.git#b08ca9d4bab597f808e5f63a562a3472feb1073f"
+source = "git+https://github.com/horup/registry-rs.git#e5ca4c2f99ae7ae7c110b364c38033fe81ba6210"
 dependencies = [
  "bincode",
  "fxhash",
