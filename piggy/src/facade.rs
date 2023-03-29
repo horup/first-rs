@@ -44,10 +44,10 @@ pub struct DoorEntity<'a> {
 }
 impl<'a> EntityFacade<'a> for DoorEntity<'a> {
     type Facade = PiggyFacade<'a>;
-    fn query(facade:&PiggyFacade<'a>, id:EntityId) -> Option<Self> {
+    fn query(facade:&'a PiggyFacade<'a>, id:EntityId) -> Option<Self> {
         let sprite = facade.sprites.get_mut(id)?;
         let door = facade.doors.get_mut(id)?;
-        Some(DoorEntity {
+        Some(Self {
             id,
             sprite,
             door
