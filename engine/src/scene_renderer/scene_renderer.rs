@@ -507,14 +507,15 @@ impl SceneRenderer {
         // and find textures in use
         let mut textures = HashMap::new();
         //let visible = |(_, sprite):&(EntityId, &Sprite)| !sprite.hidden;
-        for entity in scene.entities() {
-            if let Some(sprite) = entity.get::<Sprite>() {
+        let sprites = scene.components::<Sprite>();
+        for id in scene.iter() {
+            if let Some(sprite) = sprites.get(id) {
                 if !sprite.hidden {
                     textures.insert(sprite.texture, ());
                     if sprite.opacity.is_none() {
-                        self.opaque_sprites.push(entity.id());
+                        self.opaque_sprites.push(id);
                     } else {
-                        self.translucent_sprites.push(entity.id())
+                        self.translucent_sprites.push(id)
                     }
                 }
                 
