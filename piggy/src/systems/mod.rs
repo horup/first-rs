@@ -25,8 +25,8 @@ pub use mob_system::*;
 mod physics_system;
 pub use physics_system::*;
 
-mod render_registry_system;
-pub use render_registry_system::*;
+mod render_world_system;
+pub use render_world_system::*;
 
 mod ui_system;
 pub use ui_system::*;

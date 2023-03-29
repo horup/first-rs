@@ -46,7 +46,7 @@ impl Game for Piggy {
         systems::activator_system(&mut self.registry, engine);
         systems::door_system(&mut self.registry, engine);
         systems::effector_system(&mut self.registry, engine);
-        systems::render_registry_system(&mut self.registry, engine);
+        systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
 
