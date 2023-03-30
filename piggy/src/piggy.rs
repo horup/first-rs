@@ -1,6 +1,6 @@
 
 use engine_sdk::{Map, Game, Event, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, Global};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::Global};
 
 pub struct Piggy {
     pub current_map: Map,
