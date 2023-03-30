@@ -119,3 +119,48 @@ impl<'a> EntityFacade<'a> for MobEntity<'a> {
         })
     }
 }
+
+pub struct ActivateeEntity<'a> {
+    pub id:EntityId,
+    pub sprite:RefMut<'a, Sprite>
+}
+
+impl<'a>  EntityFacade<'a> for ActivateeEntity<'a> {
+    type Facade = PiggyFacade<'a>;
+
+    fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        if facade.players.get(id).is_some() || facade.mobs.get(id).is_some() {
+            return Some(ActivateeEntity {
+                id,
+                sprite,
+            });
+        }
+
+        None
+    }
+
+}
+
+pub struct ActivatorEntity<'a> {
+    pub id:EntityId,
+    pub activator:RefMut<'a, Activator>,
+    pub sprite:RefMut<'a, Sprite>,
+    pub door:Option<RefMut<'a, Door>>
+}
+
+impl<'a> EntityFacade<'a> for ActivatorEntity<'a> {
+    type Facade = PiggyFacade<'a>;
+
+    fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
+        let sprite = facade.sprites.get_mut(id)?;
+        let activator = facade.activators.get_mut(id)?;
+        let door = facade.doors.get_mut(id);
+        Some(Self {
+            id,
+            activator,
+            sprite,
+            door
+        })
+    }
+}
