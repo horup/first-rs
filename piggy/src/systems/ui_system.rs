@@ -1,4 +1,4 @@
-use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, registry::{Registry, Facade}};
+use engine_sdk::{Engine, DrawLineParams, glam::vec2, Color, DrawTextParams, DrawRectParams, registry::{Registry, Facade}, HorizontalAlign};
 
 use crate::{textures, components::PlayerState, PlayerEntity, PiggyFacade};
 
@@ -30,7 +30,8 @@ pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
             screen_pos:vec2(16.0, 16.0),
             text: format!("Pokemon Cards: {:?}", e.player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32),
             color:Color::WHITE,
-            scale:16.0
+            scale:16.0,
+            ..Default::default()
         });
 
         let size = vec2(32.0, 32.0);
@@ -62,6 +63,8 @@ pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 text: "You were cought!!!!".to_string(),
                 scale: 32.0,
                 color: Color::RED,
+                horizontal_align:HorizontalAlign::Center,
+                ..Default::default()
             });
         }
 
@@ -71,7 +74,9 @@ pub fn ui_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
                 text: "Click to respawn...".to_string(),
                 scale: 32.0,
+                horizontal_align:HorizontalAlign::Center,
                 color: Color::WHITE,
+                ..Default::default()
             });
         }
 

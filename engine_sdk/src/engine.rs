@@ -174,12 +174,33 @@ pub struct DrawRectParams {
     pub atlas_index:f32
 }
 
+#[derive(Clone, Debug)]
+pub enum HorizontalAlign {
+    Left, Center, Right
+}
+impl Default for HorizontalAlign {
+    fn default() -> Self {
+        Self::Left
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum VerticalAlign {
+    Top, Center, Bottom
+}
+impl Default for VerticalAlign {
+    fn default() -> Self {
+        Self::Top
+    }
+}
 #[derive(Clone, Debug, Default)]
 pub struct DrawTextParams {
     pub screen_pos:Vec2,
     pub text:String,
     pub scale:f32,
-    pub color:Color
+    pub color:Color,
+    pub horizontal_align:HorizontalAlign,
+    pub vertical_align:VerticalAlign
 }
 
 #[derive(Clone, Copy, Debug, Default)]

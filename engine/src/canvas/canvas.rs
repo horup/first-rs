@@ -4,7 +4,7 @@ use engine_sdk::{DrawTextParams, DrawLineParams, DrawRectParams, Atlas};
 use lyon::{path::Path, lyon_tessellation::{StrokeTessellator, VertexBuffers, StrokeOptions, BuffersBuilder, StrokeVertexConstructor}, geom::{point}};
 use wgpu::{util::{StagingBelt}, RenderPipeline, BindGroup, Buffer, BufferDescriptor};
 use crate::{Model, Graphics, Vertex, GraphicsContext, CameraUniform, Texture};
-use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush};
+use wgpu_glyph::{ab_glyph, GlyphBrushBuilder, Section, Text, GlyphBrush, Layout};
 
 pub struct Canvas {
     pub camera_buffer:Buffer,
@@ -301,12 +301,23 @@ impl Canvas {
         for draw_call in draw_calls {
             match draw_call {
                 DrawCall::Text(params) => {
+                    let h_align = match params.horizontal_align {
+                        engine_sdk::HorizontalAlign::Left => wgpu_glyph::HorizontalAlign::Left,
+                        engine_sdk::HorizontalAlign::Center => wgpu_glyph::HorizontalAlign::Center,
+                        engine_sdk::HorizontalAlign::Right => wgpu_glyph::HorizontalAlign::Right,
+                    };
+                    let v_align = match params.vertical_align {
+                        engine_sdk::VerticalAlign::Top => wgpu_glyph::VerticalAlign::Top,
+                        engine_sdk::VerticalAlign::Center => wgpu_glyph::VerticalAlign::Center,
+                        engine_sdk::VerticalAlign::Bottom => wgpu_glyph::VerticalAlign::Bottom,
+                    };
                     self.glyph_brush.queue(Section {
                         screen_position: params.screen_pos.into(),
                       //  bounds: (size.width as f32, size.height as f32),
                         text: vec![Text::new(&params.text)
                             .with_color::<[f32;4]>(params.color.into())
                             .with_scale(params.scale)],
+                            layout:Layout::SingleLine { line_breaker: wgpu_glyph::BuiltInLineBreaker::UnicodeLineBreaker, h_align, v_align },
                         ..Section::default()
                     });
                     let size = graphics.screen_size;

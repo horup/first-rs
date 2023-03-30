@@ -144,6 +144,7 @@ impl Editor {
                 }.to_string(),
                 scale: 12.0,
                 color: Color::WHITE,
+                ..Default::default()
             });
             engine.draw_rect(DrawRectParams {
                 pos: cursor_pos,
