@@ -1,6 +1,6 @@
 
-use engine_sdk::{Map, Game, Event, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::Global};
+use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event}, singletons::Global};
 
 pub struct Piggy {
     pub current_map: Map,
@@ -18,6 +18,7 @@ impl Default for Piggy {
         registry.register_component::<Health>();
         registry.register_component::<Item>();
         registry.register_component::<Effector>();
+        registry.register_component::<Event>();
 
         registry.register_singleton::<Tilemap>();
         registry.register_singleton::<Global>();
@@ -49,6 +50,7 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
+        systems::cleanup(&mut self.registry);
 
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -66,12 +68,12 @@ impl Game for Piggy {
         }
     }
 
-    fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&Event) {
+    fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
         match event {
-            Event::Map { map } => {
+            EngineEvent::Map { map } => {
                 systems::start_system(&mut self.registry, engine, map);
             }
-            Event::Focused(focused) => {
+            EngineEvent::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);
             },
         }
