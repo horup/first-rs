@@ -2,7 +2,7 @@ use std::cell::RefMut;
 
 use engine_sdk::{registry::{Facade, Registry, Components, EntityFacade, EntityId}, Sprite};
 
-use crate::components::{Door, Mob, Health, Item, Player, Effector, Activator};
+use crate::{components::{Door, Mob, Health, Item, Player, Effector, Activator}, Global};
 
 pub struct PiggyFacade<'a> {
     pub registry:&'a Registry,
