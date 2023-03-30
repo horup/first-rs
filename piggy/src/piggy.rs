@@ -50,6 +50,7 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
+        systems::start_system(&mut self.registry, engine, &self.current_map);
         systems::cleanup(&mut self.registry);
 
         #[cfg(not(target_arch = "wasm32"))]
@@ -71,7 +72,9 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
         match event {
             EngineEvent::Map { map } => {
-                systems::start_system(&mut self.registry, engine, map);
+                //systems::start_system(&mut self.registry, engine, map);
+                self.current_map = map.clone();
+                self.registry.spawn().attach(Event::Respawn {  });
             }
             EngineEvent::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

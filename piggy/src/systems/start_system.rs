@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, registry::Registry, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, Event}};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -64,22 +64,32 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 }
 
 pub fn start_system(registry:&mut Registry, _engine:&mut dyn Engine, map:&Map) {
-    registry.clear();
-    let mut grid:Grid<Tile> = Grid::new(map.grid.size());
-    map.grid.for_each(|cell, index| {
-        if let Some(wall) = cell.wall {
-            let tile = grid.get_mut(index).unwrap();
-            tile.wall = Some(wall);
-            tile.clips = true;
+    for (_, event) in registry.components::<Event>().iter() {
+        match *event {
+            Event::Respawn {  } => {
+                let map = map.clone();
+                registry.push(move |registry|{
+                    registry.clear();
+                    let mut grid:Grid<Tile> = Grid::new(map.grid.size());
+                    map.grid.for_each(|cell, index| {
+                        if let Some(wall) = cell.wall {
+                            let tile = grid.get_mut(index).unwrap();
+                            tile.wall = Some(wall);
+                            tile.clips = true;
+                        }
+                        if let Some(thing) = cell.thing {
+                            spawn_thing(registry, thing, index, cell.thing_facing);
+                        }
+                    });
+                
+                    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
+                    tilemap.grid = grid;
+                    tilemap.floor_texture = FLOOR_GREY;
+                    tilemap.ceiling_texture = CEILING_GREY;
+                })
+            }
         }
-        if let Some(thing) = cell.thing {
-            spawn_thing(registry, thing, index, cell.thing_facing);
-        }
-    });
-
-
-    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
-    tilemap.grid = grid;
-    tilemap.floor_texture = FLOOR_GREY;
-    tilemap.ceiling_texture = CEILING_GREY;
+    }   
+    
+    registry.execute();
 }
