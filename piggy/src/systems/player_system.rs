@@ -72,7 +72,9 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 }
             },
             PlayerState::CanRespawn => {
-                dbg!("can respawn");
+                if engine.key_just_pressed(VirtualKeyCode::Space) {
+                    
+                }
             }
             _ => {}
         }
