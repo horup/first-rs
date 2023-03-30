@@ -54,7 +54,7 @@ pub trait Engine {
             if let Some(mut sprite) = sprites.get_mut(id) {
                 let new_pos = sprite.pos + sprite.vel * dt;
                 let collision = self.clip_move(&mut sprite, registry, id, new_pos, &mut spatial_hashmap, &mut potential_colliders);
-                if collision.other_entity.is_some() || collision.tile.is_some() w{
+                if collision.other_entity.is_some() || collision.tile.is_some() {
                     collisions.push(collision);
                 }
             }
@@ -69,7 +69,6 @@ pub trait Engine {
             if v.length() > 0.0 {
                 let mut left = v.length();
                 let d = v.normalize();
-                dbg!(v);
 
                 // FIXME: max step should be configurable at some point
                 let max_step = 1.0 / 16.0;
@@ -94,9 +93,12 @@ pub trait Engine {
                         // collision handling between entities
                         spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + spatial_hashmap.max_radius(),potential_colliders);
                         for other_id in potential_colliders.iter() {
+                            if *other_id == id {
+                                continue;;
+                            }
                             let other_e = registry.component::<Sprite>(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
-                            if *other_id != id && !ignore {
+                            if !ignore {
                                 let s1_pos = Isometry2::translation(pos_new.x, pos_new.y);
                                 let s1 = parry2d::shape::Ball::new(e.radius);
                                 let aabb1 = s1.aabb(&s1_pos);
