@@ -1,7 +1,7 @@
 use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, registry::{Registry}};
 use serde::{Serialize, Deserialize};
 
-use crate::Global;
+use crate::singletons::Global;
 
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]

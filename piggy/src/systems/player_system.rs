@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, registry::{Registry, Facade}, Sprite};
-use crate::{components::PlayerState, Global, PlayerEntity, PiggyFacade};
+use crate::{components::PlayerState, singletons::Global, PlayerEntity, PiggyFacade};
 
 pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();

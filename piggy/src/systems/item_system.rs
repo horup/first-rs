@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, registry::{Registry, Facade, Commands}};
-use crate::{PlayerEntity, ItemEntity, PiggyFacade, Global};
+use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::Global};
 
 pub fn item_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let mut commands = Commands::default();

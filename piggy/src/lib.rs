@@ -5,14 +5,12 @@ pub use piggy::*;
 mod defs;
 pub use defs::*;
 
-mod global;
-pub use global::*;
-
 mod facade;
 pub use facade::*;
 
 pub mod systems;
 pub mod components;
+pub mod singletons;
 
 #[no_mangle]
 pub fn create() -> Box<dyn Game> {
