@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, registry::{Registry, Facade, Commands}};
-use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::Global};
+use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::GameState};
 
 pub fn item_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let mut commands = Commands::default();
@@ -14,7 +14,7 @@ pub fn item_system(registry:&mut Registry, _engine:&mut dyn Engine) {
                 if v.length() < pickup_radius {
                     let texture = item.sprite.texture;
                     commands.push(move |reg|{
-                        reg.singleton_mut::<Global>().unwrap().flash.flash(0.2, 0.5);
+                        reg.singleton_mut::<GameState>().unwrap().flash.flash(0.2, 0.5);
                         reg.despawn(id);
                     });
                     player.player.inventory.add(texture, 1.0);

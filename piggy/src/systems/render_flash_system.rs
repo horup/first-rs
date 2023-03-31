@@ -1,7 +1,7 @@
 use engine_sdk::{Engine, DrawRectParams, Color, glam::vec2, registry::{Registry}};
 use serde::{Serialize, Deserialize};
 
-use crate::singletons::Global;
+use crate::singletons::GameState;
 
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
@@ -30,7 +30,7 @@ impl Flash {
 }
 
 pub fn render_flash_system(registry:&mut Registry, engine:&mut dyn Engine) {
-    let mut global = registry.singleton_mut::<Global>().unwrap();
+    let mut global = registry.singleton_mut::<GameState>().unwrap();
     let screen = engine.screen_size();
     let alpha = global.flash.alpha();
     if alpha > 0.0 {

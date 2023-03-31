@@ -1,2 +1,2 @@
-mod global;
-pub use global::*;
+mod game_state;
+pub use game_state::*;

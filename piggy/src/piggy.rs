@@ -1,9 +1,8 @@
 
 use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event}, singletons::Global};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event}, singletons::GameState};
 
 pub struct Piggy {
-    pub current_map: Map,
     pub registry:Registry
 }
 
@@ -21,8 +20,8 @@ impl Default for Piggy {
         registry.register_component::<Event>();
 
         registry.register_singleton::<Tilemap>();
-        registry.register_singleton::<Global>();
-        Self { current_map: Default::default(), registry }
+        registry.register_singleton::<GameState>();
+        Self { registry }
     }
 }
 
@@ -50,7 +49,7 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
-        systems::start_system(&mut self.registry, engine, &self.current_map);
+        systems::start_system(&mut self.registry, engine);
         systems::cleanup(&mut self.registry);
 
         #[cfg(not(target_arch = "wasm32"))]
@@ -73,7 +72,7 @@ impl Game for Piggy {
         match event {
             EngineEvent::Map { map } => {
                 //systems::start_system(&mut self.registry, engine, map);
-                self.current_map = map.clone();
+                self.registry.singleton_mut::<GameState>().unwrap().current_map = map.clone();
                 self.registry.spawn().attach(Event::Respawn {  });
             }
             EngineEvent::Focused(focused) => {

@@ -1,16 +1,17 @@
-use engine_sdk::{registry::{uuid::{uuid, Uuid}, Component}, Camera, Collision};
+use engine_sdk::{registry::{uuid::{uuid, Uuid}, Component}, Camera, Collision, Map};
 use serde::{Serialize, Deserialize};
 
 use crate::systems::Flash;
 
 #[derive(Default, Clone, Serialize, Deserialize)]
-pub struct Global {
+pub struct GameState {
     pub flash:Flash,
     pub camera:Camera,
-    pub collisions:Vec<Collision>
+    pub collisions:Vec<Collision>,
+    pub current_map:Map
 }
 
-impl Component for Global {
+impl Component for GameState {
     fn type_id() -> Uuid {
         uuid!("3555ae54-18b6-4c72-a740-3ff6ee4102ae")
     }

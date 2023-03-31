@@ -1,9 +1,9 @@
 use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::{Registry, Facade}, Tilemap};
-use crate::{PlayerEntity, MobEntity, singletons::Global, PiggyFacade};
+use crate::{PlayerEntity, MobEntity, singletons::GameState, PiggyFacade};
 
 pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()> {
     let facade = registry.facade::<PiggyFacade>();
-    let global = registry.singleton::<Global>().unwrap();
+    let global = registry.singleton::<GameState>().unwrap();
     let tilemap = &registry.singleton::<Tilemap>().unwrap().grid;
     let mut player_entity = facade.query::<PlayerEntity>().next()?;
 
