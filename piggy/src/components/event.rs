@@ -2,15 +2,18 @@ use engine_sdk::registry::{Component, uuid::uuid};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub enum Event {
-    Respawn {
+pub struct RespawnEvent {
 
-    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub enum Event {
+    Respawn(RespawnEvent)
 }
 
 impl Default for Event {
     fn default() -> Self {
-        Self::Respawn {  }
+        Self::Respawn(RespawnEvent {  })
     }
 }
 

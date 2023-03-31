@@ -1,5 +1,5 @@
-use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, registry::Registry, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, Event}, singletons::GameState};
+use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, Event, RespawnEvent}, singletons::GameState};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -63,33 +63,44 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn start_system(registry:&mut Registry, _engine:&mut dyn Engine) {
-    for (_, event) in registry.components::<Event>().iter() {
-        match *event {
-            Event::Respawn {  } => {
-                let map = registry.singleton::<GameState>().unwrap().current_map.clone();
-                registry.push(move |registry|{
-                    registry.clear();
-                    let mut grid:Grid<Tile> = Grid::new(map.grid.size());
-                    map.grid.for_each(|cell, index| {
-                        if let Some(wall) = cell.wall {
-                            let tile = grid.get_mut(index).unwrap();
-                            tile.wall = Some(wall);
-                            tile.clips = true;
-                        }
-                        if let Some(thing) = cell.thing {
-                            spawn_thing(registry, thing, index, cell.thing_facing);
-                        }
-                    });
-                
-                    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
-                    tilemap.grid = grid;
-                    tilemap.floor_texture = FLOOR_GREY;
-                    tilemap.ceiling_texture = CEILING_GREY;
-                })
+pub fn on_respawn_event(registry:&mut Registry, engine:&mut dyn Engine, _e:RespawnEvent) {
+    let current_map = registry.singleton::<GameState>().unwrap().current_map.clone();
+
+    registry.clear();
+    let mut grid:Grid<Tile> = Grid::new(current_map.grid.size());
+    current_map.grid.for_each(|cell, index| {
+        if let Some(wall) = cell.wall {
+            let tile = grid.get_mut(index).unwrap();
+            tile.wall = Some(wall);
+            tile.clips = true;
+        }
+        if let Some(thing) = cell.thing {
+            spawn_thing(registry, thing, index, cell.thing_facing);
+        }
+    });
+
+    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
+    tilemap.grid = grid;
+    tilemap.floor_texture = FLOOR_GREY;
+    tilemap.ceiling_texture = CEILING_GREY;
+    registry.singleton_mut::<GameState>().unwrap().current_map = current_map;
+}
+
+pub fn event_system(registry:&mut Registry, engine:&mut dyn Engine) {
+    let mut events = Vec::with_capacity(32);
+    for (id, _) in registry.components::<Event>().iter() {
+        events.push(id);
+    }   
+
+    for id in events {
+        if let Some(event) = registry.component_detach::<Event>(id) {
+            match event {
+                Event::Respawn(e) => {
+                    on_respawn_event(registry, engine, e);
+                },
             }
         }
-    }   
+        registry.despawn(id);
+    }
     
-    registry.execute();
 }

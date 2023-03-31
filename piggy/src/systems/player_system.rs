@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, registry::{Registry, Facade}, Sprite};
-use crate::{components::{PlayerState, Event}, singletons::GameState, PlayerEntity, PiggyFacade};
+use crate::{components::{PlayerState, Event, RespawnEvent}, singletons::GameState, PlayerEntity, PiggyFacade};
 
 pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
     {
@@ -75,7 +75,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 PlayerState::CanRespawn => {
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
                         registry.push(|r|{
-                            r.spawn().attach(Event::Respawn {  });
+                            r.spawn().attach(Event::Respawn(RespawnEvent{}));
                         });
                     }
                 }

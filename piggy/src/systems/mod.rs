@@ -10,8 +10,8 @@ pub use render_flash_system::*;
 mod door_system;
 pub use door_system::*;
 
-mod start_system;
-pub use start_system::*;
+mod event_system;
+pub use event_system::*;
 
 mod effector_system;
 pub use effector_system::*;
@@ -33,6 +33,3 @@ pub use ui_system::*;
 
 mod init_system;
 pub use init_system::*;
-
-mod cleanup_system;
-pub use cleanup_system::*;
