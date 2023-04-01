@@ -220,7 +220,6 @@ impl Engine {
                             }
                         }
                         WindowEvent::Focused(focused) => {
-                            dbg!(focused);
                             self.new_events.push(engine_sdk::Event::Focused(*focused));
                         }
                         WindowEvent::MouseWheel { delta, .. } =>{
