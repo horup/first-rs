@@ -5,7 +5,7 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();
     let mut spatial = SpatialHashmap::new(registry);
     let mut near = Vec::with_capacity(64);
-    for player_entity in facade.query::<PlayerEntity>() {
+    for mut player_entity in facade.query::<PlayerEntity>() {
         let radius = 1.0;
         let pos = player_entity.sprite.pos;
 
@@ -18,6 +18,7 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
                         registry.push(move |registry|{
                             registry.spawn().attach(Event::PlayerWon { player_id });
                         });
+                        player_entity.player.state.won();
                     },
                 }
             }

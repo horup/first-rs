@@ -94,8 +94,6 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             });
         }
 
-        draw_fade_out(engine, 0.9);
-
         //draw_cought(engine);
         //draw_can_respawn(engine);
 
@@ -109,8 +107,9 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 draw_cought(engine);
                 draw_can_respawn(engine);
             }
-            PlayerState::Won { fade_out_start, fade_out_timer } => {
-                
+            PlayerState::Won { fade_out_timer } => {
+                let alpha = fade_out_timer.alpha();
+                draw_fade_out(engine, alpha);
             }
             _ => {}
         }

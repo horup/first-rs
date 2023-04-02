@@ -79,11 +79,8 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                         });
                     }
                 },
-                PlayerState::Won { fade_out_start, fade_out_timer } =>{
-                    fade_out_timer -= dt;
-                    if *fade_out_timer <= 0.0 {
-                        *fade_out_timer = 0.0;
-                    } 
+                PlayerState::Won { fade_out_timer } =>{
+                    fade_out_timer.tick(dt);
                 }
                 _ => {}
             }

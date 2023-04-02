@@ -1,4 +1,4 @@
-use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
+use engine_sdk::{registry::{Component, uuid::{Uuid, uuid}}, Timer};
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Clone, Copy, Serialize, Deserialize)]
@@ -54,8 +54,7 @@ pub enum PlayerState {
     },
     CanRespawn,
     Won {
-        fade_out_start:f32,
-        fade_out_timer:f32
+        fade_out_timer:Timer
     }
 }
 
@@ -90,8 +89,13 @@ impl PlayerState {
     }
 
     pub fn won(&mut self) {
-        let fade_out_time = 3.0;
-        *self = PlayerState::Won { fade_out_timer: fade_out_time, fade_out_start:fade_out_time  }
+        match *self {
+            PlayerState::Ready => {
+                let timeout = 1.0;
+                *self = PlayerState::Won { fade_out_timer: Timer::new(timeout)  }
+            },
+            _ => {}
+        }
     }
 }
 

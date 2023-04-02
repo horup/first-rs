@@ -40,6 +40,9 @@ pub use spatial_hashmap::*;
 mod tile;
 pub use tile::*;
 
+mod timer;
+pub use timer::*;
+
 pub use glam;
 pub use image;
 pub use egui;
