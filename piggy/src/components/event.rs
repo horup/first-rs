@@ -1,4 +1,4 @@
-use engine_sdk::registry::{Component, uuid::uuid};
+use engine_sdk::registry::{Component, uuid::uuid, EntityId};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -8,7 +8,10 @@ pub struct RespawnEvent {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum Event {
-    Respawn(RespawnEvent)
+    Respawn(RespawnEvent),
+    PlayerWon {
+        player_id:EntityId
+    }
 }
 
 impl Default for Event {

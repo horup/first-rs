@@ -78,6 +78,12 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                             r.spawn().attach(Event::Respawn(RespawnEvent{}));
                         });
                     }
+                },
+                PlayerState::Won { fade_out_start, fade_out_timer } =>{
+                    fade_out_timer -= dt;
+                    if *fade_out_timer <= 0.0 {
+                        *fade_out_timer = 0.0;
+                    } 
                 }
                 _ => {}
             }

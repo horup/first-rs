@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, registry::{Registry, Facade}, SpatialHashmap};
-use crate::{PlayerEntity, PiggyFacade};
+use crate::{PlayerEntity, PiggyFacade, components::Event};
 
 pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();
@@ -14,10 +14,15 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
             if let Some(effector) = facade.effectors.get(id) {
                 match &*effector {
                     crate::components::Effector::ExitMarker => {
-                        dbg!("you won");
+                        let player_id = player_entity.id;
+                        registry.push(move |registry|{
+                            registry.spawn().attach(Event::PlayerWon { player_id });
+                        });
                     },
                 }
             }
         }
     }
+    
+    registry.execute();
 }

@@ -52,7 +52,11 @@ pub enum PlayerState {
     Cought {
         timer_sec:f32,
     },
-    CanRespawn
+    CanRespawn,
+    Won {
+        fade_out_start:f32,
+        fade_out_timer:f32
+    }
 }
 
 impl PlayerState {
@@ -83,6 +87,11 @@ impl PlayerState {
             },
             _ => {},
         }
+    }
+
+    pub fn won(&mut self) {
+        let fade_out_time = 3.0;
+        *self = PlayerState::Won { fade_out_timer: fade_out_time, fade_out_start:fade_out_time  }
     }
 }
 

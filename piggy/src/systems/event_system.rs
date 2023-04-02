@@ -98,6 +98,9 @@ pub fn event_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 Event::Respawn(e) => {
                     on_respawn_event(registry, engine, e);
                 },
+                Event::PlayerWon { player_id } => {
+                    //registry.despawn(player_id);
+                },
             }
         }
         registry.despawn(id);
