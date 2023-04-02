@@ -1,4 +1,4 @@
-use engine_sdk::{Engine, Map, Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
+use engine_sdk::{Engine, Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
 use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, Event, RespawnEvent}, singletons::GameState};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
@@ -63,7 +63,7 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_respawn_event(registry:&mut Registry, engine:&mut dyn Engine, _e:RespawnEvent) {
+pub fn on_respawn_event(registry:&mut Registry, _engine:&mut dyn Engine, _e:RespawnEvent) {
     let current_map = registry.singleton::<GameState>().unwrap().current_map.clone();
 
     registry.clear();

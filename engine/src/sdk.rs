@@ -71,7 +71,12 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn dt(&self) -> f32 {
-        self.diagnostics.frame_time.as_millis() as f32 / 1000.0
+        let dt = self.diagnostics.frame_time.as_millis() as f32 / 1000.0;
+        if dt < 1.0 {
+            return dt;
+        }
+        
+        1.0
     }
 
     fn mouse_wheel_delta(&self) -> Vec2 {

@@ -17,7 +17,7 @@ pub fn door_system(registry:&mut Registry, engine:&mut dyn Engine) {
             e.door.direction = 0.0;
             e.door.close_timer = 0.0;
         }
-
+        
         if e.door.is_open() {
             e.door.close_timer += dt;
             e.sprite.clips = true;
