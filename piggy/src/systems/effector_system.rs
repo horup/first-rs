@@ -6,7 +6,6 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
     let mut spatial = SpatialHashmap::new(registry);
     let mut near = Vec::with_capacity(64);
     for player_entity in facade.query::<PlayerEntity>() {
-        // mut near = Vec::new();
         let radius = 1.0;
         let pos = player_entity.sprite.pos;
 
@@ -20,15 +19,5 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
                 }
             }
         }
-       /* registry.query_around(player_pos.truncate(), radius, &mut near);
-        for id in near.drain(..) {
-            if let Some(effector) = registry.effectors.get(id) {
-                match effector {
-                    crate::components::Effector::ExitMarker => {
-                        panic!("you won!");
-                    }
-                }
-            }
-        }*/
     }
 }
