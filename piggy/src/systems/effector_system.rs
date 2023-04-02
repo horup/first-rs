@@ -18,7 +18,7 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
                         registry.push(move |registry|{
                             registry.spawn().attach(Event::PlayerWon { player_id });
                         });
-                        player_entity.player.state.won();
+                        player_entity.player.state.set_won();
                     },
                 }
             }

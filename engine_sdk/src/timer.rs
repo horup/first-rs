@@ -20,9 +20,6 @@ impl Timer {
 
     pub fn tick(&mut self, dt:f32) {
         self.timer += dt;
-        if self.timer > self.timeout {
-            self.timer = self.timeout;
-        }
     }
 
     pub fn is_done(&self) -> bool {
@@ -35,5 +32,15 @@ impl Timer {
         }
 
         1.0
+    }
+
+    pub fn alpha_capped(&self) -> f32 {
+        let alpha = self.alpha();
+        if alpha < 0.0 {
+            return 0.0;
+        } else if alpha > 1.0 {
+            return 1.0;
+        }
+        alpha
     }
 }

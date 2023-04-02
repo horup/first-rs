@@ -76,7 +76,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             let size = engine.screen_size();
             engine.draw_text(DrawTextParams {
                 screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
-                text: "Click to respawn...".to_string(),
+                text: "Press SPACE to Restart...".to_string(),
                 scale: 32.0,
                 horizontal_align: HorizontalAlign::Center,
                 color: Color::WHITE,
@@ -84,7 +84,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             });
         }
 
-        fn draw_fade_out(engine: &mut dyn Engine, alpha:f32) {
+        fn draw_fade(engine: &mut dyn Engine, alpha:f32) {
             engine.draw_rect(DrawRectParams {
                 pos: vec2(0.0, 0.0),
                 size: engine.screen_size(),
@@ -98,18 +98,22 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
         //draw_can_respawn(engine);
 
         match e.player.state {
-            PlayerState::Cought { timer_sec } => {
-                if timer_sec < 1.0 {
-                    draw_cought(engine);
-                }
+            PlayerState::Cought { fade_out_timer } => {
+                draw_fade(engine, fade_out_timer.alpha_capped());
+                draw_cought(engine);
             }
             PlayerState::CanRespawn => {
+                draw_fade(engine, 1.0);
                 draw_cought(engine);
                 draw_can_respawn(engine);
             }
             PlayerState::Won { fade_out_timer } => {
                 let alpha = fade_out_timer.alpha();
-                draw_fade_out(engine, alpha);
+                draw_fade(engine, alpha);
+            }
+            PlayerState::Ready { fade_in_timer } => {
+                let alpha = 1.0 - fade_in_timer.alpha_capped();
+                draw_fade(engine, alpha);
             }
             _ => {}
         }

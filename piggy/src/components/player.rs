@@ -48,9 +48,11 @@ impl Component for Player {
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum PlayerState {
-    Ready,
+    Ready {
+        fade_in_timer:Timer
+    },
     Cought {
-        timer_sec:f32,
+        fade_out_timer:Timer,
     },
     CanRespawn,
     Won {
@@ -59,27 +61,16 @@ pub enum PlayerState {
 }
 
 impl PlayerState {
-    pub fn cought(&mut self) {
+    pub fn set_cought(&mut self) {
         match self {
-            PlayerState::Ready => *self = Self::Cought {
-                timer_sec: 2.0,
+            PlayerState::Ready {..} => *self = Self::Cought {
+                fade_out_timer: Timer::new(1.0),
             },
             _ => {}
         }
     }
 
-    pub fn ready(&mut self) {
-        *self = PlayerState::Ready;
-    }
-
-    pub fn to_ready_to_respawn(&mut self) {
-        match self {
-            PlayerState::Ready => {},
-            _=> {}
-        }
-    }
-
-    pub fn can_respawn(&mut self) {
+    pub fn set_can_respawn(&mut self) {
         match  self {
             PlayerState::Cought { .. } => {
                 *self = PlayerState::CanRespawn;
@@ -88,9 +79,9 @@ impl PlayerState {
         }
     }
 
-    pub fn won(&mut self) {
+    pub fn set_won(&mut self) {
         match *self {
-            PlayerState::Ready => {
+            PlayerState::Ready {..} => {
                 let timeout = 1.0;
                 *self = PlayerState::Won { fade_out_timer: Timer::new(timeout)  }
             },
@@ -101,6 +92,6 @@ impl PlayerState {
 
 impl Default for PlayerState {
     fn default() -> Self {
-        Self::Ready
+        Self::Ready { fade_in_timer:Timer::new(1.0) }
     }
 }

@@ -59,17 +59,17 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                         if angle < 0.1 {
                             // is looking straight towards killer
                             // transition to cought if possible
-                            e.player.state.cought();
+                            e.player.state.set_cought();
                         }
                     }
                 }
             }
         
             match &mut e.player.state {
-                PlayerState::Cought { timer_sec } => {
-                    *timer_sec -= dt;
-                    if *timer_sec <= 0.0 {
-                        e.player.state.can_respawn();
+                PlayerState::Cought { fade_out_timer } => {
+                    fade_out_timer.tick(dt);
+                    if fade_out_timer.alpha() > 2.0 {
+                        e.player.state.set_can_respawn();
                     }
                 },
                 PlayerState::CanRespawn => {
@@ -81,6 +81,9 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 },
                 PlayerState::Won { fade_out_timer } =>{
                     fade_out_timer.tick(dt);
+                }
+                PlayerState::Ready { fade_in_timer } => {
+                    fade_in_timer.tick(dt);
                 }
                 _ => {}
             }
