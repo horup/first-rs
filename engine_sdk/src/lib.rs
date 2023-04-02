@@ -43,6 +43,8 @@ pub use tile::*;
 mod timer;
 pub use timer::*;
 
+pub mod math;
+
 pub use glam;
 pub use image;
 pub use egui;

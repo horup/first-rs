@@ -1,7 +1,7 @@
 use engine_sdk::{
     glam::vec2,
     registry::{Facade, Registry},
-    Color, DrawLineParams, DrawRectParams, DrawTextParams, Engine, HorizontalAlign,
+    Color, DrawLineParams, DrawRectParams, DrawTextParams, Engine, HorizontalAlign, math::smootherstep,
 };
 
 use crate::{components::PlayerState, textures, PiggyFacade, PlayerEntity};
@@ -85,6 +85,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
         }
 
         fn draw_fade(engine: &mut dyn Engine, alpha:f32) {
+            let alpha = smootherstep(0.0, 1.0, alpha);
             engine.draw_rect(DrawRectParams {
                 pos: vec2(0.0, 0.0),
                 size: engine.screen_size(),
