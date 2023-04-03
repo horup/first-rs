@@ -12,6 +12,7 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
         let dir = v.normalize_or_zero();
         let mob_speed = 2.0;
 
+        
         // check visibility to player
         let mut player_visible = true;
         tilemap.cast_ray(mob_entity.sprite.pos.truncate(), player_entity.sprite.pos.truncate(), |visit|{
@@ -55,9 +56,14 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
             if let Some(other_entity) = collision.other_entity {
                 if player_entity.id == other_entity && mob_entity.mob.is_killer {
                     player_entity.health.kill(Some(mob_entity.id));
+                    player_entity.player.state.set_being_cought();
                 }
             }
         });
+
+        if player_entity.player.state.is_being_cought_or_cought() {
+            mob_entity.sprite.vel = Vec3::default();
+        }
     }
 
     None

@@ -41,31 +41,43 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                         new_facing += turn_speed * dt;
                     }
                 }
-            } else {
-                // player is not alive, ensure player is facing the killar
-                if let Some(killer) = e.health.killer {
-                    if let Some(killer) = registry.component::<Sprite>(killer) {
-                        let facing_towards_killer = killer.pos - e.sprite.pos;
-                        let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
-                        let facing = e.sprite.facing_as_vec2(); 
+            }
 
-                        let angle = facing_towards_killer.angle_between(facing);
-                        // turn player towards killer
-                        let alpha = 10.0;
-                        let facing = facing + facing_towards_killer * alpha * dt;
-                        let facing = facing.normalize_or_zero();
-                        new_facing = facing.y.atan2(facing.x);
-
-                        if angle < 0.1 {
-                            // is looking straight towards killer
-                            // transition to cought if possible
-                            e.player.state.set_cought();
+            match e.player.state {
+                PlayerState::BeingCought { .. } | PlayerState::Cought { .. }  => {
+                    if let Some(killer) = e.health.killer {
+                        if let Some(killer) = registry.component::<Sprite>(killer) {
+                            let facing_towards_killer = killer.pos - e.sprite.pos;
+                            let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
+                            let facing = e.sprite.facing_as_vec2(); 
+    
+                            let angle = facing_towards_killer.angle_between(facing);
+                            // turn player towards killer
+                            let alpha = 10.0;
+                            let facing = facing + facing_towards_killer * alpha * dt;
+                            let facing = facing.normalize_or_zero();
+                            new_facing = facing.y.atan2(facing.x);
+    
+                            if angle < 0.1 {
+                                // is looking straight towards killer
+                                // transition to cought if possible
+                                //e.player.state.set_cought();
+                            }
                         }
                     }
-                }
+                },
+                _=>{}
             }
         
             match &mut e.player.state {
+                PlayerState::BeingCought { turn_around_timer } => {
+                    turn_around_timer.tick(dt);
+                    
+
+                    if turn_around_timer.is_done() {
+                        e.player.state.set_cought();
+                    }
+                }
                 PlayerState::Cought { fade_out_timer } => {
                     fade_out_timer.tick(dt);
                     if fade_out_timer.alpha() > 2.0 {

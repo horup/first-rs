@@ -124,6 +124,9 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
         //draw_can_respawn(engine);
 
         match e.player.state {
+            PlayerState::BeingCought { .. } => {
+                draw_cought(engine);
+            },
             PlayerState::Cought { fade_out_timer } => {
                 draw_fade(engine, fade_out_timer.alpha_capped());
                 draw_cought(engine);

@@ -51,6 +51,9 @@ pub enum PlayerState {
     Ready {
         fade_in_timer:Timer
     },
+    BeingCought {
+        turn_around_timer:Timer
+    },
     Cought {
         fade_out_timer:Timer,
     },
@@ -63,9 +66,23 @@ pub enum PlayerState {
 }
 
 impl PlayerState {
+    pub fn is_being_cought_or_cought(&self) -> bool {
+        match self {
+            Self::BeingCought { .. } | Self::Cought { .. } => true,
+            _=> false
+        }
+    }
+    pub fn set_being_cought(&mut self) {
+        match self {
+            Self::Ready { .. } => {
+                *self = Self::BeingCought { turn_around_timer: Timer::new(1.0) }
+            },
+            _=>{}
+        }
+    }
     pub fn set_cought(&mut self) {
         match self {
-            PlayerState::Ready {..} => *self = Self::Cought {
+            PlayerState::BeingCought {..} => *self = Self::Cought {
                 fade_out_timer: Timer::new(1.0),
             },
             _ => {}
