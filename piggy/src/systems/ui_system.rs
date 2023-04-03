@@ -72,11 +72,36 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             });
         }
 
+        fn draw_won(engine: &mut dyn Engine, alpha:f32) {
+            let size = engine.screen_size();
+            let alpha = smootherstep(0.0, 1.0, alpha);
+            engine.draw_text(DrawTextParams {
+                screen_pos: vec2(size.x / 2.0, size.y / 2.0),
+                text: "Gratz! you escaped!".to_string(),
+                scale: 32.0,
+                color: Color { r: 1.0, g: 1.0, b: 1.0, a: alpha },
+                horizontal_align: HorizontalAlign::Center,
+                ..Default::default()
+            });
+        }
+
         fn draw_can_respawn(engine: &mut dyn Engine) {
             let size = engine.screen_size();
             engine.draw_text(DrawTextParams {
                 screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
                 text: "Press SPACE to Restart...".to_string(),
+                scale: 32.0,
+                horizontal_align: HorizontalAlign::Center,
+                color: Color::WHITE,
+                ..Default::default()
+            });
+        }
+
+        fn draw_can_continue(engine: &mut dyn Engine) {
+            let size = engine.screen_size();
+            engine.draw_text(DrawTextParams {
+                screen_pos: vec2(size.x / 2.0, size.y / 2.0 + 32.0),
+                text: "Press SPACE to continue...".to_string(),
                 scale: 32.0,
                 horizontal_align: HorizontalAlign::Center,
                 color: Color::WHITE,
@@ -111,12 +136,17 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             PlayerState::Won { fade_out_timer } => {
                 let alpha = fade_out_timer.alpha();
                 draw_fade(engine, alpha);
+                draw_won(engine, alpha);
             }
             PlayerState::Ready { fade_in_timer } => {
                 let alpha = 1.0 - fade_in_timer.alpha_capped();
                 draw_fade(engine, alpha);
             }
-            _ => {}
+            PlayerState::CanContinue {  } => {
+                draw_fade(engine, 1.0);
+                draw_won(engine, 1.0);
+                draw_can_continue(engine);
+            }
         }
     }
 }

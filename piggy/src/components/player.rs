@@ -57,6 +57,9 @@ pub enum PlayerState {
     CanRespawn,
     Won {
         fade_out_timer:Timer
+    },
+    CanContinue {
+        
     }
 }
 
