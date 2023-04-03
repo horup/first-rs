@@ -82,7 +82,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 PlayerState::Won { fade_out_timer } =>{
                     fade_out_timer.tick(dt);
                     if fade_out_timer.alpha() > 1.2 {
-                        *
+                        e.player.state.set_can_continue();
                     }
                 }
                 PlayerState::Ready { fade_in_timer } => {

@@ -59,7 +59,6 @@ pub enum PlayerState {
         fade_out_timer:Timer
     },
     CanContinue {
-        
     }
 }
 
@@ -89,6 +88,14 @@ impl PlayerState {
                 *self = PlayerState::Won { fade_out_timer: Timer::new(timeout)  }
             },
             _ => {}
+        }
+    }
+    pub fn set_can_continue(&mut self) {
+        match self {
+            Self::Won { .. } => {
+                *self = Self::CanContinue {  }
+            },
+            _=>{}
         }
     }
 }
