@@ -8,7 +8,7 @@ pub struct GameState {
     pub flash:Flash,
     pub camera:Camera,
     pub collisions:Vec<Collision>,
-    pub current_map:Map
+    pub current_level:usize
 }
 
 impl Component for GameState {

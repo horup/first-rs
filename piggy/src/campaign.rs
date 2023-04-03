@@ -5,8 +5,8 @@ pub struct Level {
 }
 
 impl Level {
-    pub fn from_bytes(bytes:&[u8]) -> Self {
-        let map = bincode::deserialize::<Map>(bytes).unwrap();
+    pub fn from_bytes(map_json:&str) -> Self {
+        let map = serde_json::from_str::<Map>(map_json).unwrap();
         Self {
             map
         }
@@ -20,7 +20,7 @@ pub struct Campaign {
 impl Campaign {
     pub fn new() -> Self {
         let mut levels = Vec::new();
-        levels.push(Level::from_bytes(include_bytes!("../assets/maps/001.map")));
+        levels.push(Level::from_bytes(include_str!("../assets/maps/001.map")));
         Self {
             levels
         }
