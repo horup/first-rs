@@ -8,6 +8,9 @@ pub use defs::*;
 mod facade;
 pub use facade::*;
 
+mod campaign;
+pub use campaign::*;
+
 pub mod systems;
 pub mod components;
 pub mod singletons;
