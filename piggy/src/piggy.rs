@@ -1,9 +1,10 @@
 
-use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry, Facade}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event, RespawnEvent}, singletons::GameState, Campaign};
+use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::GameState, Campaign, Signal, StartSignal};
 
 pub struct Piggy {
     pub registry:Registry,
+    pub start_signals:Signal<StartSignal>,
     pub campaign:Campaign
 }
 
@@ -18,18 +19,19 @@ impl Default for Piggy {
         registry.register_component::<Health>();
         registry.register_component::<Item>();
         registry.register_component::<Effector>();
-        registry.register_component::<Event>();
-
         registry.register_singleton::<Tilemap>();
         registry.register_singleton::<GameState>();
-        Self { registry, campaign:Campaign::new() }
+        Self { registry, 
+            campaign:Campaign::new(), 
+            start_signals:Signal::new()
+        }
     }
 }
 
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        systems::init_system(&mut self.registry, engine);
+        systems::init_system(&mut self.registry, engine, &mut self.start_signals);
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -40,7 +42,7 @@ impl Game for Piggy {
             engine.set_cursor_grabbed(false);
         }
         
-        systems::player_system(&mut self.registry, engine);
+        systems::player_system(&mut self.registry, engine, &mut self.start_signals);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);
         systems::item_system(&mut self.registry, engine);
@@ -50,7 +52,10 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
-        systems::event_system(self, engine);
+
+        for start_signal in self.start_signals.drain() {
+            systems::on_start(&mut self.registry, &self.campaign, &start_signal);
+        }
 
         #[cfg(not(target_arch = "wasm32"))]
         {

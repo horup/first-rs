@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, registry::{Registry, Facade}, SpatialHashmap};
-use crate::{PlayerEntity, PiggyFacade, components::Event};
+use crate::{PlayerEntity, PiggyFacade};
 
 pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();
@@ -16,7 +16,7 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
                     crate::components::Effector::ExitMarker => {
                         let player_id = player_entity.id;
                         registry.push(move |registry|{
-                            registry.spawn().attach(Event::PlayerWon { player_id });
+                            //registry.spawn().attach(Event::PlayerWon { player_id });
                         });
                         player_entity.player.state.set_won();
                     },

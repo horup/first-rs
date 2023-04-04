@@ -1,7 +1,7 @@
 use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, Map, registry::Registry};
-use crate::{textures, components::{Event, RespawnEvent}};
+use crate::{textures, Signal, StartSignal};
 
-pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine) {
+pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<StartSignal>) {
     macro_rules! wall {
         ($id:expr, $path:expr) => {
             engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
@@ -42,7 +42,6 @@ pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine) {
     wall!(textures::CEILING_GREY, "../../assets/textures/ceiling_grey.png");
 
     let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
-    //engine.push_event(Event::Map { map });
-    registry.spawn().attach(Event::Respawn(RespawnEvent {}));
+    start_signals.push(StartSignal {  });
     
 }

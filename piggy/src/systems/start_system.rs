@@ -1,5 +1,5 @@
-use engine_sdk::{Engine, Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, Event, RespawnEvent}, singletons::GameState, piggy, Piggy};
+use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, piggy, Piggy, StartSignal, Campaign};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -63,10 +63,10 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_respawn_event(piggy:&mut Piggy, _engine:&mut dyn Engine, _e:RespawnEvent) {
-    let current_level = piggy.registry.singleton::<GameState>().unwrap().current_level.clone();
-    let current_map = &piggy.campaign.get(current_level).unwrap().map;
-    piggy.registry.clear();
+pub fn on_start(registry:&mut Registry, campaign:&Campaign, start_signal:&StartSignal) {
+    let current_level = registry.singleton::<GameState>().unwrap().current_level.clone();
+    let current_map = campaign.get(current_level).unwrap().map.clone();
+    registry.clear();
     let mut grid:Grid<Tile> = Grid::new(current_map.grid.size());
     current_map.grid.for_each(|cell, index| {
         if let Some(wall) = cell.wall {
@@ -75,36 +75,13 @@ pub fn on_respawn_event(piggy:&mut Piggy, _engine:&mut dyn Engine, _e:RespawnEve
             tile.clips = true;
         }
         if let Some(thing) = cell.thing {
-            spawn_thing(&mut piggy.registry, thing, index, cell.thing_facing);
+            spawn_thing(registry, thing, index, cell.thing_facing);
         }
     });
 
-    let mut tilemap = piggy.registry.singleton_mut::<Tilemap>().unwrap();
+    let mut tilemap = registry.singleton_mut::<Tilemap>().unwrap();
     tilemap.grid = grid;
     tilemap.floor_texture = FLOOR_GREY;
     tilemap.ceiling_texture = CEILING_GREY;
-    piggy.registry.singleton_mut::<GameState>().unwrap().current_level = current_level;
-}
-
-pub fn event_system(piggy:&mut Piggy,engine:&mut dyn Engine) {
-    let mut events = Vec::with_capacity(32);
-    for (id, _) in piggy.registry.components::<Event>().iter() {
-        events.push(id);
-    }   
-
-    for id in events {
-        if let Some(event) = piggy.registry.component_detach::<Event>(id) {
-            match event {
-                Event::Respawn(e) => {
-                    on_respawn_event(piggy, engine, e);
-                },
-                Event::PlayerWon { player_id:_ } => {
-                    
-                    //registry.despawn(player_id);
-                },
-            }
-        }
-        piggy.registry.despawn(id);
-    }
-    
+    registry.singleton_mut::<GameState>().unwrap().current_level = current_level;
 }

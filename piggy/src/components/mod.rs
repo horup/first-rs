@@ -18,6 +18,3 @@ pub use mob::*;
 
 mod health;
 pub use health::*;
-
-mod event;
-pub use event::*;
