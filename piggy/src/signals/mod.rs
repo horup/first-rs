@@ -1,4 +1,4 @@
 #[derive(Clone)]
-pub struct StartSignal {
+pub struct Start {
     
 }

@@ -1,10 +1,10 @@
 
 use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::GameState, Campaign, Signal, StartSignal};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::GameState, Campaign, Signal, Start, listeners};
 
 pub struct Piggy {
     pub registry:Registry,
-    pub start_signals:Signal<StartSignal>,
+    pub start_signals:Signal<Start>,
     pub campaign:Campaign
 }
 
@@ -54,7 +54,7 @@ impl Game for Piggy {
         systems::ui_system(&mut self.registry, engine);
 
         for start_signal in self.start_signals.drain() {
-            systems::on_start(&mut self.registry, &self.campaign, &start_signal);
+            listeners::on_start(&mut self.registry, &self.campaign, &start_signal);
         }
 
         #[cfg(not(target_arch = "wasm32"))]

@@ -1,9 +1,9 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, registry::{Registry, Facade}, Sprite};
-use crate::{components::{PlayerState}, singletons::GameState, PlayerEntity, PiggyFacade, Signal, StartSignal};
+use crate::{components::{PlayerState}, singletons::GameState, PlayerEntity, PiggyFacade, Signal, Start};
 
-pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<StartSignal>) {
+pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
     {
         let facade = registry.facade::<PiggyFacade>();
         let mut global = registry.singleton_mut::<GameState>().unwrap();
@@ -86,7 +86,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 },
                 PlayerState::CanRespawn => {
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
-                        start_signals.push(StartSignal {  });
+                        start_signals.push(Start {  });
                     }
                 },
                 PlayerState::Won { fade_out_timer } =>{

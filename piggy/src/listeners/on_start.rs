@@ -1,5 +1,5 @@
 use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, piggy, Piggy, StartSignal, Campaign};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, piggy, Piggy, Start, Campaign};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -63,7 +63,7 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_start(registry:&mut Registry, campaign:&Campaign, start_signal:&StartSignal) {
+pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start) {
     let current_level = registry.singleton::<GameState>().unwrap().current_level.clone();
     let current_map = campaign.get(current_level).unwrap().map.clone();
     registry.clear();

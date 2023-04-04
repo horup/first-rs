@@ -10,9 +10,6 @@ pub use render_flash_system::*;
 mod door_system;
 pub use door_system::*;
 
-mod start_system;
-pub use start_system::*;
-
 mod effector_system;
 pub use effector_system::*;
 
