@@ -64,8 +64,12 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 }
 
 pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start) {
-    let current_level = registry.singleton::<GameState>().unwrap().current_level.clone();
-    let current_map = campaign.get(current_level).unwrap().map.clone();
+    let current_level = start.level;
+    let mut current_map = campaign.get(current_level).unwrap().map.clone();
+    if let Some(map) = &start.override_map {
+        current_map = map.clone();
+    }
+    
     registry.clear();
     let mut grid:Grid<Tile> = Grid::new(current_map.grid.size());
     current_map.grid.for_each(|cell, index| {

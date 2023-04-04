@@ -76,10 +76,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
         match event {
             EngineEvent::Map { map } => {
-                //systems::start_system(&mut self.registry, engine, map);
-                todo!();
-                //self.registry.singleton_mut::<GameState>().unwrap().current_level = map.clone();
-                //self.registry.spawn().attach(Event::Respawn(RespawnEvent{}));
+                self.start_signals.push(Start { override_map: Some(map.clone()), level:0 });
             }
             EngineEvent::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

@@ -42,6 +42,6 @@ pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals
     wall!(textures::CEILING_GREY, "../../assets/textures/ceiling_grey.png");
 
     let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
-    start_signals.push(Start {  });
+    start_signals.push(Start::default());
     
 }

@@ -6,11 +6,11 @@ use crate::{components::{PlayerState}, singletons::GameState, PlayerEntity, Pigg
 pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
     {
         let facade = registry.facade::<PiggyFacade>();
-        let mut global = registry.singleton_mut::<GameState>().unwrap();
+        let mut game_state = registry.singleton_mut::<GameState>().unwrap();
         let dt = engine.dt();
         let speed = 3.0;
-        let left = global.camera.left();
-        let forward = global.camera.forward_body();
+        let left = game_state.camera.left();
+        let forward = game_state.camera.forward_body();
 
         for mut e in facade.query::<PlayerEntity>() {
             let old_pos = e.sprite.pos;
@@ -86,7 +86,10 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 },
                 PlayerState::CanRespawn => {
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
-                        start_signals.push(Start {  });
+                        start_signals.push(Start {
+                            override_map: None,
+                            level: registry.singleton::<GameState>().unwrap().current_level,
+                        });
                     }
                 },
                 PlayerState::Won { fade_out_timer } =>{
@@ -98,15 +101,23 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 PlayerState::Ready { fade_in_timer } => {
                     fade_in_timer.tick(dt);
                 }
-                _ => {}
+                PlayerState::CanContinue {  } => {
+                    if engine.key_just_pressed(VirtualKeyCode::Space) {
+                        start_signals.push(Start {
+                            override_map:None,
+                            level: game_state.current_level + 1
+                        });
+                    }
+                },
+                
             }
         
             e.sprite.vel = new_pos - old_pos;
             e.sprite.facing = new_facing;
             let pos = e.sprite.pos;
             let facing = e.sprite.facing;
-            global.camera.pos = pos;
-            global.camera.facing = facing;
+            game_state.camera.pos = pos;
+            game_state.camera.facing = facing;
 
         }
     }
