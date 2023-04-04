@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone, Copy, Default)]
 pub struct Mob {
+    pub active:bool,
     pub last_known_pos:Option<Vec3>,
     pub can_see_player:bool,
     pub dir:Vec2,

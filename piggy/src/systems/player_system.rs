@@ -88,7 +88,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
                         start_signals.push(Start {
                             override_map: None,
-                            level: registry.singleton::<GameState>().unwrap().current_level,
+                            level: game_state.current_level,
                         });
                     }
                 },

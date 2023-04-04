@@ -11,7 +11,6 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
         let v = player_entity.sprite.pos - mob_entity.sprite.pos;
         let dir = v.normalize_or_zero();
         let mob_speed = 2.0;
-
         
         // check visibility to player
         let mut player_visible = true;
@@ -28,9 +27,11 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
         if mob_entity.mob.can_see_player {
             mob_entity.mob.last_known_pos = Some(player_entity.sprite.pos);
             mob_entity.sprite.vel = dir * mob_speed;
+            mob_entity.mob.active = true;
         }
         
-        if let Some(last_known_pos) = mob_entity.mob.last_known_pos {
+        if mob_entity.mob.active {
+            let last_known_pos = player_entity.sprite.pos;
             let start = mob_entity.sprite.pos.truncate().as_ivec2();
             let end = last_known_pos.truncate().as_ivec2();
             if let Some(path) = tilemap.astar(start.into(), end.into(), |_, tile| {
@@ -45,10 +46,7 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
                     mob_entity.sprite.vel = v.normalize_or_zero().extend(0.0) * mob_speed;
                     break;
                 }
-            }
-        } else {
-            // todo implement patrol
-            mob_entity.sprite.vel = Vec3::default();
+            }  
         }
 
         // check if touching player
