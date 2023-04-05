@@ -1,11 +1,26 @@
-use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::{Registry, Facade}, Tilemap};
-use crate::{PlayerEntity, MobEntity, singletons::GameState, PiggyFacade, components::PlayerState};
+use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::{Registry, Facade}, Tilemap, Grid};
+use crate::{PlayerEntity, MobEntity, singletons::GameState, PiggyFacade, components::PlayerState, DoorEntity};
 
 pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()> {
     let facade = registry.facade::<PiggyFacade>();
     let global = registry.singleton::<GameState>().unwrap();
     let tilemap = &registry.singleton::<Tilemap>().unwrap().grid;
     let mut player_entity = facade.query::<PlayerEntity>().next()?;
+
+    let mut block_grid:Grid<bool> = Grid::new(tilemap.size());
+    for y in 0..tilemap.size() as i32 {
+        for x in 0..tilemap.size() as i32 {
+            let blocks = block_grid.get_mut((x,y)).unwrap();
+            *blocks = tilemap.get((x, y)).unwrap().clips;
+        }
+    }
+
+    for door_entity in facade.query::<DoorEntity>() {
+        let i = door_entity.door.pos.as_ivec3().truncate();
+        if let Some(blocks) = block_grid.get_mut((i.x, i.y)) {
+            *blocks = false;
+        }
+    }
 
     for mut mob_entity in facade.query::<MobEntity>() {
         let v = player_entity.sprite.pos - mob_entity.sprite.pos;
@@ -34,8 +49,9 @@ pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()>
             let last_known_pos = player_entity.sprite.pos;
             let start = mob_entity.sprite.pos.truncate().as_ivec2();
             let end = last_known_pos.truncate().as_ivec2();
-            if let Some(path) = tilemap.astar(start.into(), end.into(), |_, tile| {
-                tile.clips
+
+            if let Some(path) = block_grid.astar(start.into(), end.into(), |_, blocks| {
+                *blocks
             }) {
                 let path = path.iter().skip(1);
                 for (x,y) in path {
