@@ -19,6 +19,7 @@ log = "0.4.17"
 instant = "0.1.12"
 anyhow = "1.0.68"
 engine_editor = {path = "../engine_editor"}
+kira = "0.7.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 wgpu = "0.14.2"

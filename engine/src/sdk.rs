@@ -1,4 +1,4 @@
-use std::{rc::Rc};
+use std::{rc::Rc, io::Cursor};
 
 use crate::{Engine};
 use engine_sdk::{
@@ -7,6 +7,7 @@ use engine_sdk::{
     image::DynamicImage,
     DrawRectParams, TextureAtlas, Event, LoadAtlasParams,
 };
+use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundSettings}};
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
@@ -135,4 +136,21 @@ impl engine_sdk::Engine for Engine {
     fn cursor_grabbed(&self) -> bool {
         self.cursor_visible
     }
+
+    fn play_sound(&self, sound:u32, volume:f32) {
+        if let Some(sound_data) = self.static_sound_data.get(&sound) {
+            if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
+                let _ = audio_manager.play(sound_data.clone());
+            }
+        }
+    }
+
+    fn load_sound(&mut self, sound:u32, bytes:&[u8]) {
+        let vec = Vec::from(bytes);
+        let cursor = Cursor::new(vec);
+        let sound_data = StaticSoundData::from_cursor(cursor, StaticSoundSettings::default()).expect("failed to load sound data");
+        self.static_sound_data.insert(sound, sound_data);
+        
+    }
+    
 }

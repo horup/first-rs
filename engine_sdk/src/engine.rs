@@ -19,6 +19,8 @@ pub struct Collision {
 
 
 pub trait Engine {
+    fn play_sound(&self, sound:u32, volume:f32);
+    fn load_sound(&mut self, sound:u32, bytes:&[u8]);
     fn egui(&self) -> &egui::Context;
     fn egui_texture(&mut self, id:&u32) -> Option<egui::TextureHandle>;
     fn load_atlas(&mut self, id:u32, image:&DynamicImage, params:LoadAtlasParams);

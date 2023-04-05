@@ -1,5 +1,5 @@
 use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, Map, registry::Registry};
-use crate::{textures, Signal, Start};
+use crate::{textures, Signal, Start, sounds};
 
 pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
     macro_rules! wall {
@@ -41,7 +41,9 @@ pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals
     wall!(textures::FLOOR_GREY, "../../assets/textures/floor_grey.png");
     wall!(textures::CEILING_GREY, "../../assets/textures/ceiling_grey.png");
 
-    let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
+
+    engine.load_sound(sounds::PICKUP, include_bytes!("../../assets/sfx/pickup.ogg"));
+    //let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
     start_signals.push(Start::default());
     
 }

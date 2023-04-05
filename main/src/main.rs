@@ -13,15 +13,15 @@ async fn init() -> Engine {
 
 fn main() {
     #[cfg(not(target_arch = "wasm32"))]
-    {
+   /* */ {
         env_logger::init();
         pollster::block_on(async {
             let mut engine = init().await;
             engine.show_editor = false;
             #[cfg(debug_assertions)]
             {
-                let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
-                engine.set_game_hotreload(lib_path);
+              //  let lib_path = std::env::current_exe().unwrap().parent().unwrap().to_path_buf().join(PathBuf::from_str("piggy.dll").unwrap());
+              //  engine.set_game_hotreload(lib_path);
             }
             engine.run().await;  
         }); 
