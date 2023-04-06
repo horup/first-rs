@@ -6,6 +6,10 @@ pub struct Diagnostics {
 }
 
 impl Diagnostics {
+    pub fn now_ms(&self) -> u128 {
+        let now = Instant::now();
+        now.elapsed().as_millis()
+    }
     pub fn measure_frame_time(&mut self) {
         let tick = Instant::now();
         self.frame_time = tick - self.last_tick;

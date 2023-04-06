@@ -28,6 +28,7 @@ pub trait Engine {
     fn atlases(&self) -> Vec<TextureAtlas>;
     fn draw_scene(&mut self, camera:&Camera, scene:&Registry);
     fn dt(&self) -> f32;
+    fn tick_count(&self) -> u64;
     fn draw_rect(&mut self, params:DrawRectParams);
     fn draw_line(&mut self, params:DrawLineParams);
     fn screen_size(&self) -> Vec2;
