@@ -1,6 +1,6 @@
 
 use engine_sdk::{Map, Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector}, singletons::GameState, Campaign, Signal, Start, listeners};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound}, singletons::GameState, Campaign, Signal, Start, listeners};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -21,6 +21,7 @@ impl Default for Piggy {
         registry.register_component::<Effector>();
         registry.register_singleton::<Tilemap>();
         registry.register_singleton::<GameState>();
+        registry.register_component::<EmitSound>();
         Self { registry, 
             campaign:Campaign::new(), 
             start_signals:Signal::new()
@@ -45,13 +46,14 @@ impl Game for Piggy {
         systems::player_system(&mut self.registry, engine, &mut self.start_signals);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);
-        systems::item_system(&mut self.registry, engine);
+        systems::item_pickup(&mut self.registry);
         systems::activator_system(&mut self.registry, engine);
         systems::door_system(&mut self.registry, engine);
         systems::effector_system(&mut self.registry, engine);
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
+        systems::sound_playback(&mut self.registry, engine);
 
         for start_signal in self.start_signals.drain() {
             listeners::on_start(&mut self.registry, &self.campaign, &start_signal);

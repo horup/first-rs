@@ -1,5 +1,5 @@
-mod item_system;
-pub use item_system::*;
+mod item_pickup;
+pub use item_pickup::*;
 
 mod player_system;
 pub use player_system::*;
@@ -7,8 +7,8 @@ pub use player_system::*;
 mod render_flash_system;
 pub use render_flash_system::*;
 
-mod door_system;
-pub use door_system::*;
+mod door_opening;
+pub use door_opening::*;
 
 mod effector_system;
 pub use effector_system::*;
@@ -30,3 +30,6 @@ pub use ui_system::*;
 
 mod init_system;
 pub use init_system::*;
+
+mod sound_playback;
+pub use sound_playback::*;

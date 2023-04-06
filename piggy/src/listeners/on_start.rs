@@ -1,5 +1,5 @@
 use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry, Commands}, Tile, Tilemap};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, piggy, Piggy, Start, Campaign};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, piggy, Piggy, Start, Campaign, sounds};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -44,11 +44,11 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
         }
         textures::THING_ITEM_KEY_BLUE => {
             sprite.clips = false;
-            e.attach(Item::new(1.0));
+            e.attach(Item::new(1.0).with_pickup_sound(sounds::PICKUP_KEY));
         }
         textures::THING_ITEM_KEY_GOLD => {
             sprite.clips = false;
-            e.attach(Item::new(1.0));
+            e.attach(Item::new(1.0).with_pickup_sound(sounds::PICKUP_KEY));
         }
         textures::THING_MONSTER_PIGGY => {
             e.attach(Mob {

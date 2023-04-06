@@ -21,6 +21,12 @@ pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals
             });
         };
     }
+
+    macro_rules! sound {
+        ($id:expr, $path:expr) => {
+            engine.load_sound($id, include_bytes!($path));
+        };
+    }
     
     wall!(textures::WALL_BRICK, "../../assets/textures/wall_brick.png");
     wall!(textures::WALL_BUSH, "../../assets/textures/wall_bush.png");
@@ -42,7 +48,10 @@ pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals
     wall!(textures::CEILING_GREY, "../../assets/textures/ceiling_grey.png");
 
 
-    engine.load_sound(sounds::PICKUP, include_bytes!("../../assets/sfx/pickup.ogg"));
+    sound!(sounds::PICKUP, "../../assets/audio/pickup.ogg");
+    sound!(sounds::PICKUP_KEY, "../../assets/audio/pickup_key.ogg");
+    sound!(sounds::DOOR_OPEN, "../../assets/audio/door_open.ogg");
+    sound!(sounds::DOOR_CLOSE, "../../assets/audio/door_close.ogg");
     //let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
     start_signals.push(Start::default());
     
