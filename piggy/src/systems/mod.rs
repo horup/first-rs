@@ -28,8 +28,8 @@ pub use render_world_system::*;
 mod ui_system;
 pub use ui_system::*;
 
-mod init_system;
-pub use init_system::*;
+mod init;
+pub use init::*;
 
 mod sound_playback;
 pub use sound_playback::*;
