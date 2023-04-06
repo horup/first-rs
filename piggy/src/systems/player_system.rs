@@ -39,7 +39,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 } else if engine.key_down(VirtualKeyCode::Right) {
                     new_facing += turn_speed * dt;
                 }
-            }
+            } 
 
             match e.player.state {
                 PlayerState::BeingCought { .. } | PlayerState::Cought { .. }  => {
