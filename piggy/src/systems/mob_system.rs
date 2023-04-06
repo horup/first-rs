@@ -1,5 +1,5 @@
 use engine_sdk::{Engine, glam::{IVec2, Vec3}, glam::Vec2, registry::{Registry, Facade}, Tilemap, Grid};
-use crate::{PlayerEntity, MobEntity, singletons::GameState, PiggyFacade, components::PlayerState, DoorEntity};
+use crate::{PlayerEntity, MobEntity, singletons::GameState, PiggyFacade, DoorEntity};
 
 pub fn mob_system(registry:&mut Registry, _engine:&mut dyn Engine) -> Option<()> {
     let facade = registry.facade::<PiggyFacade>();

@@ -14,8 +14,8 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
             if let Some(effector) = facade.effectors.get(id) {
                 match &*effector {
                     crate::components::Effector::ExitMarker => {
-                        let player_id = player_entity.id;
-                        registry.push(move |registry|{
+                        let _player_id = player_entity.id;
+                        registry.push(move |_registry|{
                             //registry.spawn().attach(Event::PlayerWon { player_id });
                         });
                         player_entity.player.state.set_won();

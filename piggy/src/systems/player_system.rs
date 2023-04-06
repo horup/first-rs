@@ -17,29 +17,27 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
             let mut new_pos = e.sprite.pos;
             let mut new_facing = e.sprite.facing;
         
-            if e.health.is_alive() {
-                if !engine.cursor_grabbed() {
-                    if engine.key_down(VirtualKeyCode::A) {
-                        new_pos += speed * left;
-                    }
-                    if engine.key_down(VirtualKeyCode::D) {
-                        new_pos -= speed * left;
-                    }
-                    if engine.key_down(VirtualKeyCode::W) {
-                        new_pos += speed * forward;
-                    }
-                    if engine.key_down(VirtualKeyCode::S) {
-                        new_pos -= speed * forward;
-                    }
-                    let turn_speed = PI / 4.0;
-                    new_facing += turn_speed * dt * engine.mouse_motion().x;
+            if e.health.is_alive() && !engine.cursor_grabbed() {
+                if engine.key_down(VirtualKeyCode::A) {
+                    new_pos += speed * left;
+                }
+                if engine.key_down(VirtualKeyCode::D) {
+                    new_pos -= speed * left;
+                }
+                if engine.key_down(VirtualKeyCode::W) {
+                    new_pos += speed * forward;
+                }
+                if engine.key_down(VirtualKeyCode::S) {
+                    new_pos -= speed * forward;
+                }
+                let turn_speed = PI / 4.0;
+                new_facing += turn_speed * dt * engine.mouse_motion().x;
 
-                    let turn_speed = turn_speed * 5.0;
-                    if engine.key_down(VirtualKeyCode::Left) {
-                        new_facing -= turn_speed * dt;
-                    } else if engine.key_down(VirtualKeyCode::Right) {
-                        new_facing += turn_speed * dt;
-                    }
+                let turn_speed = turn_speed * 5.0;
+                if engine.key_down(VirtualKeyCode::Left) {
+                    new_facing -= turn_speed * dt;
+                } else if engine.key_down(VirtualKeyCode::Right) {
+                    new_facing += turn_speed * dt;
                 }
             }
 

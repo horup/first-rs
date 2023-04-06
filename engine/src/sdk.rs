@@ -7,7 +7,7 @@ use engine_sdk::{
     image::DynamicImage,
     DrawRectParams, TextureAtlas, Event, LoadAtlasParams,
 };
-use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundSettings}};
+use kira::{sound::static_sound::{StaticSoundData, StaticSoundSettings}};
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
@@ -137,7 +137,7 @@ impl engine_sdk::Engine for Engine {
         self.cursor_visible
     }
 
-    fn play_sound(&self, sound:u32, volume:f32) {
+    fn play_sound(&self, sound:u32, _volume:f32) {
         if let Some(sound_data) = self.static_sound_data.get(&sound) {
             if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
                 let _ = audio_manager.play(sound_data.clone());

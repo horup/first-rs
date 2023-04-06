@@ -1,5 +1,5 @@
 use engine_sdk::{registry::{Registry, Facade}};
-use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::GameState, sounds, components::EmitSound, textures};
+use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::GameState, components::EmitSound};
 
 pub fn item_pickup(registry:&mut Registry) {
     let facade = registry.facade::<PiggyFacade>();

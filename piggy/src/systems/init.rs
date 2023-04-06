@@ -1,7 +1,7 @@
-use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, Map, registry::Registry};
+use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry};
 use crate::{textures, Signal, Start, sounds};
 
-pub fn init_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
+pub fn init_system(_registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
     macro_rules! wall {
         ($id:expr, $path:expr) => {
             engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {

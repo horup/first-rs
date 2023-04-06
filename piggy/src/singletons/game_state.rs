@@ -1,4 +1,4 @@
-use engine_sdk::{registry::{uuid::{uuid, Uuid}, Component}, Camera, Collision, Map};
+use engine_sdk::{registry::{uuid::{uuid, Uuid}, Component}, Camera, Collision};
 use serde::{Serialize, Deserialize};
 
 use crate::systems::Flash;

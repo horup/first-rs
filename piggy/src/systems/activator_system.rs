@@ -7,7 +7,7 @@ pub fn activator_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let query_radius = 1.0;
     let mut player_inventory = Inventory::default();
     for player in facade.query::<PlayerEntity>() {
-        player_inventory = player.player.inventory.clone();
+        player_inventory = player.player.inventory;
     }
     for activatee in facade.query::<ActivateeEntity>() {
         let pos = activatee.sprite.pos;

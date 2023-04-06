@@ -2,15 +2,13 @@ use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
+#[derive(Default)]
 pub enum Effector {
+    #[default]
     ExitMarker
 }
 
-impl Default for Effector {
-    fn default() -> Self {
-        Effector::ExitMarker
-    }
-}
+
 
 impl Component for Effector {
     fn type_id() -> Uuid {
