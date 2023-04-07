@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound}, singletons::GameState, Campaign, Signal, Start, listeners};
+use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound}, singletons::GameState, Campaign, Signal, Start, listeners, sounds};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -44,6 +44,15 @@ impl Game for Piggy {
         if engine.mouse_down(0) {
             engine.set_cursor_grabbed(false);
         }
+
+        if engine.key_just_pressed(VirtualKeyCode::Key1) {
+            engine.play_music(sounds::PICKUP_KEY);
+        }
+
+        if engine.key_just_pressed(VirtualKeyCode::Key2) {
+            engine.stop_music();
+        }
+
         
         systems::player_system(&mut self.registry, engine, &mut self.start_signals);
         systems::mob_system(&mut self.registry, engine);
@@ -58,7 +67,7 @@ impl Game for Piggy {
         systems::sound_playback(&mut self.registry, engine);
 
         for start_signal in self.start_signals.drain() {
-            listeners::on_start(&mut self.registry, &self.campaign, &start_signal);
+            listeners::on_start(&mut self.registry, &self.campaign, &start_signal, engine);
         }
 
         #[cfg(not(target_arch = "wasm32"))]

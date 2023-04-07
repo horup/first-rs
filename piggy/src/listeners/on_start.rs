@@ -1,4 +1,4 @@
-use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry}, Tile, Tilemap};
+use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry}, Tile, Tilemap, Engine};
 use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, Start, Campaign, sounds};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
@@ -63,7 +63,7 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start) {
+pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start, engine:&mut dyn Engine) {
     let current_level = start.level;
     let mut current_map = campaign.get(current_level).unwrap().map.clone();
     if let Some(map) = &start.override_map {
@@ -88,4 +88,5 @@ pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start) {
     tilemap.floor_texture = FLOOR_GREY;
     tilemap.ceiling_texture = CEILING_GREY;
     registry.singleton_mut::<GameState>().unwrap().current_level = current_level;
+    engine.play_music(sounds::MUSIC01);
 }

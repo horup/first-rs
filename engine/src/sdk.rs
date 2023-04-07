@@ -7,7 +7,7 @@ use engine_sdk::{
     image::DynamicImage,
     DrawRectParams, TextureAtlas, Event, LoadAtlasParams,
 };
-use kira::{sound::static_sound::{StaticSoundData, StaticSoundSettings}, tween::Tween};
+use kira::{sound::static_sound::{StaticSoundData, StaticSoundSettings}, tween::Tween, LoopBehavior};
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
@@ -157,18 +157,34 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn play_music(&self, sound:u32) {
+        if let Ok(handle) = self.music.try_borrow_mut().as_deref_mut() {
+            if let Some(handle) = handle {
+                let _ = handle.stop(Tween::default());
+            }
+
+            *handle = None;
+        }
+
         if let Some(sound_data) = self.static_sound_data.get(&sound) {
             if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
-                if let Ok(handle) = audio_manager.play(sound_data.clone()) {
+                let mut sound_data = sound_data.clone();
+                sound_data.settings.loop_behavior = Some(LoopBehavior {
+                    start_position:0.0
+                });
+                if let Ok(handle) = audio_manager.play(sound_data) {
+                    *self.music.borrow_mut() = Some(handle);
                 }
             }
         }
     }
 
     fn stop_music(&self) {
-        if let Some(handle) = &self.music {
-            let mut handle = handle.borrow_mut();
-            let _ = handle.stop(Tween::default());
+        if let Ok(handle) = self.music.try_borrow_mut().as_deref_mut() {
+            if let Some(handle) = handle {
+                let _ = handle.stop(Tween::default());
+            }
+
+            *handle = None;
         }
     }
 

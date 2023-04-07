@@ -2,9 +2,9 @@ use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureAtlas};
 use instant::Instant;
-use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle}};
+use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle}, tween::Tween};
 
-use std::{collections::HashMap, cell::{RefCell}};
+use std::{collections::HashMap, cell::{RefCell}, ops::DerefMut};
 
 use winit::{
     event::{ElementState, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
@@ -15,7 +15,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
 
 pub struct Engine {
-    pub music:Option<RefCell<StaticSoundHandle>>,
+    pub music:RefCell<Option<StaticSoundHandle>>,
     pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
     pub static_sound_data:HashMap<u32, StaticSoundData>,
@@ -88,7 +88,7 @@ impl Engine {
             input: Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
             hot_reloader: None,
-            music:None
+            music:RefCell::new(None)
         }
     }
 
@@ -103,6 +103,19 @@ impl Engine {
 
 
     pub fn update(&mut self, egui_raw_input: RawInput) {
+        /*if let Ok(handle) = self.music.try_borrow_mut().as_deref_mut() {
+            if let Some(handle) = handle {
+                match handle.state() {
+                    kira::sound::static_sound::PlaybackState::Stopped => {
+                        let _ = handle.seek_to(0.0);
+                        let _ = handle.stop(Tween::default());
+                        let _ = handle.resume(Tween::default());
+                        dbg!("hahaha");
+                    },
+                    _=>{}
+                }
+            }
+        }*/
         #[cfg(not(target_arch = "wasm32"))]
         {
             let hot_reloader = self.hot_reloader.take();
