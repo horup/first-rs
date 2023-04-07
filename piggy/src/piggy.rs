@@ -89,12 +89,12 @@ impl Game for Piggy {
             }
         }
 
-        let now = engine.elapsed_ms();
+        //let now = engine.elapsed_ms();
         
-        // let elapsed = now - self.prev_now;
-        self.prev_now = now;
-        //let fps = 1000 / elapsed;
-        //dbg!(fps);
+       // let elapsed = now - self.prev_now;
+       // self.prev_now = now;
+       // let fps = 1000 / elapsed;
+       // dbg!(fps);
     }
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
