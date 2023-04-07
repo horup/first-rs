@@ -72,7 +72,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn dt(&self) -> f32 {
-        let dt = self.diagnostics.frame_time.as_millis() as f32 / 1000.0;
+        let dt = self.diagnostics.frame_time.as_secs_f32();
         if dt < 1.0 {
             return dt;
         }
