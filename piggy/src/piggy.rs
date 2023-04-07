@@ -71,8 +71,8 @@ impl Game for Piggy {
             listeners::on_start(&mut self.registry, &self.campaign, &start_signal, engine);
         }
 
-        systems::process_events(&mut self.registry, engine);
-        systems::cleanup_events(&mut self.registry);
+        systems::events_process(&mut self.registry, engine);
+        systems::events_cleanup(&mut self.registry);
 
         #[cfg(not(target_arch = "wasm32"))]
         {

@@ -7,9 +7,16 @@ pub struct PlayerCoughtEvent {
 }
 
 #[derive(Clone, Serialize, Deserialize)]
+pub struct PlayerEscapedEvent {
+    
+}
+
+
+#[derive(Clone, Serialize, Deserialize)]
 pub enum Event {
     Empty,
-    PlayerCought(PlayerCoughtEvent)
+    PlayerCought(PlayerCoughtEvent),
+    PlayerEscaped(PlayerEscapedEvent)
 }
 
 impl Default for Event {
