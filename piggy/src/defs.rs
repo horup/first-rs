@@ -24,4 +24,7 @@ pub mod sounds {
     pub const DOOR_CLOSE:u32 = 3;
     pub const PICKUP_KEY:u32 = 4;
     pub const MUSIC01:u32 = 5;
+    pub const COUGHT:u32 = 6;
+    pub const WIN:u32 = 7;
+    pub const LOSE:u32 = 8;
 }

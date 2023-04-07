@@ -48,7 +48,7 @@ impl Component for Player {
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum PlayerState {
-    Ready {
+    Active {
         fade_in_timer:Timer
     },
     BeingCought {
@@ -66,6 +66,18 @@ pub enum PlayerState {
 }
 
 impl PlayerState {
+    pub fn is_active(&self) -> bool {
+        match  self {
+            PlayerState::Active { fade_in_timer } => {
+                if fade_in_timer.is_done() {
+                    return true;
+                }
+
+                return false;
+            },
+            _=>return false
+        }
+    }
     pub fn is_being_cought_or_cought(&self) -> bool {
         match self {
             Self::BeingCought { .. } | Self::Cought { .. } => true,
@@ -74,7 +86,7 @@ impl PlayerState {
     }
     pub fn set_being_cought(&mut self) {
         match self {
-            Self::Ready { .. } => {
+            Self::Active { .. } => {
                 *self = Self::BeingCought { turn_around_timer: Timer::new(1.0) }
             },
             _=>{}
@@ -100,7 +112,7 @@ impl PlayerState {
 
     pub fn set_won(&mut self) {
         match *self {
-            PlayerState::Ready {..} => {
+            PlayerState::Active {..} => {
                 let timeout = 1.0;
                 *self = PlayerState::Won { fade_out_timer: Timer::new(timeout)  }
             },
@@ -119,6 +131,6 @@ impl PlayerState {
 
 impl Default for PlayerState {
     fn default() -> Self {
-        Self::Ready { fade_in_timer:Timer::new(1.0) }
+        Self::Active { fade_in_timer:Timer::new(1.0) }
     }
 }

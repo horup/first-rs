@@ -141,7 +141,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 draw_fade(engine, alpha);
                 draw_won(engine, alpha);
             }
-            PlayerState::Ready { fade_in_timer } => {
+            PlayerState::Active { fade_in_timer } => {
                 let alpha = 1.0 - fade_in_timer.alpha_capped();
                 draw_fade(engine, alpha);
             }

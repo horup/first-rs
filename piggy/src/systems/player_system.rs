@@ -96,7 +96,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                         e.player.state.set_can_continue();
                     }
                 }
-                PlayerState::Ready { fade_in_timer } => {
+                PlayerState::Active { fade_in_timer } => {
                     fade_in_timer.tick(dt);
                 }
                 PlayerState::CanContinue {  } => {
