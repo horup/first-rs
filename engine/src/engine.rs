@@ -1,6 +1,7 @@
 use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureAtlas};
+use instant::Instant;
 use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::StaticSoundData};
 
 use std::{collections::HashMap, cell::{RefCell}};
@@ -14,6 +15,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
 
 pub struct Engine {
+    pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
     pub static_sound_data:HashMap<u32, StaticSoundData>,
     pub cursor_visible:bool,
@@ -65,6 +67,7 @@ impl Engine {
         let audio_manager = AudioManager::<CpalBackend>::new(AudioManagerSettings::default()).expect("failed to construct audiomanager");
 
         Engine {
+            start:Instant::now(),
             static_sound_data:HashMap::default(),
             audio_manager:RefCell::new(audio_manager),
             cursor_visible:false,

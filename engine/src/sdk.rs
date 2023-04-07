@@ -152,5 +152,9 @@ impl engine_sdk::Engine for Engine {
         self.static_sound_data.insert(sound, sound_data);
         
     }
+
+    fn elapsed_ms(&self) -> u128 {
+        self.start.elapsed().as_millis()
+    }
     
 }

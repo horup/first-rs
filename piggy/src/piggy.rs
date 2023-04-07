@@ -5,7 +5,8 @@ use crate::{systems, components::{Player, Door, Mob, Activator, Health, Item, Ef
 pub struct Piggy {
     pub registry:Registry,
     pub start_signals:Signal<Start>,
-    pub campaign:Campaign
+    pub campaign:Campaign,
+    pub prev_now:u128
 }
 
 impl Default for Piggy {
@@ -24,7 +25,8 @@ impl Default for Piggy {
         registry.register_component::<EmitSound>();
         Self { registry, 
             campaign:Campaign::new(), 
-            start_signals:Signal::new()
+            start_signals:Signal::new(),
+            prev_now:0
         }
     }
 }
@@ -73,6 +75,13 @@ impl Game for Piggy {
                 }
             }
         }
+
+        let now = engine.elapsed_ms();
+        
+        // let elapsed = now - self.prev_now;
+        self.prev_now = now;
+        //let fps = 1000 / elapsed;
+        //dbg!(fps);
     }
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
