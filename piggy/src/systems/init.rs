@@ -52,6 +52,7 @@ pub fn init_system(_registry:&mut Registry, engine:&mut dyn Engine, start_signal
     sound!(sounds::PICKUP_KEY, "../../assets/audio/pickup_key.ogg");
     sound!(sounds::DOOR_OPEN, "../../assets/audio/door_open.ogg");
     sound!(sounds::DOOR_CLOSE, "../../assets/audio/door_close.ogg");
+    sound!(sounds::MUSIC01, "../../assets/music/iwan_gabovitch.ogg");
     //let map:Map = serde_json::from_str(include_str!("../../assets/maps/test.map")).unwrap();
     start_signals.push(Start::default());
     

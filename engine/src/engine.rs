@@ -2,7 +2,7 @@ use egui::{RawInput};
 use engine_editor::Editor;
 use engine_sdk::{glam::vec2, Game, TextureAtlas};
 use instant::Instant;
-use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::StaticSoundData};
+use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle}};
 
 use std::{collections::HashMap, cell::{RefCell}};
 
@@ -15,6 +15,7 @@ use winit::{
 use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
 
 pub struct Engine {
+    pub music:Option<RefCell<StaticSoundHandle>>,
     pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
     pub static_sound_data:HashMap<u32, StaticSoundData>,
@@ -87,6 +88,7 @@ impl Engine {
             input: Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
             hot_reloader: None,
+            music:None
         }
     }
 

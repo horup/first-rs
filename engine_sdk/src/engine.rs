@@ -19,6 +19,8 @@ pub struct Collision {
 
 
 pub trait Engine {
+    fn play_music(&self, sound:u32);
+    fn stop_music(&self);
     fn play_sound(&self, sound:u32, volume:f32);
     fn load_sound(&mut self, sound:u32, bytes:&[u8]);
     fn egui(&self) -> &egui::Context;
