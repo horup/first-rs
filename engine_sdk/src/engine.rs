@@ -99,7 +99,7 @@ pub trait Engine {
                         spatial_hashmap.query_around(e.pos.truncate(), e.radius + v.length() + spatial_hashmap.max_radius(),potential_colliders);
                         for other_id in potential_colliders.iter() {
                             if *other_id == id {
-                                continue;;
+                                continue;
                             }
                             let other_e = registry.component::<Sprite>(*other_id).unwrap();
                             let ignore = !e.clips || !other_e.clips;
