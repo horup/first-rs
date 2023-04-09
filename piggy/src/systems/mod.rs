@@ -39,3 +39,6 @@ pub use events_cleanup::*;
 
 mod events_process;
 pub use events_process::*;
+
+mod diagnostics;
+pub use diagnostics::*;

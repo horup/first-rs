@@ -19,6 +19,7 @@ pub struct Collision {
 
 
 pub trait Engine {
+    fn time(&self) -> f64;
     fn play_music(&self, sound:u32);
     fn stop_music(&self);
     fn play_sound(&self, sound:u32, volume:f32);
