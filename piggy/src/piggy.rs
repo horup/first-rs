@@ -1,14 +1,12 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, diagnostics_collect, diagnostics_render}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event}, singletons::GameState, Campaign, Signal, Start, listeners, sounds};
+use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event}, singletons::GameState, Campaign, Signal, Start, listeners, sounds};
 
 pub struct Piggy {
     pub registry:Registry,
     pub start_signals:Signal<Start>,
     pub campaign:Campaign,
-    pub prev_time:f64,
-    pub fps:f32,
-    pub frames:f32
+    pub diagnostics_system:DiagnosticsSystem
 }
 
 impl Default for Piggy {
@@ -29,9 +27,7 @@ impl Default for Piggy {
         Self { registry, 
             campaign:Campaign::new(), 
             start_signals:Signal::new(),
-            prev_time:0.0,
-            fps: 0.0,
-            frames: 0.0,
+            diagnostics_system:DiagnosticsSystem::default()
         }
     }
 }
@@ -93,16 +89,8 @@ impl Game for Piggy {
             }
         }
 
-        diagnostics_collect(engine, &mut self.prev_time, &mut self.frames, &mut self.fps);
-
-        diagnostics_render(engine, &self.fps);
-
-        //let now = engine.elapsed_ms();
-        
-       // let elapsed = now - self.prev_now;
-       // self.prev_now = now;
-       // let fps = 1000 / elapsed;
-       // dbg!(fps);
+        self.diagnostics_system.calculate_fps(engine);
+        self.diagnostics_system.render(engine);
     }
 
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
