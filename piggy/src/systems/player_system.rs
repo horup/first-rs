@@ -30,10 +30,10 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 if engine.key_down(VirtualKeyCode::S) {
                     new_pos -= speed * forward;
                 }
-                let turn_speed = PI / 4.0;
-                new_facing += turn_speed * dt * engine.mouse_motion().x;
+                let turn_speed = PI / 365.0;
+                new_facing += turn_speed * engine.mouse_motion().x;
 
-                let turn_speed = turn_speed * 5.0;
+                let turn_speed = PI * 1.5;
                 if engine.key_down(VirtualKeyCode::Left) {
                     new_facing -= turn_speed * dt;
                 } else if engine.key_down(VirtualKeyCode::Right) {
