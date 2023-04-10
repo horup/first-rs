@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent}, singletons::Global, Campaign, Signal, Start, listeners, sounds};
+use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent}, singletons::{Global, Local}, Campaign, Signal, Start, listeners, sounds};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -24,6 +24,7 @@ impl Default for Piggy {
         registry.register_singleton::<Global>();
         registry.register_component::<EmitSound>();
         registry.register_component::<Event>();
+        registry.register_singleton::<Local>();
         Self { registry, 
             campaign:Campaign::new(), 
             start_signals:Signal::new(),
