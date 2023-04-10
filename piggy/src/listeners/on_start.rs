@@ -1,5 +1,5 @@
 use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry}, Tile, Tilemap, Engine};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::GameState, Start, Campaign, sounds};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::Global, Start, Campaign, sounds};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -87,6 +87,6 @@ pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start, engine
     tilemap.grid = grid;
     tilemap.floor_texture = FLOOR_GREY;
     tilemap.ceiling_texture = CEILING_GREY;
-    registry.singleton_mut::<GameState>().unwrap().current_level = current_level;
+    registry.singleton_mut::<Global>().unwrap().current_level = current_level;
     engine.play_music(sounds::MUSIC01);
 }

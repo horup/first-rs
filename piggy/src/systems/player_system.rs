@@ -1,12 +1,12 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, registry::{Registry, Facade}, Sprite};
-use crate::{components::{PlayerState}, singletons::GameState, PlayerEntity, PiggyFacade, Signal, Start};
+use crate::{components::{PlayerState}, singletons::Global, PlayerEntity, PiggyFacade, Signal, Start};
 
 pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
     {
         let facade = registry.facade::<PiggyFacade>();
-        let mut game_state = registry.singleton_mut::<GameState>().unwrap();
+        let mut game_state = registry.singleton_mut::<Global>().unwrap();
         let dt = engine.dt();
         let speed = 3.0;
         let left = game_state.camera.left();

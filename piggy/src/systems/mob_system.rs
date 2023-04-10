@@ -1,6 +1,6 @@
 use crate::{
     components::{Event, PlayerCoughtEvent},
-    singletons::GameState,
+    singletons::Global,
     DoorEntity, MobEntity, PiggyFacade, PlayerEntity,
 };
 use engine_sdk::{
@@ -13,7 +13,7 @@ use engine_sdk::{
 pub fn mob_system(registry: &mut Registry, _engine: &mut dyn Engine) -> Option<()> {
     {
         let facade = registry.facade::<PiggyFacade>();
-        let global = registry.singleton::<GameState>().unwrap();
+        let global = registry.singleton::<Global>().unwrap();
         let tilemap = &registry.singleton::<Tilemap>().unwrap().grid;
         let mut player_entity = facade.query::<PlayerEntity>().next()?;
 
