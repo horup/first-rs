@@ -11,12 +11,19 @@ pub struct PlayerEscapedEvent {
     
 }
 
+#[derive(Clone, Serialize, Deserialize)]
+pub struct PlayerCompletedFinalLevelEvent {
+    
+}
+
+
 
 #[derive(Clone, Serialize, Deserialize)]
 pub enum Event {
     Empty,
     PlayerCought(PlayerCoughtEvent),
-    PlayerEscaped(PlayerEscapedEvent)
+    PlayerEscaped(PlayerEscapedEvent),
+    PlayerCompletedFinalLevel(PlayerCompletedFinalLevelEvent)
 }
 
 impl Default for Event {

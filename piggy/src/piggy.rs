@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event}, singletons::GameState, Campaign, Signal, Start, listeners, sounds};
+use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent}, singletons::GameState, Campaign, Signal, Start, listeners, sounds};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -47,7 +47,7 @@ impl Game for Piggy {
         }
 
         if engine.key_just_pressed(VirtualKeyCode::Key1) {
-            engine.play_music(sounds::PICKUP_KEY);
+            self.registry.spawn().attach(Event::PlayerCompletedFinalLevel(PlayerCompletedFinalLevelEvent {}));
         }
 
         if engine.key_just_pressed(VirtualKeyCode::Key2) {

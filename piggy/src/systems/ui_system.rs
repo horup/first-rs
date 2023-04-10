@@ -120,8 +120,17 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             });
         }
 
-        //draw_cought(engine);
-        //draw_can_respawn(engine);
+        fn draw_final(e:&mut dyn Engine) {
+            let size = e.screen_size() / 2.0;
+            e.draw_text(DrawTextParams {
+                screen_pos: size,
+                text: "Congratulation! You won the game!".into(),
+                scale: 24.0,
+                color: Color::WHITE,
+                horizontal_align: engine_sdk::HorizontalAlign::Center,
+                vertical_align: engine_sdk::VerticalAlign::Center,
+            });
+        }
 
         match e.player.state {
             PlayerState::BeingCought { .. } => {
@@ -136,7 +145,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 draw_cought(engine);
                 draw_can_respawn(engine);
             }
-            PlayerState::Won { fade_out_timer } => {
+            PlayerState::Escaped { fade_out_timer } => {
                 let alpha = fade_out_timer.alpha();
                 draw_fade(engine, alpha);
                 draw_won(engine, alpha);
@@ -150,6 +159,11 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 draw_won(engine, 1.0);
                 draw_can_continue(engine);
             }
+            PlayerState::CompletedFinalLevel { fade_out_timer } => {
+                let alpha = fade_out_timer.alpha_capped();
+                draw_fade(engine, alpha);
+                draw_final(engine);
+            },
         }
     }
 }

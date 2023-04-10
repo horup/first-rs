@@ -58,10 +58,13 @@ pub enum PlayerState {
         fade_out_timer:Timer,
     },
     CanRespawn,
-    Won {
+    Escaped {
         fade_out_timer:Timer
     },
     CanContinue {
+    },
+    CompletedFinalLevel {
+        fade_out_timer:Timer
     }
 }
 
@@ -110,22 +113,26 @@ impl PlayerState {
         }
     }
 
-    pub fn set_won(&mut self) {
+    pub fn set_escaped(&mut self) {
         match *self {
             PlayerState::Active {..} => {
                 let timeout = 1.0;
-                *self = PlayerState::Won { fade_out_timer: Timer::new(timeout)  }
+                *self = PlayerState::Escaped { fade_out_timer: Timer::new(timeout)  }
             },
             _ => {}
         }
     }
     pub fn set_can_continue(&mut self) {
         match self {
-            Self::Won { .. } => {
+            Self::Escaped { .. } => {
                 *self = Self::CanContinue {  }
             },
             _=>{}
         }
+    }
+
+    pub fn set_final(&mut self) {
+        *self = PlayerState::CompletedFinalLevel { fade_out_timer: Timer::new(1.0) };
     }
 }
 

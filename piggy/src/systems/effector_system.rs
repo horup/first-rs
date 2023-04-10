@@ -18,7 +18,7 @@ pub fn effector_system(registry: &mut Registry, _engine: &mut dyn Engine) {
                         registry.push(move |r|{
                             r.spawn().attach(Event::PlayerEscaped(PlayerEscapedEvent {  }));
                         });
-                        player_entity.player.state.set_won();
+                        player_entity.player.state.set_escaped();
                     },
                 }
             }

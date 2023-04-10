@@ -27,4 +27,5 @@ pub mod sounds {
     pub const COUGHT:u32 = 6;
     pub const WIN:u32 = 7;
     pub const LOSE:u32 = 8;
+    pub const FINAL:u32 = 9;
 }
