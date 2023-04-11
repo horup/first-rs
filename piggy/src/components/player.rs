@@ -76,9 +76,9 @@ impl PlayerState {
                     return true;
                 }
 
-                return false;
+                false
             },
-            _=>return false
+            _=>false
         }
     }
     pub fn is_being_cought_or_cought(&self) -> bool {
