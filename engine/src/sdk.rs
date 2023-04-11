@@ -191,7 +191,4 @@ impl engine_sdk::Engine for Engine {
     fn time(&self) -> f64 {
         self.start.elapsed().as_secs_f64()
     }
-
-    
-    
 }
