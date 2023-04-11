@@ -1,5 +1,5 @@
 use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry};
-use log::info;
+
 use crate::{textures, Signal, Start, sounds};
 
 pub fn init_system(_registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {

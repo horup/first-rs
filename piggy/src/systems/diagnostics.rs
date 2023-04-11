@@ -19,7 +19,7 @@ impl DiagnosticsSystem {
     }
     pub fn render(&self, engine:&mut dyn Engine) {
         let screen_size = engine.screen_size();
-        let dt = engine.dt() * 1000.0;
+        let _dt = engine.dt() * 1000.0;
         engine.draw_text(DrawTextParams {
             screen_pos: vec2(screen_size.x, 0.0),
             text: format!("FPS {}", self.fps),
