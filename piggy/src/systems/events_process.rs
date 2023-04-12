@@ -1,8 +1,8 @@
 use engine_sdk::{registry::Registry, Engine};
 
-use crate::{components::{Event, Player}, sounds, listeners::on_start, Campaign};
+use crate::{components::{Event, Player}, sounds, listeners::on_start};
 
-pub fn events_process(r:&mut Registry, engine:&mut dyn Engine, campaign:&Campaign) {
+pub fn events_process(r:&mut Registry, engine:&mut dyn Engine) {
     let mut events = Vec::with_capacity(64);
     for (id, e) in r.components::<Event>().iter() {
         events.push(e.clone());
@@ -30,7 +30,7 @@ pub fn events_process(r:&mut Registry, engine:&mut dyn Engine, campaign:&Campaig
                 });
             },
             Event::Start(start_event) => {
-                on_start(r, campaign, start_event, engine);
+                on_start(r, start_event, engine);
             },
         }
     }

@@ -8,9 +8,6 @@ pub use defs::*;
 mod facade;
 pub use facade::*;
 
-mod campaign;
-pub use campaign::*;
-
 pub mod listeners;
 
 pub mod systems;

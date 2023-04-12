@@ -1,5 +1,5 @@
 use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry}, Tile, Tilemap, Engine};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, StartEvent, Event, PlayerCompletedFinalLevelEvent}, singletons::Global, Campaign, sounds};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, StartEvent, Event, PlayerCompletedFinalLevelEvent}, singletons::{Global, Campaign}, sounds};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -63,19 +63,17 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_start(r:&mut Registry, campaign:&Campaign, start:&StartEvent, engine:&mut dyn Engine) {
+pub fn on_start(r:&mut Registry,start:&StartEvent, engine:&mut dyn Engine) {
     let level = start.level;
     let map_to_load = match &start.override_map {
         Some(map) => Option::Some(map.clone()),
         None => {
-            match campaign.get(level) {
+            match r.singleton::<Campaign>().unwrap().get(level) {
                 Some(level) => Some(level.map.clone()),
                 None => Option::default(),
             }
         },
     };
-
-
 
     if let Some(map_to_load) = map_to_load {
         r.clear();
