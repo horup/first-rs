@@ -1,10 +1,9 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent}, singletons::{Global, Local}, Campaign, Signal, Start, listeners};
+use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local}, Campaign, listeners::{self, on_start}};
 
 pub struct Piggy {
     pub registry:Registry,
-    pub start_signals:Signal<Start>,
     pub campaign:Campaign,
     pub diagnostics_system:DiagnosticsSystem
 }
@@ -27,7 +26,6 @@ impl Default for Piggy {
         registry.register_singleton::<Local>();
         Self { registry, 
             campaign:Campaign::new(), 
-            start_signals:Signal::new(),
             diagnostics_system:DiagnosticsSystem::default()
         }
     }
@@ -36,7 +34,7 @@ impl Default for Piggy {
 
 impl Game for Piggy {
     fn init(&mut self, engine:&mut dyn engine_sdk::Engine) {
-        systems::init_system(&mut self.registry, engine, &mut self.start_signals);
+        systems::init_system(&mut self.registry, engine);
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
@@ -56,7 +54,7 @@ impl Game for Piggy {
         }
 
         
-        systems::player_system(&mut self.registry, engine, &mut self.start_signals);
+        systems::player_system(&mut self.registry, engine);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);
         systems::item_pickup(&mut self.registry);
@@ -67,13 +65,7 @@ impl Game for Piggy {
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
         systems::sound_playback(&mut self.registry, engine);
-
-        for start_signal in self.start_signals.drain() {
-            listeners::on_start(&mut self.registry, &self.campaign, &start_signal, engine);
-        }
-
-        systems::events_process(&mut self.registry, engine);
-        systems::events_cleanup(&mut self.registry);
+        systems::events_process(&mut self.registry, engine, &self.campaign);
 
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -97,7 +89,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
         match event {
             EngineEvent::Map { map } => {
-                self.start_signals.push(Start { override_map: Some(map.clone()), level:0 });
+                on_start(&mut self.registry, &self.campaign, &StartEvent { override_map: Some(map.clone()), level:0 }, engine);
             }
             EngineEvent::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

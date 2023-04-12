@@ -1,8 +1,8 @@
 use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry};
 
-use crate::{textures, Signal, Start, sounds};
+use crate::{textures, sounds, components::{Event, StartEvent}};
 
-pub fn init_system(_registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
+pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     let start = engine.time();
     macro_rules! wall {
         ($id:expr, $path:expr) => {
@@ -59,7 +59,8 @@ pub fn init_system(_registry:&mut Registry, engine:&mut dyn Engine, start_signal
     sound!(sounds::WIN, "../../assets/audio/win.ogg");
     sound!(sounds::LOSE, "../../assets/audio/win.ogg");
     sound!(sounds::FINAL, "../../assets/audio/final.ogg");
-    start_signals.push(Start::default());
+    
+    r.spawn().attach(Event::Start(StartEvent::default()));
 
     let took = engine.time() - start;
     println!("init() took {}s", took);

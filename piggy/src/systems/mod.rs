@@ -34,9 +34,6 @@ pub use init::*;
 mod sound_playback;
 pub use sound_playback::*;
 
-mod events_cleanup;
-pub use events_cleanup::*;
-
 mod events_process;
 pub use events_process::*;
 

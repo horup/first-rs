@@ -1,12 +1,12 @@
 use std::f32::consts::PI;
 
 use engine_sdk::{Engine, VirtualKeyCode, registry::{Registry, Facade}, Sprite};
-use crate::{components::{PlayerState}, singletons::Global, PlayerEntity, PiggyFacade, Signal, Start};
+use crate::{components::{PlayerState, Event, StartEvent}, singletons::Global, PlayerEntity, PiggyFacade};
 
-pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signals:&mut Signal<Start>) {
+pub fn player_system(r:&mut Registry, engine:&mut dyn Engine) {
     {
-        let facade = registry.facade::<PiggyFacade>();
-        let mut game_state = registry.singleton_mut::<Global>().unwrap();
+        let facade = r.facade::<PiggyFacade>();
+        let mut game_state = r.singleton_mut::<Global>().unwrap();
         let dt = engine.dt();
         let speed = 3.0;
         let left = game_state.camera.left();
@@ -44,7 +44,7 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
             match e.player.state {
                 PlayerState::BeingCought { .. } | PlayerState::Cought { .. }  => {
                     if let Some(killer) = e.health.killer {
-                        if let Some(killer) = registry.component::<Sprite>(killer) {
+                        if let Some(killer) = r.component::<Sprite>(killer) {
                             let facing_towards_killer = killer.pos - e.sprite.pos;
                             let facing_towards_killer = facing_towards_killer.normalize_or_zero().truncate();
                             let facing = e.sprite.facing_as_vec2(); 
@@ -84,9 +84,12 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 },
                 PlayerState::CanRespawn => {
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
-                        start_signals.push(Start {
-                            override_map: None,
-                            level: game_state.current_level,
+                        let current_level = game_state.current_level;
+                        r.push(move |r|{
+                            r.spawn().attach(Event::Start(StartEvent {
+                                override_map: None,
+                                level: current_level,
+                            }));
                         });
                     }
                 },
@@ -101,9 +104,12 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
                 }
                 PlayerState::CanContinue {  } => {
                     if engine.key_just_pressed(VirtualKeyCode::Space) {
-                        start_signals.push(Start {
-                            override_map:None,
-                            level: game_state.current_level + 1
+                        let current_level = game_state.current_level;
+                        r.push(move |r|{
+                            r.spawn().attach(Event::Start(StartEvent {
+                                override_map: None,
+                                level: current_level + 1,
+                            }));
                         });
                     }
                 },
@@ -122,5 +128,5 @@ pub fn player_system(registry:&mut Registry, engine:&mut dyn Engine, start_signa
         }
     }
 
-    registry.execute();
+    r.execute();
 }

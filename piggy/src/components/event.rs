@@ -1,4 +1,4 @@
-use engine_sdk::registry::{Component, uuid::uuid};
+use engine_sdk::{registry::{Component, uuid::uuid}, Map};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -16,6 +16,11 @@ pub struct PlayerCompletedFinalLevelEvent {
     
 }
 
+#[derive(Clone, Serialize, Deserialize, Default)]
+pub struct StartEvent {
+    pub override_map:Option<Map>,
+    pub level:usize
+}
 
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -23,7 +28,8 @@ pub enum Event {
     Empty,
     PlayerCought(PlayerCoughtEvent),
     PlayerEscaped(PlayerEscapedEvent),
-    PlayerCompletedFinalLevel(PlayerCompletedFinalLevelEvent)
+    PlayerCompletedFinalLevel(PlayerCompletedFinalLevelEvent),
+    Start(StartEvent)
 }
 
 impl Default for Event {

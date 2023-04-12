@@ -1,5 +1,5 @@
 use engine_sdk::{Grid, Sprite, SpriteType, glam::{Vec3}, registry::{Registry}, Tile, Tilemap, Engine};
-use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health}, singletons::Global, Start, Campaign, sounds};
+use crate::{textures::{self, FLOOR_GREY, CEILING_GREY}, components::{Item, Door, Effector, Player, Activator, Mob, Health, StartEvent}, singletons::Global, Campaign, sounds};
 
 pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f32) {
     let mut sprite = Sprite {
@@ -63,7 +63,7 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&Start, engine:&mut dyn Engine) {
+pub fn on_start(registry:&mut Registry, campaign:&Campaign, start:&StartEvent, engine:&mut dyn Engine) {
     let current_level = start.level;
     let mut current_map = campaign.get(current_level).unwrap().map.clone();
     if let Some(map) = &start.override_map {
