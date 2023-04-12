@@ -1,5 +1,8 @@
 
 
+map should have an entity as a keyvalue pair allowing much more flexibility.
+editor knows some keys, e.g. facing and texture.
+
 I would love to have the ability to add singletons without having to enforce Serialize, since some singletons should not be 
 serialized, e.g. campaign.
 maybe simply implement serialize and deserialize and make them empty / default?
