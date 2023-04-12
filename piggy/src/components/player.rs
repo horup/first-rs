@@ -63,8 +63,8 @@ pub enum PlayerState {
     },
     CanContinue {
     },
-    CompletedFinalLevel {
-        fade_out_timer:Timer
+    ShowFinalScore {
+       
     }
 }
 
@@ -132,7 +132,7 @@ impl PlayerState {
     }
 
     pub fn set_final(&mut self) {
-        *self = PlayerState::CompletedFinalLevel { fade_out_timer: Timer::new(1.0) };
+        *self = PlayerState::ShowFinalScore {  };
     }
 }
 

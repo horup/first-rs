@@ -159,9 +159,8 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 draw_won(engine, 1.0);
                 draw_can_continue(engine);
             }
-            PlayerState::CompletedFinalLevel { fade_out_timer } => {
-                let alpha = fade_out_timer.alpha_capped();
-                draw_fade(engine, alpha);
+            PlayerState::ShowFinalScore {  } => {
+                draw_fade(engine, 1.0);
                 draw_final(engine);
             },
         }

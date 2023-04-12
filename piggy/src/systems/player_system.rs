@@ -113,8 +113,7 @@ pub fn player_system(r:&mut Registry, engine:&mut dyn Engine) {
                         });
                     }
                 },
-                PlayerState::CompletedFinalLevel { fade_out_timer } => {
-                    fade_out_timer.tick(dt);
+                PlayerState::ShowFinalScore {  } => {
                 },
             }
         
