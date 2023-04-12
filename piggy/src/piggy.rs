@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign}, listeners::{self, on_start}};
+use crate::{systems::{self, DiagnosticsSystem, time_machine_tick}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign, Timemachine}, listeners::{self, on_start}};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -15,6 +15,7 @@ impl Default for Piggy {
         registry.register_singleton::<Global>();
         registry.register_singleton::<Campaign>();
         registry.register_singleton::<Local>();
+        registry.register_singleton::<Timemachine>();
 
         registry.register_component::<Sprite>();
         registry.register_component::<Player>();
@@ -39,6 +40,8 @@ impl Game for Piggy {
     }
 
     fn update(&mut self, engine:&mut dyn engine_sdk::Engine) {
+        systems::time_machine_tick(&mut self.registry, engine);
+        
         if engine.key_just_pressed(engine_sdk::VirtualKeyCode::Escape) {
             engine.set_cursor_grabbed(true);
         }

@@ -28,6 +28,9 @@ pub use render_world_system::*;
 mod ui_system;
 pub use ui_system::*;
 
+mod time_machine;
+pub use time_machine::*;
+
 mod init;
 pub use init::*;
 
