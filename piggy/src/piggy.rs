@@ -10,6 +10,12 @@ pub struct Piggy {
 impl Default for Piggy {
     fn default() -> Self {
         let mut registry = Registry::new();
+
+        registry.register_singleton::<Tilemap>();
+        registry.register_singleton::<Global>();
+        registry.register_singleton::<Campaign>();
+        registry.register_singleton::<Local>();
+
         registry.register_component::<Sprite>();
         registry.register_component::<Player>();
         registry.register_component::<Door>();
@@ -18,12 +24,8 @@ impl Default for Piggy {
         registry.register_component::<Health>();
         registry.register_component::<Item>();
         registry.register_component::<Effector>();
-        registry.register_singleton::<Tilemap>();
-        registry.register_singleton::<Global>();
         registry.register_component::<EmitSound>();
         registry.register_component::<Event>();
-        registry.register_singleton::<Local>();
-        registry.register_singleton::<Campaign>();
         Self { registry, 
             diagnostics_system:DiagnosticsSystem::default()
         }
