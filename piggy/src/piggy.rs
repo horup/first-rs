@@ -69,6 +69,7 @@ impl Game for Piggy {
         systems::ui_system(&mut self.registry, engine);
         systems::sound_playback(&mut self.registry, engine);
         systems::events_process(&mut self.registry, engine);
+        
 
         #[cfg(not(target_arch = "wasm32"))]
         {
