@@ -1,10 +1,10 @@
 use egui::{RawInput};
 use engine_editor::Editor;
-use engine_sdk::{glam::vec2, Game, TextureAtlas};
+use engine_sdk::{glam::vec2, Game, TextureAtlas, DrawRectParams, Color, DrawTextParams, HorizontalAlign, VerticalAlign};
 use instant::Instant;
-use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle}};
+use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle, StaticSoundSettings}};
 
-use std::{collections::HashMap, cell::{RefCell}};
+use std::{collections::{HashMap, VecDeque}, cell::{RefCell}, rc::Rc, io::Cursor};
 
 use winit::{
     event::{ElementState, VirtualKeyCode, WindowEvent, Event, DeviceEvent},
@@ -12,9 +12,11 @@ use winit::{
     window::{WindowBuilder}
 };
 
-use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer};
+use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer, Load};
 
 pub struct Engine {
+    pub load_queue_start_length:usize,
+    pub load_queue:VecDeque<Load>,
     pub music:RefCell<Option<StaticSoundHandle>>,
     pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
@@ -68,6 +70,8 @@ impl Engine {
         let audio_manager = AudioManager::<CpalBackend>::new(AudioManagerSettings::default()).expect("failed to construct audiomanager");
 
         Engine {
+            load_queue_start_length:0,
+            load_queue:VecDeque::default(),
             start:Instant::now(),
             static_sound_data:HashMap::default(),
             audio_manager:RefCell::new(audio_manager),
@@ -155,34 +159,97 @@ impl Engine {
                 self.game = Some(game);
             }
         }
-        
-        // do game update
-        if self.show_editor {
-            if let Some(mut editor) = self.editor.take() {
-                editor.update(self);
-                self.editor = Some(editor);
+
+        if let Some(load) = self.load_queue.pop_front() {
+            let left = self.load_queue.len() + 1;
+            let start = self.load_queue_start_length;
+            let size = self.screen_size();
+            self.draw_rect(DrawRectParams {
+                size,
+                color:Color::BLACK,
+                ..Default::default()
+            });
+            self.draw_text(DrawTextParams {
+                screen_pos:size / 2.0,
+                scale:32.0,
+                text:format!("Loading..."),
+                color:Color::WHITE,
+                horizontal_align:HorizontalAlign::Center,
+                vertical_align:VerticalAlign::Center,
+                ..Default::default()
+            });
+            self.draw_text(DrawTextParams {
+                screen_pos:size / 2.0 + vec2(0.0, 32.0),
+                scale:32.0,
+                text:format!("{} / {}", left, start),
+                color:Color::WHITE,
+                horizontal_align:HorizontalAlign::Center,
+                vertical_align:VerticalAlign::Center,
+                ..Default::default()
+            });
+            let full_output = self.egui_ctx.end_frame();
+            let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
+            self.scene_renderer.draw(&mut context);
+            self.canvas.draw(&mut context);
+            self.graphics.draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
+            self.graphics.submit(encoder, surface_texture);
+            self.diagnostics.measure_frame_time();
+            self.input.clear();
+
+            match load {
+                Load::Atlas { id, img: image, params } => {
+                    self.graphics.load_texture(id, &image, params.atlas);
+                    self.textures.insert(
+                        id,
+                        TextureAtlas::new(id, Rc::new(image.clone()), params.atlas, params.editor_props),
+                    );
+                },
+                Load::Sound { id, bytes } => {
+                    let vec = Vec::from(bytes);
+                    let cursor = Cursor::new(vec);
+                    let sound_data = StaticSoundData::from_cursor(cursor, StaticSoundSettings::default()).expect("failed to load sound data");
+                    self.static_sound_data.insert(id, sound_data);
+                },
             }
         } else {
-            let game = self.game.take();
-            if let Some(mut game) = game {
-                game.update(self);
-                self.game = Some(game);
+            self.load_queue_start_length = 0;
+            if self.show_editor {
+                if let Some(mut editor) = self.editor.take() {
+                    editor.update(self);
+                    self.editor = Some(editor);
+                }
+            } else {
+                let game = self.game.take();
+                if let Some(mut game) = game {
+                    game.update(self);
+                    self.game = Some(game);
+                }
             }
+
+            let full_output = self.egui_ctx.end_frame();
+            let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
+            self.scene_renderer.draw(&mut context);
+            self.canvas.draw(&mut context);
+
+            
+            self.graphics.draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
+
+            self.graphics.submit(encoder, surface_texture);
+            self.diagnostics.measure_frame_time();
+            self.input.clear();
         }
 
-        let full_output = self.egui_ctx.end_frame();
-
+      /*  let full_output = self.egui_ctx.end_frame();
         let mut context = GraphicsContext::new(&mut self.graphics, &mut encoder, &surface_view);
         self.scene_renderer.draw(&mut context);
         self.canvas.draw(&mut context);
 
-        // draw ui always on top
-        self.graphics
-            .draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
+        
+        self.graphics.draw_egui(&self.egui_ctx, full_output, &mut encoder, &surface_view);
 
         self.graphics.submit(encoder, surface_texture);
         self.diagnostics.measure_frame_time();
-        self.input.clear();
+        self.input.clear();*/
     }
 
     pub fn init(&mut self) {

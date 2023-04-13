@@ -31,6 +31,9 @@ pub use input::*;
 mod scene_renderer;
 pub use scene_renderer::*;
 
+mod load;
+pub use load::*;
+
 #[cfg(not(target_arch = "wasm32"))]
 pub mod hot_reloader;
 

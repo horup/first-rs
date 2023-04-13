@@ -1,6 +1,6 @@
 use std::{rc::Rc, io::Cursor};
 
-use crate::{Engine};
+use crate::{Engine, Load};
 use engine_sdk::{
     self,
     glam::{Vec2},
@@ -12,11 +12,13 @@ use winit::{event::VirtualKeyCode, window::CursorGrabMode};
 
 impl engine_sdk::Engine for Engine {
     fn load_atlas(&mut self, id: u32, image: &DynamicImage, params:LoadAtlasParams) {
-        self.graphics.load_texture(id, image, params.atlas);
+        self.load_queue_start_length += 1;
+        self.load_queue.push_back(Load::Atlas { id: id, img: image.clone(), params });
+       /* self.graphics.load_texture(id, image, params.atlas);
         self.textures.insert(
             id,
             TextureAtlas::new(id, Rc::new(image.clone()), params.atlas, params.editor_props),
-        );
+        );*/
     }
 
     fn draw_scene(&mut self, camera: &engine_sdk::Camera, scene: &engine_sdk::registry::Registry) {
@@ -146,10 +148,12 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn load_sound(&mut self, sound:u32, bytes:&[u8]) {
-        let vec = Vec::from(bytes);
+        self.load_queue_start_length += 1;
+        self.load_queue.push_back(Load::Sound { id: sound, bytes: Vec::from(bytes) });
+        /*let vec = Vec::from(bytes);
         let cursor = Cursor::new(vec);
         let sound_data = StaticSoundData::from_cursor(cursor, StaticSoundSettings::default()).expect("failed to load sound data");
-        self.static_sound_data.insert(sound, sound_data);
+        self.static_sound_data.insert(sound, sound_data);*/
     }
 
     fn elapsed_ms(&self) -> u128 {

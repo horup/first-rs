@@ -1,5 +1,10 @@
 
 
+Using instant::now to keep a start variable works in the engine, but if the PC sleeps and is resumed, the tick will jump very much forward in time. Maybe this is OK behavior or maybe the engine should use dt to increment the tick?
+
+Loading needs to have some kind of progress bar.
+loading in rust should be easy, but what about when loading the wasm module? how to handle that?
+
 map should have an entity as a keyvalue pair allowing much more flexibility.
 editor knows some keys, e.g. facing and texture.
 
