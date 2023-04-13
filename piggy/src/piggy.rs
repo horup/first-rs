@@ -57,7 +57,6 @@ impl Game for Piggy {
             engine.stop_music();
         }
 
-        
         systems::player_system(&mut self.registry, engine);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);

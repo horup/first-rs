@@ -1,5 +1,10 @@
 
 
+
+Had strange issues with vscode. Used alot of memory after building.
+Seems to be related to extensions being installed.
+Removed all extensions and reinstalled rust analyzer, issue seems to be gone.
+
 William said that mouse input is too fast and needs to be slowed down.
 there should be a way to set this using a UI or atleast a json file or similar.
 
