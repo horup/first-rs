@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
-use engine_sdk::{Engine, glam::{vec3}, registry::{Registry, Facade}, Tilemap};
-use crate::{DoorEntity, PiggyFacade, components::EmitSound, sounds};
+use engine_sdk::{Engine, glam::{vec3}, registry::{Registry, Facade}, Tilemap, SoundEmitter};
+use crate::{DoorEntity, PiggyFacade, sounds};
 
 pub fn door_system(registry:&mut Registry, engine:&mut dyn Engine) {
     {
@@ -14,7 +14,7 @@ pub fn door_system(registry:&mut Registry, engine:&mut dyn Engine) {
                 e.door.openess = 0.0;
                 e.door.direction = 0.0;
                 registry.push(|r|{
-                    r.spawn().attach(EmitSound::new(sounds::DOOR_CLOSE));
+                    r.spawn().attach(SoundEmitter::once(sounds::DOOR_CLOSE));
                 });
             } else if e.door.openess > 1.0 {
                 e.door.openess = 1.0;

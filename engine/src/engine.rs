@@ -1,6 +1,6 @@
 use egui::{RawInput};
 use engine_editor::Editor;
-use engine_sdk::{glam::vec2, Game, TextureAtlas, DrawRectParams, Color, DrawTextParams, HorizontalAlign, VerticalAlign};
+use engine_sdk::{glam::vec2, Game, TextureAtlas, DrawRectParams, Color, DrawTextParams, HorizontalAlign, VerticalAlign, registry::EntityId};
 use instant::Instant;
 use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle, StaticSoundSettings}};
 
@@ -17,7 +17,7 @@ use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer
 pub struct Engine {
     pub load_queue_start_length:usize,
     pub load_queue:VecDeque<Load>,
-    pub music:RefCell<Option<StaticSoundHandle>>,
+    pub active_sounds:HashMap<EntityId, StaticSoundHandle>,
     pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
     pub static_sound_data:HashMap<u32, StaticSoundData>,
@@ -70,6 +70,7 @@ impl Engine {
         let audio_manager = AudioManager::<CpalBackend>::new(AudioManagerSettings::default()).expect("failed to construct audiomanager");
 
         Engine {
+            active_sounds:HashMap::new(),
             load_queue_start_length:0,
             load_queue:VecDeque::default(),
             start:Instant::now(),
@@ -92,7 +93,6 @@ impl Engine {
             input: Input::default(),
             #[cfg(not(target_arch = "wasm32"))]
             hot_reloader: None,
-            music:RefCell::new(None)
         }
     }
 

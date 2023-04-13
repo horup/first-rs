@@ -1,6 +1,6 @@
-use engine_sdk::{Engine, registry::{Registry, Facade}};
+use engine_sdk::{Engine, registry::{Registry, Facade}, SoundEmitter};
 
-use crate::{PiggyFacade, ActivateeEntity, ActivatorEntity, components::{Inventory, EmitSound}, PlayerEntity, sounds};
+use crate::{PiggyFacade, ActivateeEntity, ActivatorEntity, components::{Inventory}, PlayerEntity, sounds};
 
 pub fn activator_system(registry:&mut Registry, _engine:&mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();
@@ -31,7 +31,7 @@ pub fn activator_system(registry:&mut Registry, _engine:&mut dyn Engine) {
                             if let Some(mut door) = activator.door {
                                 if door.openess == 0.0 {
                                     registry.push(|r|{
-                                        r.spawn().attach(EmitSound::new(sounds::DOOR_OPEN));
+                                        r.spawn().attach(SoundEmitter::once(sounds::DOOR_OPEN));
                                     });
                                 }
                                 door.open();

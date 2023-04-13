@@ -1,6 +1,6 @@
 
-use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem, time_machine_tick}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign, Timemachine}};
+use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap, SoundEmitter};
+use crate::{systems::{self, DiagnosticsSystem, time_machine_tick}, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign, Timemachine}};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -18,6 +18,7 @@ impl Default for Piggy {
         registry.register_singleton::<Timemachine>();
 
         registry.register_component::<Sprite>();
+        registry.register_component::<SoundEmitter>();
         registry.register_component::<Player>();
         registry.register_component::<Door>();
         registry.register_component::<Mob>();
@@ -25,7 +26,6 @@ impl Default for Piggy {
         registry.register_component::<Health>();
         registry.register_component::<Item>();
         registry.register_component::<Effector>();
-        registry.register_component::<EmitSound>();
         registry.register_component::<Event>();
         Self { registry, 
             diagnostics_system:DiagnosticsSystem::default()
@@ -53,10 +53,6 @@ impl Game for Piggy {
             self.registry.spawn().attach(Event::PlayerCompletedFinalLevel(PlayerCompletedFinalLevelEvent {}));
         }
 
-        if engine.key_just_pressed(VirtualKeyCode::Key2) {
-            engine.stop_music();
-        }
-
         systems::player_system(&mut self.registry, engine);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);
@@ -67,9 +63,7 @@ impl Game for Piggy {
         systems::render_world_system(&mut self.registry, engine);
         systems::render_flash_system(&mut self.registry, engine);
         systems::ui_system(&mut self.registry, engine);
-        systems::sound_playback(&mut self.registry, engine);
         systems::events_process(&mut self.registry, engine);
-        
 
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -86,6 +80,7 @@ impl Game for Piggy {
             }
         }
 
+        engine.play_sounds(&mut self.registry);
         self.diagnostics_system.calculate_fps(engine);
         self.diagnostics_system.render(engine);
     }

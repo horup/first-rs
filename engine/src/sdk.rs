@@ -5,7 +5,7 @@ use engine_sdk::{
     self,
     glam::{Vec2},
     image::DynamicImage,
-    DrawRectParams, TextureAtlas, Event, LoadAtlasParams,
+    DrawRectParams, TextureAtlas, Event, LoadAtlasParams, registry::Registry, SoundEmitter,
 };
 use kira::{sound::static_sound::{StaticSoundData, StaticSoundSettings}, tween::Tween, LoopBehavior};
 use winit::{event::VirtualKeyCode, window::CursorGrabMode};
@@ -139,13 +139,13 @@ impl engine_sdk::Engine for Engine {
         self.cursor_visible
     }
 
-    fn play_sound(&self, sound:u32, _volume:f32) {
+  /*  fn play_sound(&self, sound:u32, _volume:f32) {
         if let Some(sound_data) = self.static_sound_data.get(&sound) {
             if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
                 let _ = audio_manager.play(sound_data.clone());
             }
         }
-    }
+    }*/
 
     fn load_sound(&mut self, sound:u32, bytes:&[u8]) {
         self.load_queue_start_length += 1;
@@ -159,7 +159,7 @@ impl engine_sdk::Engine for Engine {
     fn elapsed_ms(&self) -> u128 {
         self.start.elapsed().as_millis()
     }
-
+/*
     fn play_music(&self, sound:u32) {
         if let Ok(handle) = self.music.try_borrow_mut().as_deref_mut() {
             if let Some(handle) = handle {
@@ -190,9 +190,35 @@ impl engine_sdk::Engine for Engine {
 
             *handle = None;
         }
-    }
+    }*/
 
     fn time(&self) -> f64 {
         self.start.elapsed().as_secs_f64()
+    }
+
+    fn play_sounds(&mut self, registry:&mut Registry) {
+        for (id, sound_emitter) in registry.components::<SoundEmitter>().iter() {
+            match self.active_sounds.get_mut(&id) {
+                Some(active_sound) => {
+                    match active_sound.state() {
+                        kira::sound::static_sound::PlaybackState::Stopped => {
+                            registry.push(move |r|r.despawn(id));
+                        },
+                        _=>{}
+                    }
+                },
+                None => {
+                    if let Some(sound_data) = self.static_sound_data.get(&sound_emitter.sound) {
+                        if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
+                            if let Ok(handle) = audio_manager.play(sound_data.clone()) {
+                                self.active_sounds.insert(id, handle);
+                            }
+                        }
+                    }
+                },
+            }
+        }
+
+        registry.execute();
     }
 }

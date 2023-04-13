@@ -1,5 +1,5 @@
-use engine_sdk::{registry::{Registry, Facade}};
-use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::Global, components::EmitSound};
+use engine_sdk::{registry::{Registry, Facade}, SoundEmitter};
+use crate::{PlayerEntity, ItemEntity, PiggyFacade, singletons::Global};
 
 pub fn item_pickup(registry:&mut Registry) {
     let facade = registry.facade::<PiggyFacade>();
@@ -15,11 +15,7 @@ pub fn item_pickup(registry:&mut Registry) {
                 registry.push(move |reg|{
                     reg.singleton_mut::<Global>().unwrap().flash.flash(0.2, 0.5);
                     reg.despawn(id);
-                    
-                    reg.spawn().attach(EmitSound {
-                        looping: false,
-                        sound: pickup_sound,
-                    });
+                    reg.spawn().attach(SoundEmitter::once(pickup_sound));
                 });
                 
                 player.player.inventory.add(texture, 1.0);

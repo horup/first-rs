@@ -19,8 +19,5 @@ pub use mob::*;
 mod health;
 pub use health::*;
 
-mod emit_sound;
-pub use emit_sound::*;
-
 mod event;
 pub use event::*;
