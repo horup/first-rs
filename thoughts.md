@@ -1,6 +1,9 @@
 
 
-Using instant::now to keep a start variable works in the engine, but if the PC sleeps and is resumed, the tick will jump very much forward in time. Maybe this is OK behavior or maybe the engine should use dt to increment the tick?
+William said that mouse input is too fast and needs to be slowed down.
+there should be a way to set this using a UI or atleast a json file or similar.
+
+Using instant::now to keep a start variable works in the engine, but if the PC sleeps and is resumed, the tick will jump very much forward in time. Maybe this is OK behavior or maybe the engine should use dt to inck?
 
 Loading needs to have some kind of progress bar.
 loading in rust should be easy, but what about when loading the wasm module? how to handle that?
