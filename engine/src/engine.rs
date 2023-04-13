@@ -161,9 +161,10 @@ impl Engine {
         }
 
         if let Some(load) = self.load_queue.pop_front() {
-            let left = self.load_queue.len() + 1;
-            let start = self.load_queue_start_length;
             let size = self.screen_size();
+            let left = self.load_queue.len() + 1;
+            let total = self.load_queue_start_length;
+            let loaded = total - left;
             self.draw_rect(DrawRectParams {
                 size,
                 color:Color::BLACK,
@@ -181,7 +182,7 @@ impl Engine {
             self.draw_text(DrawTextParams {
                 screen_pos:size / 2.0 + vec2(0.0, 32.0),
                 scale:32.0,
-                text:format!("{} / {}", left, start),
+                text:format!("{} / {}", loaded, total),
                 color:Color::WHITE,
                 horizontal_align:HorizontalAlign::Center,
                 vertical_align:VerticalAlign::Center,
