@@ -30,7 +30,7 @@ pub fn events_process(r:&mut Registry, engine:&mut dyn Engine) {
                 });
             },
             Event::Start(start_event) => {
-                crate::systems::on_start(r, start_event, engine);
+                crate::systems::start(r, start_event, engine);
             },
         }
     }

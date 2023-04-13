@@ -63,7 +63,7 @@ pub fn spawn_thing(registry:&mut Registry, thing:u32, index:(i32, i32), facing:f
 
 }
 
-pub fn on_start(r:&mut Registry,start:&StartEvent, engine:&mut dyn Engine) {
+pub fn start(r:&mut Registry, start:&StartEvent, engine:&mut dyn Engine) {
     let level = start.level;
     let map_to_load = match &start.override_map {
         Some(map) => Option::Some(map.clone()),
