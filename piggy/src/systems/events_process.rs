@@ -1,6 +1,6 @@
 use engine_sdk::{registry::Registry, Engine};
 
-use crate::{components::{Event, Player}, sounds, listeners::on_start};
+use crate::{components::{Event, Player}, sounds};
 
 pub fn events_process(r:&mut Registry, engine:&mut dyn Engine) {
     let mut events = Vec::with_capacity(64);
@@ -30,7 +30,7 @@ pub fn events_process(r:&mut Registry, engine:&mut dyn Engine) {
                 });
             },
             Event::Start(start_event) => {
-                on_start(r, start_event, engine);
+                crate::systems::on_start(r, start_event, engine);
             },
         }
     }

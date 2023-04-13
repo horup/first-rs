@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap};
-use crate::{systems::{self, DiagnosticsSystem, time_machine_tick}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign, Timemachine}, listeners::{self, on_start}};
+use crate::{systems::{self, DiagnosticsSystem, time_machine_tick}, components::{Player, Door, Mob, Activator, Health, Item, Effector, EmitSound, Event, PlayerCompletedFinalLevelEvent, StartEvent}, singletons::{Global, Local, Campaign, Timemachine}};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -93,7 +93,7 @@ impl Game for Piggy {
     fn on_event(&mut self, engine:&mut dyn engine_sdk::Engine, event:&EngineEvent) {
         match event {
             EngineEvent::Map { map } => {
-                on_start(&mut self.registry, &StartEvent { override_map: Some(map.clone()), level:0 }, engine);
+                systems::on_start(&mut self.registry, &StartEvent { override_map: Some(map.clone()), level:0 }, engine);
             }
             EngineEvent::Focused(focused) => {
                 engine.set_cursor_grabbed(!*focused);

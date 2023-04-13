@@ -8,8 +8,6 @@ pub use defs::*;
 mod facade;
 pub use facade::*;
 
-pub mod listeners;
-
 pub mod systems;
 pub mod components;
 pub mod singletons;
