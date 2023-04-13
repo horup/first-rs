@@ -1,6 +1,8 @@
 
 
 
+I need a way to despawn all entities based on some premise.
+
 Had strange issues with vscode. Used alot of memory after building.
 Seems to be related to extensions being installed.
 Removed all extensions and reinstalled rust analyzer, issue seems to be gone.
