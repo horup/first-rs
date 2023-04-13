@@ -1,10 +1,10 @@
 use registry::{Component, uuid::uuid};
 use serde::{Serialize, Deserialize};
 
-#[derive(Default, Serialize, Deserialize, Clone, Copy)]
+#[derive(Default, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub struct SoundEmitter {
     pub sound:u32,
-    pub position_secs:f32,
+    pub position_secs:f64,
     pub loops:bool
 }
 

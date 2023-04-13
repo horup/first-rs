@@ -1,6 +1,6 @@
 use egui::{RawInput};
 use engine_editor::Editor;
-use engine_sdk::{glam::vec2, Game, TextureAtlas, DrawRectParams, Color, DrawTextParams, HorizontalAlign, VerticalAlign, registry::EntityId};
+use engine_sdk::{glam::vec2, Game, TextureAtlas, DrawRectParams, Color, DrawTextParams, HorizontalAlign, VerticalAlign, registry::EntityId, SoundEmitter};
 use instant::Instant;
 use kira::{manager::{AudioManager, backend::cpal::CpalBackend, AudioManagerSettings}, sound::static_sound::{StaticSoundData, StaticSoundHandle, StaticSoundSettings}};
 
@@ -17,7 +17,7 @@ use crate::{Canvas, Diagnostics, Graphics, GraphicsContext, Input, SceneRenderer
 pub struct Engine {
     pub load_queue_start_length:usize,
     pub load_queue:VecDeque<Load>,
-    pub active_sounds:HashMap<EntityId, StaticSoundHandle>,
+    pub active_sounds:HashMap<EntityId, (SoundEmitter, StaticSoundHandle)>,
     pub start:Instant,
     pub audio_manager:RefCell<AudioManager>,
     pub static_sound_data:HashMap<u32, StaticSoundData>,

@@ -197,21 +197,59 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn play_sounds(&mut self, registry:&mut Registry) {
-        for (id, sound_emitter) in registry.components::<SoundEmitter>().iter() {
+
+        // stop sounds where no entity is present
+        let mut rm = Vec::new();
+        for (id, (_, handle)) in self.active_sounds.iter_mut() {
+            if registry.entity(*id).is_none() {
+                let _ = handle.stop(Tween::default());
+                rm.push(*id);
+            }
+        }
+        for id in rm.drain(..) {
+            self.active_sounds.remove(&id);
+        }
+
+        // iterate through all sound emitter entities
+        for (id, mut sound_emitter) in registry.components::<SoundEmitter>().iter_mut() {
             match self.active_sounds.get_mut(&id) {
-                Some(active_sound) => {
-                    match active_sound.state() {
+                // if entity has an active handle
+                // update handle and entity
+                Some((prev_sound_emitter, handle)) => {
+                    match handle.state() {
                         kira::sound::static_sound::PlaybackState::Stopped => {
+                            // sound has stopped, despawn entity
                             registry.push(move |r|r.despawn(id));
                         },
-                        _=>{}
+                        _=>{
+                            if *prev_sound_emitter == *sound_emitter {
+                                // no change to entity, update entity to match handle
+                                sound_emitter.position_secs = handle.position();
+                                *prev_sound_emitter = sound_emitter.clone();
+                                //dbg!(handle.position());
+                            } else {
+                                // entity was changed since last time
+                                // remove handle and let it be re-created next tick
+                                if let Some((_, mut handle)) = self.active_sounds.remove(&id) {
+                                    let _ = handle.stop(Tween::default());
+                                }
+                            }
+                        }
                     }
                 },
                 None => {
+                    // no active handle, create one
                     if let Some(sound_data) = self.static_sound_data.get(&sound_emitter.sound) {
                         if let Ok(mut audio_manager) = self.audio_manager.try_borrow_mut() {
-                            if let Ok(handle) = audio_manager.play(sound_data.clone()) {
-                                self.active_sounds.insert(id, handle);
+                            let mut sound_data = sound_data.clone();
+                            if sound_emitter.loops {
+                                sound_data.settings.loop_behavior = Some(LoopBehavior {
+                                    start_position: 0.0,
+                                });
+                            }
+                            if let Ok(mut handle) = audio_manager.play(sound_data.clone()) {
+                                let _ = handle.seek_to(sound_emitter.position_secs);
+                                self.active_sounds.insert(id, (sound_emitter.clone(), handle));
                             }
                         }
                     }
