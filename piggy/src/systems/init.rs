@@ -1,4 +1,4 @@
-use engine_sdk::{LoadAtlasParams, Engine, image, Atlas, registry::Registry, LoadWallsParam};
+use engine_sdk::{LoadAtlasParams, Engine, image, Atlas, registry::Registry, AtlasDef};
 
 use crate::{textures, sounds, components::{Event, StartEvent}};
 
@@ -32,8 +32,15 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
 
     load_atlas!(textures::WALLS, "../../assets/textures/walls.png", Atlas::new(8, 8));
     if let Some(editor) = engine.editor() {
-        editor.load_walls(LoadWallsParam {
+        editor.def_wall(AtlasDef {
             atlas: textures::WALLS,
+            atlas_index: 0,
+            tags:vec!["Walls".into()]
+        });
+        editor.def_wall(AtlasDef {
+            atlas: textures::WALLS,
+            atlas_index: 1,
+            tags:vec!["Walls".into()]
         });
     }
     

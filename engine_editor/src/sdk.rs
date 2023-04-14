@@ -1,11 +1,11 @@
 use crate::Editor;
 
 impl engine_sdk::Editor for Editor {
-    fn load_walls(&mut self, param:engine_sdk::LoadWallsParam) {
-        self.walls.push(param.atlas);
+    fn def_wall(&mut self, atlas_def:engine_sdk::AtlasDef) {
+        self.walls.push(atlas_def);
     }
 
-    fn load_entity(&mut self, param:engine_sdk::LoadEntityParam) {
-        self.entities.push(param.atlas);
+    fn def_entity(&mut self, atlas_def:engine_sdk::AtlasDef) {
+        self.entities.push(atlas_def);
     }
 }

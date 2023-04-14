@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, AtlasDef};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -12,8 +12,8 @@ pub struct Editor {
     pub selected_texture:u32,
     pub selected_index:u16,
     pub tool:Tool,
-    pub walls:Vec<u32>,
-    pub entities:Vec<u32>,
+    pub walls:Vec<AtlasDef>,
+    pub entities:Vec<AtlasDef>,
     pub show_texture_selector:bool
 }
 
@@ -46,46 +46,47 @@ impl Editor {
         let mut pos = vec2(0.0, 0.0);
         let scale = 2.0;
         let mouse_pos = engine.mouse_pos();
-        for atlas_id in atlases.iter() {
-            if let Some(atlas) = engine.atlas(atlas_id) {
+        for a in atlases.iter() {
+            if let Some(atlas) = engine.atlas(&a.atlas) {
                 let indexes = atlas.atlas().columns as u16 * atlas.atlas().rows as u16;
-                for i in 0..indexes {
-                    let s = vec2(atlas.width(i) as f32, atlas.height(i) as f32) * scale;
+                let s = vec2(atlas.width(a.atlas_index) as f32, atlas.height(a.atlas_index) as f32) * scale;
+                if pos.x + s.x > screen_size.x {
+                    pos.x = 0.0;
+                    pos.y += s.y;
+                }
+
+                engine.draw_rect(DrawRectParams {
+                    pos:pos,
+                    size:s,
+                    atlas_index:a.atlas_index as f32,
+                    texture:Some(a.atlas),
+                    ..Default::default()
+                });
+
+                let r = Rect2 {
+                    x: pos.x,
+                    y: pos.y,
+                    w: s.x,
+                    h: s.y,
+                };
+
+                if r.contains(&mouse_pos) {
                     engine.draw_rect(DrawRectParams {
                         pos:pos,
                         size:s,
-                        atlas_index:i as f32,
-                        texture:Some(*atlas_id),
+                        color:Color { r: 1.0, g: 1.0, b: 1.0, a: 0.2 },
                         ..Default::default()
                     });
 
-                    let r = Rect2 {
-                        x: pos.x,
-                        y: pos.y,
-                        w: s.x,
-                        h: s.y,
-                    };
-
-                    if r.contains(&mouse_pos) {
-                        engine.draw_rect(DrawRectParams {
-                            pos:pos,
-                            size:s,
-                            color:Color { r: 1.0, g: 1.0, b: 1.0, a: 0.2 },
-                            ..Default::default()
-                        });
-
-                        if engine.mouse_down(0) {
-                            self.selected_texture = *atlas_id;
-                            self.selected_index = i;
-                            self.show_texture_selector = false;
-                        }
+                    if engine.mouse_down(0) {
+                        self.show_texture_selector = false;
                     }
+                }
 
-                    pos.x += s.x;
-                    if pos.x + s.x > screen_size.x {
-                        pos.x = 0.0;
-                        pos.y += s.y;
-                    }
+                pos.x += s.x;
+                if pos.x + s.x > screen_size.x {
+                    pos.x = 0.0;
+                    pos.y += s.y;
                 }
             }
         }
