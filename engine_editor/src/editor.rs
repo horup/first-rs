@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui, Map, DrawLineParams, DrawTextParams, VirtualKeyCode};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -10,19 +10,85 @@ pub struct Editor {
     pub camera:EditorCamera,
     pub map:Map,
     pub selected_texture:u32,
-    pub tool:Tool
+    pub selected_index:u16,
+    pub tool:Tool,
+    pub walls:Vec<u32>,
+    pub entities:Vec<u32>,
+    pub show_texture_selector:bool
 }
 
 impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
         engine.set_cursor_grabbed(true);
-        self.camera.update(engine);
-        self.edit_map(engine);
-        self.draw_map(engine);
-        self.draw_grid(engine);
-        self.draw_grid_cursor(engine);
-        self.draw_cursor(engine);
-        self.update_ui(engine);
+        if engine.key_just_pressed(VirtualKeyCode::T) {
+            self.show_texture_selector = !self.show_texture_selector;
+        }
+
+        if self.show_texture_selector {
+            self.texture_selector(engine);
+        } else {
+            self.camera.update(engine);
+            self.edit_map(engine);
+            self.draw_map(engine);
+            self.draw_grid(engine);
+            self.draw_grid_cursor(engine);
+            self.draw_cursor(engine);
+            self.update_ui(engine);
+        }
+    }
+
+    fn texture_selector(&mut self, engine:&mut dyn Engine) {
+        let atlases = match self.tool {
+            Tool::PlaceWall => &self.walls,
+            Tool::PlaceThing => &self.entities,
+        };
+        let screen_size = engine.screen_size();
+        let mut pos = vec2(0.0, 0.0);
+        let scale = 2.0;
+        let mouse_pos = engine.mouse_pos();
+        for atlas_id in atlases.iter() {
+            if let Some(atlas) = engine.atlas(atlas_id) {
+                let indexes = atlas.atlas().columns as u16 * atlas.atlas().rows as u16;
+                for i in 0..indexes {
+                    let s = vec2(atlas.width(i) as f32, atlas.height(i) as f32) * scale;
+                    engine.draw_rect(DrawRectParams {
+                        pos:pos,
+                        size:s,
+                        atlas_index:i as f32,
+                        texture:Some(*atlas_id),
+                        ..Default::default()
+                    });
+
+                    let r = Rect2 {
+                        x: pos.x,
+                        y: pos.y,
+                        w: s.x,
+                        h: s.y,
+                    };
+
+                    if r.contains(&mouse_pos) {
+                        engine.draw_rect(DrawRectParams {
+                            pos:pos,
+                            size:s,
+                            color:Color { r: 1.0, g: 1.0, b: 1.0, a: 0.2 },
+                            ..Default::default()
+                        });
+
+                        if engine.mouse_down(0) {
+                            self.selected_texture = *atlas_id;
+                            self.selected_index = i;
+                            self.show_texture_selector = false;
+                        }
+                    }
+
+                    pos.x += s.x;
+                    if pos.x + s.x > screen_size.x {
+                        pos.x = 0.0;
+                        pos.y += s.y;
+                    }
+                }
+            }
+        }
     }
 
     fn draw_map(&mut self, engine:&mut dyn Engine) {
@@ -170,7 +236,7 @@ impl Editor {
             ui.radio_value(&mut self.tool, Tool::PlaceThing, Tool::PlaceThing.to_string()); 
         });
 
-        egui::Window::new("Textures").show(&ctx, |ui|{
+        /*egui::Window::new("Textures").show(&ctx, |ui|{
             egui::containers::ScrollArea::vertical().show(ui, |ui|{
                 let line_length = 3;
                 let mut count= 0;
@@ -203,7 +269,7 @@ impl Editor {
                     });
                 } 
             });
-        });
+        });*/
     }
 
     fn draw_grid(&mut self, engine:&mut dyn Engine) {
