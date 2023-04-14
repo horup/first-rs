@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::Grid;
 
+
 #[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
 pub struct MapCell {
     #[serde(default)]
@@ -11,6 +12,8 @@ pub struct MapCell {
     pub thing_facing:f32,
     #[serde(default)]
     pub wall_index:u16,
+    #[serde(default)]
+    pub thing_index:u16,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]

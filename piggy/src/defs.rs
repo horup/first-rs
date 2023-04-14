@@ -17,6 +17,7 @@ pub mod textures {
     pub const THING_PLANT:u32                   = 16;
     pub const THING_MARKER_EXIT:u32             = 17;
     pub const WALLS:u32                         = 18;
+    pub const MARKERS:u32                       = 19;
 }
 
 pub mod sounds {

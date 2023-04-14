@@ -31,6 +31,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     }
 
     load_atlas!(textures::WALLS, "../../assets/textures/walls.png", Atlas::new(8, 8));
+    load_atlas!(textures::MARKERS, "../../assets/textures/markers.png", Atlas::new(8, 8));
     if let Some(editor) = engine.editor() {
         editor.def_wall(AtlasDef {
             atlas: textures::WALLS,
@@ -42,6 +43,9 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
             atlas_index: 1,
             tags:vec!["Walls".into()]
         });
+
+        editor.def_entity(AtlasDef { atlas: textures::MARKERS, atlas_index: 0, tags: vec!["SpawnPlayer".into(), "Marker".into()] });
+        editor.def_entity(AtlasDef { atlas: textures::MARKERS, atlas_index: 0, tags: vec!["ExitLevel".into(), "Marker".into()] });
     }
     
     
