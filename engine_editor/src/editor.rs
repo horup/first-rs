@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, AtlasDef};
 use serde::{Serialize, Deserialize};
 
@@ -12,18 +14,35 @@ pub struct Editor {
     pub entities:Vec<AtlasDef>,
     pub selected_wall:Option<AtlasDef>,
     pub selected_entity:Option<AtlasDef>,
-    pub show_texture_selector:bool
+    pub show_atlas_def_selector:bool
 }
 
 impl Editor {
+    pub fn selected_atlas_def(&self) -> Option<AtlasDef> {
+        match self.tool {
+            Tool::PlaceWall => self.selected_wall.clone(),
+            Tool::PlaceThing => self.selected_entity.clone(),
+        }
+    }
+
     pub fn update(&mut self, engine:&mut dyn Engine) {
         engine.set_cursor_grabbed(true);
         if engine.key_just_pressed(VirtualKeyCode::T) {
-            self.show_texture_selector = !self.show_texture_selector;
+            self.show_atlas_def_selector = !self.show_atlas_def_selector;
         }
 
-        if self.show_texture_selector {
-            self.texture_selector(engine);
+        if self.show_atlas_def_selector {
+            let atlas_defs = match self.tool {
+                Tool::PlaceWall => &self.walls,
+                Tool::PlaceThing => &self.entities,
+            };
+            let selected = self.atlas_def_selector(engine, &atlas_defs);
+            if let Some(selected) = selected {
+                match self.tool {
+                    Tool::PlaceWall => self.selected_wall = Some(selected),
+                    Tool::PlaceThing => self.selected_entity = Some(selected),
+                }
+            }
         } else {
             self.camera.update(engine);
             self.edit_map(engine);
@@ -35,18 +54,14 @@ impl Editor {
         }
     }
 
-    fn texture_selector(&mut self, engine:&mut dyn Engine) {
-        let atlases = match self.tool {
-            Tool::PlaceWall => &self.walls,
-            Tool::PlaceThing => &self.entities,
-        };
+    fn atlas_def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[AtlasDef]) -> Option<AtlasDef> {
+        let mut selected:Option<AtlasDef> = None;
         let screen_size = engine.screen_size();
         let mut pos = vec2(0.0, 0.0);
         let scale = 2.0;
         let mouse_pos = engine.mouse_pos();
-        for a in atlases.iter() {
+        for a in atlas_defs.iter() {
             if let Some(atlas) = engine.atlas(&a.atlas) {
-                let indexes = atlas.atlas().columns as u16 * atlas.atlas().rows as u16;
                 let s = vec2(atlas.width(a.atlas_index) as f32, atlas.height(a.atlas_index) as f32) * scale;
                 if pos.x + s.x > screen_size.x {
                     pos.x = 0.0;
@@ -77,7 +92,7 @@ impl Editor {
                     });
 
                     if engine.mouse_down(0) {
-                        self.show_texture_selector = false;
+                        selected = Some(a.clone());
                     }
                 }
 
@@ -88,6 +103,8 @@ impl Editor {
                 }
             }
         }
+
+        selected
     }
 
     fn draw_map(&mut self, engine:&mut dyn Engine) {
@@ -100,6 +117,7 @@ impl Editor {
                     size: (self.camera.zoom, self.camera.zoom).into(),
                     color: Color::WHITE,
                     texture: cell.wall,
+                    atlas_index: cell.wall_index as f32,
                     ..Default::default()
                 });
             }
@@ -146,64 +164,68 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
-       /* let valid = self.is_tool_valid(engine);
-        match self.tool {
-            Tool::PlaceWall => {
-                if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-                    if engine.mouse_down(0) && valid {
-                     //   cell.wall = Some(self.selected_texture);
-                    } else if engine.mouse_down(1) {
-                        cell.wall = None;
+        if let Some(def) = self.selected_atlas_def() {
+            match self.tool {
+                Tool::PlaceWall => {
+                    if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+                        if engine.mouse_down(0) {
+                            cell.wall = Some(def.atlas);
+                            cell.wall_index = def.atlas_index;
+                        } else if engine.mouse_down(1) {
+                            cell.wall = None;
+                        }
                     }
-                }
-            },
-            Tool::PlaceThing => {
-                if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-                    if engine.mouse_down(0) && valid {
-                       // cell.thing = Some(self.selected_texture);
-                    } else if engine.mouse_down(1) {
-                        cell.thing = None;
+                },
+                Tool::PlaceThing => {
+                    if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+                        if engine.mouse_down(0) {
+                            cell.thing = Some(def.atlas);
+                        } else if engine.mouse_down(1) {
+                            cell.thing = None;
+                        }
                     }
-                }
-            },
-        }
-        
-        if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-            if engine.key_down(VirtualKeyCode::Up) {
-                cell.thing_facing = PI / 2.0 * 3.0;
-            } else if  engine.key_down(VirtualKeyCode::Down) {
-                cell.thing_facing = PI / 2.0;
-            } else if engine.key_down(VirtualKeyCode::Left) {
-                cell.thing_facing = PI;
-            } else if  engine.key_down(VirtualKeyCode::Right) {
-                cell.thing_facing = 0.0;
+                },
             }
-        }*/
+            
+            if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
+                if engine.key_down(VirtualKeyCode::Up) {
+                    cell.thing_facing = PI / 2.0 * 3.0;
+                } else if  engine.key_down(VirtualKeyCode::Down) {
+                    cell.thing_facing = PI / 2.0;
+                } else if engine.key_down(VirtualKeyCode::Left) {
+                    cell.thing_facing = PI;
+                } else if  engine.key_down(VirtualKeyCode::Right) {
+                    cell.thing_facing = 0.0;
+                }
+            }
+        }
     }
 
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
         let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
-/*
-        if let Some(tex) = engine.atlas(&self.selected_texture) {
-            let s = 32.0;
-            engine.draw_text(DrawTextParams {
-                screen_pos: cursor_pos - vec2(0.0, 12.0),
-                text: match self.tool {
-                    Tool::PlaceWall => "Wall",
-                    Tool::PlaceThing => "Thing",
-                }.to_string(),
-                scale: 12.0,
-                color: Color::WHITE,
-                ..Default::default()
-            });
-            engine.draw_rect(DrawRectParams {
-                pos: cursor_pos,
-                size: (s, s * tex.aspect(0)).into(),
-                color: Color::WHITE,
-                texture: Some(self.selected_texture),
-                ..Default::default()
-            });
-        }*/
+        if let Some(def) = self.selected_atlas_def() {
+            if let Some(atlas) = engine.atlas(&def.atlas) {
+                let s = 32.0;
+                engine.draw_text(DrawTextParams {
+                    screen_pos: cursor_pos - vec2(0.0, 12.0),
+                    text: match self.tool {
+                        Tool::PlaceWall => "Wall",
+                        Tool::PlaceThing => "Thing",
+                    }.to_string(),
+                    scale: 12.0,
+                    color: Color::WHITE,
+                    ..Default::default()
+                });
+                engine.draw_rect(DrawRectParams {
+                    pos: cursor_pos,
+                    size: (s, s * atlas.aspect(def.atlas_index)).into(),
+                    color: Color::WHITE,
+                    texture: Some(atlas.id()),
+                    atlas_index: def.atlas_index as f32,
+                    ..Default::default()
+                });
+            }
+        }
     }
 
     fn update_ui(&mut self, engine:&mut dyn Engine) {

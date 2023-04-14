@@ -9,6 +9,8 @@ pub struct MapCell {
     pub thing:Option<u32>,
     #[serde(default)]
     pub thing_facing:f32,
+    #[serde(default)]
+    pub wall_index:u16,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
