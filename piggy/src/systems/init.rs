@@ -24,6 +24,17 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         };
     }
 
+    macro_rules! walls {
+        ($id:expr, $path:expr, $atlas:expr) => {
+            engine.load_atlas
+            ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
+                atlas:$atlas,
+                editor_props:EditorProps::wall(),
+                ..Default::default()
+            });
+        };
+    }
+
     macro_rules! sound {
         ($id:expr, $path:expr) => {
             engine.load_sound($id, include_bytes!($path));
@@ -33,6 +44,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     wall!(textures::WALL_BRICK, "../../assets/textures/wall_brick.png");
     wall!(textures::WALL_BUSH, "../../assets/textures/wall_bush.png");
     wall!(textures::WALL_WHITE, "../../assets/textures/wall_white.png");
+    wall!(textures::WALLS, "../../assets/textures/walls.png");
 
     thing!(textures::THING_MARKER_SPAWN_PLAYER, "../../assets/textures/thing_player.png", Atlas::new(1, 1));
     thing!(textures::THING_VIKTOR, "../../assets/textures/thing_player_viktor.png", Atlas::new(1, 1));

@@ -16,6 +16,7 @@ pub mod textures {
     pub const THING_ITEM_POKEMONCARD:u32        = 15;
     pub const THING_PLANT:u32                   = 16;
     pub const THING_MARKER_EXIT:u32             = 17;
+    pub const WALLS:u32                         = 18;
 }
 
 pub mod sounds {
