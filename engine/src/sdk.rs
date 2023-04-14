@@ -260,8 +260,11 @@ impl engine_sdk::Engine for Engine {
         registry.execute();
     }
 
-    fn editor<'a>(&'a mut self) -> &'a mut dyn engine_sdk::Editor {
-        self.editor.as_mut().expect("could not get a mutable reference to the editor")
+    fn editor<'a>(&'a mut self) -> Option<&'a mut dyn engine_sdk::Editor> {
+        if let Some(editor) = self.editor.as_mut() {
+            return Some(editor);
+        }
+        None
     }
     
 }

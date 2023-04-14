@@ -1,19 +1,19 @@
-use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry};
+use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry, LoadWallsParam};
 
 use crate::{textures, sounds, components::{Event, StartEvent}};
 
 pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     let start = engine.time();
-    macro_rules! wall {
-        ($id:expr, $path:expr) => {
+    macro_rules! load_atlas {
+        ($id:expr, $path:expr, $atlas:expr) => {
             engine.load_atlas($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
-                editor_props:EditorProps::wall(),
+                atlas:$atlas,
                 ..Default::default()
             });
         };
     }
 
-    macro_rules! thing {
+   /* macro_rules! thing {
         ($id:expr, $path:expr, $atlas:expr) => {
             engine.load_atlas
             ($id, &image::load_from_memory(include_bytes!($path)).unwrap(), LoadAtlasParams {
@@ -22,13 +22,21 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
                 ..Default::default()
             });
         };
-    }
+    }*/
 
     macro_rules! sound {
         ($id:expr, $path:expr) => {
             engine.load_sound($id, include_bytes!($path));
         };
     }
+
+    load_atlas!(textures::WALLS, "../../assets/textures/walls.png", Atlas::new(8, 8));
+    if let Some(editor) = engine.editor() {
+        editor.load_walls(LoadWallsParam {
+            atlas: textures::WALLS,
+        });
+    }
+    
     
     //wall!(textures::WALL_BRICK, "../../assets/textures/wall_brick.png");
     //wall!(textures::WALL_BUSH, "../../assets/textures/wall_bush.png");
