@@ -1,5 +1,3 @@
-use std::f32::consts::PI;
-
 use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, AtlasDef};
 use serde::{Serialize, Deserialize};
 
@@ -9,11 +7,11 @@ use crate::{EditorCamera, Tool};
 pub struct Editor {
     pub camera:EditorCamera,
     pub map:Map,
-    pub selected_texture:u32,
-    pub selected_index:u16,
     pub tool:Tool,
     pub walls:Vec<AtlasDef>,
     pub entities:Vec<AtlasDef>,
+    pub selected_wall:Option<AtlasDef>,
+    pub selected_entity:Option<AtlasDef>,
     pub show_texture_selector:bool
 }
 
@@ -148,12 +146,12 @@ impl Editor {
     }
 
     fn edit_map(&mut self, engine:&mut dyn Engine) {
-        let valid = self.is_tool_valid(engine);
+       /* let valid = self.is_tool_valid(engine);
         match self.tool {
             Tool::PlaceWall => {
                 if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                     if engine.mouse_down(0) && valid {
-                        cell.wall = Some(self.selected_texture);
+                     //   cell.wall = Some(self.selected_texture);
                     } else if engine.mouse_down(1) {
                         cell.wall = None;
                     }
@@ -162,7 +160,7 @@ impl Editor {
             Tool::PlaceThing => {
                 if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                     if engine.mouse_down(0) && valid {
-                        cell.thing = Some(self.selected_texture);
+                       // cell.thing = Some(self.selected_texture);
                     } else if engine.mouse_down(1) {
                         cell.thing = None;
                     }
@@ -180,27 +178,12 @@ impl Editor {
             } else if  engine.key_down(VirtualKeyCode::Right) {
                 cell.thing_facing = 0.0;
             }
-        }
-    }
-
-    fn is_tool_valid(&self, engine:&dyn Engine) -> bool {
-        if let Some(texture) = engine.atlas(&self.selected_texture) {
-           /* match self.tool {
-                Tool::PlaceWall => return texture.editor_props().is_wall,
-                Tool::PlaceThing => return texture.editor_props().is_thing,
-            }*/
-        }
-       
-        false
+        }*/
     }
 
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
-        if !self.is_tool_valid(engine) {
-            return;
-        }
-
         let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
-
+/*
         if let Some(tex) = engine.atlas(&self.selected_texture) {
             let s = 32.0;
             engine.draw_text(DrawTextParams {
@@ -220,7 +203,7 @@ impl Editor {
                 texture: Some(self.selected_texture),
                 ..Default::default()
             });
-        }
+        }*/
     }
 
     fn update_ui(&mut self, engine:&mut dyn Engine) {
