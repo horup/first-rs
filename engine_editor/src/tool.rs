@@ -16,7 +16,6 @@ impl ToString for Tool {
     }
 }
 
-
 impl Default for Tool {
     fn default() -> Self {
         Self::PlaceWall
