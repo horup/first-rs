@@ -202,7 +202,7 @@ impl Engine {
                     self.graphics.load_texture(id, &image, params.atlas);
                     self.textures.insert(
                         id,
-                        TextureAtlas::new(id, Rc::new(image.clone()), params.atlas, params.editor_props),
+                        TextureAtlas::new(id, Rc::new(image.clone()), params.atlas),
                     );
                 },
                 Load::Sound { id, bytes } => {

@@ -118,10 +118,10 @@ impl Editor {
 
     fn is_tool_valid(&self, engine:&dyn Engine) -> bool {
         if let Some(texture) = engine.atlas(&self.selected_texture) {
-            match self.tool {
+           /* match self.tool {
                 Tool::PlaceWall => return texture.editor_props().is_wall,
                 Tool::PlaceThing => return texture.editor_props().is_thing,
-            }
+            }*/
         }
        
         false
@@ -181,10 +181,10 @@ impl Editor {
                         texture_line.push(Vec::new());
                     }
 
-                    match self.tool {
+                   /* match self.tool {
                         Tool::PlaceWall => if !texture.editor_props().is_wall { continue; },
                         Tool::PlaceThing => if !texture.editor_props().is_thing { continue; },
-                    }
+                    }*/
 
                     texture_line.last_mut().unwrap().push(texture.clone());
                     count+=1;
