@@ -8,7 +8,7 @@ use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use registry::EntityId;
 use crate::registry::Registry;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, SpatialHashmap, Sprite, Tilemap, Editor};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, SpatialHashmap, Sprite, Tilemap, Editor, Pic};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
@@ -177,8 +177,7 @@ pub struct DrawRectParams {
     pub pos:Vec2,
     pub size:Vec2,
     pub color:Color,
-    pub texture:Option<u32>,
-    pub atlas_index:f32
+    pub pic:Option<Pic>
 }
 
 #[derive(Clone, Debug)]

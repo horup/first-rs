@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, AtlasDef};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, Def, Pic, Wall, Entity};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -10,15 +10,15 @@ pub struct Editor {
     pub camera:EditorCamera,
     pub map:Map,
     pub tool:Tool,
-    pub walls:Vec<AtlasDef>,
-    pub entities:Vec<AtlasDef>,
-    pub selected_wall:Option<AtlasDef>,
-    pub selected_entity:Option<AtlasDef>,
+    pub walls:Vec<Def>,
+    pub entities:Vec<Def>,
+    pub selected_wall:Option<Def>,
+    pub selected_entity:Option<Def>,
     pub show_atlas_def_selector:bool
 }
 
 impl Editor {
-    pub fn selected_atlas_def(&self) -> Option<AtlasDef> {
+    pub fn selected_atlas_def(&self) -> Option<Def> {
         match self.tool {
             Tool::PlaceWall => self.selected_wall.clone(),
             Tool::PlaceThing => self.selected_entity.clone(),
@@ -54,15 +54,15 @@ impl Editor {
         }
     }
 
-    fn atlas_def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[AtlasDef]) -> Option<AtlasDef> {
-        let mut selected:Option<AtlasDef> = None;
+    fn atlas_def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[Def]) -> Option<Def> {
+        let mut selected:Option<Def> = None;
         let screen_size = engine.screen_size();
         let mut pos = vec2(0.0, 0.0);
         let scale = 2.0;
         let mouse_pos = engine.mouse_pos();
         for a in atlas_defs.iter() {
-            if let Some(atlas) = engine.atlas(&a.atlas) {
-                let s = vec2(atlas.width(a.atlas_index) as f32, atlas.height(a.atlas_index) as f32) * scale;
+            if let Some(atlas) = engine.atlas(&a.pic.atlas) {
+                let s = vec2(atlas.width(a.pic.index as u16) as f32, atlas.height(a.pic.index as u16) as f32) * scale;
                 if pos.x + s.x > screen_size.x {
                     pos.x = 0.0;
                     pos.y += s.y;
@@ -71,8 +71,7 @@ impl Editor {
                 engine.draw_rect(DrawRectParams {
                     pos:pos,
                     size:s,
-                    atlas_index:a.atlas_index as f32,
-                    texture:Some(a.atlas),
+                    pic:Some(a.pic),
                     ..Default::default()
                 });
 
@@ -111,13 +110,12 @@ impl Editor {
         // draw walls
         self.map.grid.for_each(|cell, (x,y)| {
             let p = self.camera.to_screen(&vec2(x as f32, y as f32));
-            if cell.wall.is_some() {
+            if let Some(wall) = cell.wall {
                 engine.draw_rect(DrawRectParams {
                     pos: p,
                     size: (self.camera.zoom, self.camera.zoom).into(),
                     color: Color::WHITE,
-                    texture: cell.wall,
-                    atlas_index: cell.wall_index as f32,
+                    pic:Some(wall.pic),
                     ..Default::default()
                 });
             }
@@ -128,30 +126,16 @@ impl Editor {
             let center = self.camera.to_screen(&vec2(x as f32 + 0.5, y as f32 + 0.5));
             let size = vec2(self.camera.zoom, self.camera.zoom);
             let p = center - size/2.0;
-            if cell.thing.is_some() {
-                let _ps = [vec2(p.x, p.y), vec2(p.x + size.x, p.y), vec2(p.x + size.x, p.y + size.y), vec2(p.x, p.y + size.y)];
-
-                /*for i in 0..ps.len() {
-                    let p1 = ps[i];
-                    let p2 = ps[(i+1)% ps.len()];
-                    engine.draw_line(DrawLineParams {
-                        begin: p1,
-                        end: p2,
-                        line_width: 1.0,
-                        color: Color::RED,
-                    });
-                }*/
-
-                
+            if let Some(entity) = &cell.entity {
                 engine.draw_rect(DrawRectParams {
                     pos: p,
                     size,
                     color: Color::WHITE,
-                    texture: cell.thing,
+                    pic:Some(entity.pic),
                     ..Default::default()
                 });
 
-                let v = vec2(cell.thing_facing.cos(), cell.thing_facing.sin()) * size.x / 2.0;
+                let v = vec2(entity.facing.cos(), entity.facing.sin()) * size.x / 2.0;
                 engine.draw_line(DrawLineParams {
                     begin: center,
                     end: center + v,
@@ -169,8 +153,9 @@ impl Editor {
                 Tool::PlaceWall => {
                     if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                         if engine.mouse_down(0) {
-                            cell.wall = Some(def.atlas);
-                            cell.wall_index = def.atlas_index;
+                            cell.wall = Some(Wall {
+                                pic:def.pic
+                            })
                         } else if engine.mouse_down(1) {
                             cell.wall = None;
                         }
@@ -179,23 +164,29 @@ impl Editor {
                 Tool::PlaceThing => {
                     if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                         if engine.mouse_down(0) {
-                            cell.thing = Some(def.atlas);
+                            cell.entity = Some(Entity {
+                                pic: def.pic,
+                                facing: 0.0,
+                                class: "Unknown".into(),
+                            })
                         } else if engine.mouse_down(1) {
-                            cell.thing = None;
+                            cell.entity = None;
                         }
                     }
                 },
             }
             
             if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
-                if engine.key_down(VirtualKeyCode::Up) {
-                    cell.thing_facing = PI / 2.0 * 3.0;
-                } else if  engine.key_down(VirtualKeyCode::Down) {
-                    cell.thing_facing = PI / 2.0;
-                } else if engine.key_down(VirtualKeyCode::Left) {
-                    cell.thing_facing = PI;
-                } else if  engine.key_down(VirtualKeyCode::Right) {
-                    cell.thing_facing = 0.0;
+                if let Some(e) = &mut cell.entity {
+                    if engine.key_down(VirtualKeyCode::Up) {
+                        e.facing = PI / 2.0 * 3.0;
+                    } else if  engine.key_down(VirtualKeyCode::Down) {
+                        e.facing = PI / 2.0;
+                    } else if engine.key_down(VirtualKeyCode::Left) {
+                        e.facing = PI;
+                    } else if  engine.key_down(VirtualKeyCode::Right) {
+                        e.facing = 0.0;
+                    }
                 }
             }
         }
@@ -204,7 +195,7 @@ impl Editor {
     fn draw_cursor(&mut self, engine:&mut dyn Engine) {
         let cursor_pos = engine.mouse_pos() + vec2(16.0, 16.0);
         if let Some(def) = self.selected_atlas_def() {
-            if let Some(atlas) = engine.atlas(&def.atlas) {
+            if let Some(atlas) = engine.atlas(&def.pic.atlas) {
                 let s = 32.0;
                 engine.draw_text(DrawTextParams {
                     screen_pos: cursor_pos - vec2(0.0, 12.0),
@@ -218,10 +209,9 @@ impl Editor {
                 });
                 engine.draw_rect(DrawRectParams {
                     pos: cursor_pos,
-                    size: (s, s * atlas.aspect(def.atlas_index)).into(),
+                    size: (s, s * atlas.aspect(def.pic.index as u16)).into(),
                     color: Color::WHITE,
-                    texture: Some(atlas.id()),
-                    atlas_index: def.atlas_index as f32,
+                    pic: Some(def.pic),
                     ..Default::default()
                 });
             }
@@ -311,7 +301,7 @@ impl Editor {
             pos: self.camera.to_screen(&grid_cursor),
             size: (self.camera.zoom, self.camera.zoom).into(),
             color: Color { r: 1.0, g: 1.0, b: 1.0, a: 0.25 },
-            texture: None,
+            pic: None,
             ..Default::default()
         });
     }

@@ -1,13 +1,13 @@
 use serde::{Serialize, Deserialize};
+use crate::Pic;
 
 #[derive(Default, Serialize, Deserialize, Clone)]
-pub struct AtlasDef {
-    pub atlas:u32,
-    pub atlas_index:u16,
+pub struct Def {
+    pub pic:Pic,
     pub tags:Vec<String>
 }
 
 pub trait Editor {
-    fn def_wall(&mut self, param:AtlasDef);
-    fn def_entity(&mut self, param:AtlasDef);
+    fn def_wall(&mut self, param:Def);
+    fn def_entity(&mut self, param:Def);
 }

@@ -1,4 +1,4 @@
-use engine_sdk::AtlasDef;
+use engine_sdk::Def;
 use serde::{Serialize, Deserialize};
 
 #[derive(PartialEq, Eq, Hash, Serialize, Deserialize)]

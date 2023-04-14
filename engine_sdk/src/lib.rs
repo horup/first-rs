@@ -46,6 +46,9 @@ pub use tile::*;
 mod timer;
 pub use timer::*;
 
+mod pic;
+pub use pic::*;
+
 pub mod math;
 
 pub use glam;
