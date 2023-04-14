@@ -1,4 +1,4 @@
-use engine_sdk::{LoadAtlasParams, Engine, EditorProps, image, Atlas, registry::Registry, LoadWallsParam};
+use engine_sdk::{LoadAtlasParams, Engine, image, Atlas, registry::Registry, LoadWallsParam};
 
 use crate::{textures, sounds, components::{Event, StartEvent}};
 

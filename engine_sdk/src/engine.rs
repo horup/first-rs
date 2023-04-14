@@ -8,7 +8,7 @@ use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use registry::EntityId;
 use crate::registry::Registry;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Tilemap, Editor};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, SpatialHashmap, Sprite, Tilemap, Editor};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
@@ -170,7 +170,6 @@ pub trait Engine {
 #[derive(Clone, Debug, Default)]
 pub struct LoadAtlasParams {
     pub atlas:Atlas,
-    pub editor_props:EditorProps
 }
 
 #[derive(Clone, Debug, Default)]

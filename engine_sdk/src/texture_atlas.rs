@@ -2,41 +2,6 @@ use crate::Atlas;
 use image::DynamicImage;
 use std::rc::Rc;
 
-#[derive(Clone, Debug)]
-pub struct EditorProps {
-    pub is_thing: bool,
-    pub is_wall: bool,
-}
-
-impl EditorProps {
-    pub fn all() -> Self {
-        Self {
-            is_thing: true,
-            is_wall: true,
-        }
-    }
-
-    pub fn thing() -> Self {
-        Self {
-            is_thing:true,
-            is_wall:false
-        }
-    }
-
-    pub fn wall() -> Self {
-        Self {
-            is_wall:true,
-            is_thing:false
-        }
-    }
-}
-
-impl Default for EditorProps {
-    fn default() -> Self {
-        Self::all()
-    }
-}
-
 #[derive(Clone, Debug, Default)]
 pub struct TextureAtlas {
     id: u32,
@@ -44,11 +9,10 @@ pub struct TextureAtlas {
     atlas: Atlas,
     width: u32,
     height: u32,
-    editor_props: EditorProps,
 }
 
 impl TextureAtlas {
-    pub fn new(id: u32, image: Rc<DynamicImage>, atlas: Atlas, editor_props: EditorProps) -> Self {
+    pub fn new(id: u32, image: Rc<DynamicImage>, atlas: Atlas) -> Self {
         let width = image.width();
         let height = image.height();
         Self {
@@ -57,12 +21,7 @@ impl TextureAtlas {
             atlas,
             width,
             height,
-            editor_props,
         }
-    }
-
-    pub fn editor_props(&self) -> &EditorProps {
-        &self.editor_props
     }
 
     pub fn atlas(&self) -> Atlas {
