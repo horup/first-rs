@@ -1,6 +1,21 @@
+use egui::epaint::ahash::HashMap;
+use glam::Vec3;
 use serde::{Serialize, Deserialize};
 use crate::Grid;
 
+#[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
+pub struct Entity {
+    pub pos:Vec3,
+    pub atlas:u32,
+    pub atlas_index:u32,
+    pub class:String,
+    pub properties:HashMap<String, String>
+}
+
+#[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
+pub struct Wall {
+
+}
 
 #[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
 pub struct MapCell {
