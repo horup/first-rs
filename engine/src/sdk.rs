@@ -259,4 +259,9 @@ impl engine_sdk::Engine for Engine {
 
         registry.execute();
     }
+
+    fn editor<'a>(&'a mut self) -> &'a mut dyn engine_sdk::Editor {
+        self.editor.as_mut().expect("could not get a mutable reference to the editor")
+    }
+    
 }

@@ -8,7 +8,7 @@ use serde::{Serialize, Deserialize};
 use winit::{event::VirtualKeyCode};
 use registry::EntityId;
 use crate::registry::Registry;
-use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Tilemap};
+use crate::{Camera, Color, Event, Atlas, TextureAtlas, EditorProps, SpatialHashmap, Sprite, Tilemap, Editor};
 
 #[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Collision {
@@ -19,6 +19,7 @@ pub struct Collision {
 
 
 pub trait Engine {
+    fn editor<'a>(&'a mut self) -> &'a mut dyn Editor;
     fn time(&self) -> f64;
     //fn play_music(&self, sound:u32);
     //fn stop_music(&self);

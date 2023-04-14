@@ -30,10 +30,10 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         };
     }
     
-    wall!(textures::WALL_BRICK, "../../assets/textures/wall_brick.png");
-    wall!(textures::WALL_BUSH, "../../assets/textures/wall_bush.png");
-    wall!(textures::WALL_WHITE, "../../assets/textures/wall_white.png");
-    wall!(textures::WALLS, "../../assets/textures/wall_wood_dark.png");
+    //wall!(textures::WALL_BRICK, "../../assets/textures/wall_brick.png");
+    //wall!(textures::WALL_BUSH, "../../assets/textures/wall_bush.png");
+    //wall!(textures::WALL_WHITE, "../../assets/textures/wall_white.png");
+    /*wall!(textures::WALLS, "../../assets/textures/wall_wood_dark.png");
 
     thing!(textures::THING_MARKER_SPAWN_PLAYER, "../../assets/textures/thing_player.png", Atlas::new(1, 1));
     thing!(textures::THING_VIKTOR, "../../assets/textures/thing_player_viktor.png", Atlas::new(1, 1));
@@ -55,13 +55,13 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     sound!(sounds::PICKUP_KEY, "../../assets/audio/pickup_key.ogg");
     sound!(sounds::DOOR_OPEN, "../../assets/audio/door_open.ogg");
     sound!(sounds::DOOR_CLOSE, "../../assets/audio/door_close.ogg");
-    sound!(sounds::MUSIC01, "../../assets/music/iwan_gabovitch.ogg");
+    //sound!(sounds::MUSIC01, "../../assets/music/iwan_gabovitch.ogg");
     sound!(sounds::COUGHT, "../../assets/audio/cought.ogg");
     sound!(sounds::WIN, "../../assets/audio/win.ogg");
     sound!(sounds::LOSE, "../../assets/audio/win.ogg");
-    sound!(sounds::FINAL, "../../assets/audio/final.ogg");
+    sound!(sounds::FINAL, "../../assets/audio/final.ogg");*/
     
-    r.spawn().attach(Event::Start(StartEvent::default()));
+    //r.spawn().attach(Event::Start(StartEvent::default()));
 
     let took = engine.time() - start;
     println!("init() took {}s", took);

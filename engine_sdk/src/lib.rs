@@ -37,6 +37,9 @@ pub use texture_atlas::*;
 mod spatial_hashmap;
 pub use spatial_hashmap::*;
 
+mod editor;
+pub use editor::*;
+
 mod tile;
 pub use tile::*;
 
