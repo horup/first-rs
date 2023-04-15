@@ -26,7 +26,7 @@ impl engine_sdk::Engine for Engine {
     }
 
     fn draw_rect(&mut self, params: DrawRectParams) {
-        let atlas = self.graphics.get_atlas(params.texture);
+        let atlas = self.graphics.get_atlas(params.pic);
         self.canvas.draw_rect(params, &atlas);
     }
 

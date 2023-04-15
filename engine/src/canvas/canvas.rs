@@ -192,8 +192,9 @@ impl Canvas {
 
         let vs = model.vertices.len() as u32;
         let start = model.indicies.len() as u32;
-        let u = atlas.u(params.atlas_index as u16);
-        let v = atlas.v(params.atlas_index as u16);
+        let atlas_index = params.pic.unwrap_or_default().index as u16;
+        let u = atlas.u(atlas_index as u16);
+        let v = atlas.v(atlas_index as u16);
         model.vertices.push(Vertex {
             position: [px, py, 0.0],
             color,
@@ -222,10 +223,15 @@ impl Canvas {
         model.indicies.push(vs + 2);
         model.indicies.push(vs + 3);
 
+        let tex:Option<u32> = match params.pic {
+            Some(pic) => Some(pic.atlas),
+            None => None,
+        };
+
         let end = model.indicies.len() as u32;
         self.push_draw_call(DrawCall::Geometry {
             range: start..end,
-            diffuse_texture:params.texture
+            diffuse_texture:tex
         });
     }
 

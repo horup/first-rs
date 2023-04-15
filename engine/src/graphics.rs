@@ -1,6 +1,6 @@
 use crate::{CameraUniform, Vertex};
 use egui::Context;
-use engine_sdk::{image::{DynamicImage, GenericImage}, Atlas};
+use engine_sdk::{image::{DynamicImage, GenericImage}, Atlas, Pic};
 use std::collections::HashMap;
 use wgpu::{
     util::DeviceExt, BindGroup, BindGroupLayout, Buffer, CommandEncoder, Device, Queue,
@@ -259,9 +259,9 @@ impl Graphics {
         self.textures.insert(id, texture);
     }
 
-    pub fn get_atlas(&self, texture:Option<u32>) -> Atlas {
-        if let Some(texture) = texture {
-            if let Some(texture) = self.textures.get(&texture) {
+    pub fn get_atlas(&self, pic:Option<Pic>) -> Atlas {
+        if let Some(pic) = pic {
+            if let Some(texture) = self.textures.get(&pic.atlas) {
                 return texture.atlas;
             }
         }
