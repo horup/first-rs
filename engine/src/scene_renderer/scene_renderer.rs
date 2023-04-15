@@ -1,7 +1,7 @@
 use std::{mem::{size_of}, ops::Range, cmp::Ordering, f32::consts::PI};
 
 use egui::epaint::ahash::{HashMap, HashMapExt};
-use engine_sdk::{Camera, registry::{Registry, EntityId}, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, Tilemap};
+use engine_sdk::{Camera, registry::{Registry, EntityId}, glam::{ivec2, IVec2, Vec3, vec3}, Sprite, Atlas, Tilemap, Pic};
 use wgpu::{BufferDescriptor, BindGroup, Buffer, RenderPipeline, StencilState, DepthBiasState};
 
 use crate::{Graphics, CameraUniform, Vertex, Model, GraphicsContext};
@@ -280,7 +280,7 @@ impl SceneRenderer {
         self.draw_calls.push(DrawCall::DrawGeometry { texture: floor_texture, range: start_index..end_index });
     }
 
-    fn wall(&mut self, wall_texture:u32, pos:IVec2, normal:IVec2) {
+    fn wall(&mut self, pic:Pic, atlas:&Atlas, pos:IVec2, normal:IVec2) {
         let s = 0.5;
         let color = if normal.x == 0 {[1.0, 1.0, 1.0, 1.0]} else {[s, s, s, 1.0]};
         let start_vertex = self.geometry.vertices.len() as u32;
@@ -303,22 +303,24 @@ impl SceneRenderer {
             wall = &east;
         }
 
+        let u = atlas.u(pic.index);
+        let v = atlas.v(pic.index);
         let wall = [Vertex {
             position: wall[0],
             color,
-            uv: [0.0, 1.0],
+            uv: [u[0], v[1]],
         }, Vertex {
             position: wall[1],
             color,
-            uv: [1.0, 1.0],
+            uv: [u[1], v[1]],
         }, Vertex {
             position: wall[2],
             color,
-            uv: [1.0, 0.0],
+            uv: [u[1], v[0]],
         },  Vertex {
             position: wall[3],
             color,
-            uv: [0.0, 0.0],
+            uv: [u[0], v[0]],
         }];
 
         for mut v in wall {
@@ -337,13 +339,13 @@ impl SceneRenderer {
 
         let end_index = self.geometry.indicies.len() as u32;
         if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
-            if wall_texture == *texture {
+            if pic.atlas == *texture {
                 range.end = end_index;
                 return;
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawGeometry { texture: wall_texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: pic.atlas, range: start_index..end_index });
             
     }
 
@@ -459,34 +461,38 @@ impl SceneRenderer {
             bytemuck::cast_slice(&[camera_uniform]),
         );
 
-        // find wall textures in use
-        let mut textures = HashMap::new();
+        // find wall pics in use
+        let mut pics = HashMap::new();
         tilemap.grid.for_each(|cell, _| {
-            if let Some(wall) = cell.wall {
-                textures.insert(wall, ());
+            if let Some(pic) = cell.wall {
+                pics.insert(pic, ());
             }
         });
-        let mut textures:Vec<u32> = textures.keys().copied().collect();
-        textures.sort();
+        let mut pics:Vec<Pic> = pics.keys().copied().collect();
+        pics.sort();
 
         // once per texture, prepare walls that can be reached from a spot without a wall
         // i.e. dont prepare walls that are not reachable
-        for texture in textures {
-            tilemap.grid.for_each(|cell, (x,y)| {
-                if cell.wall.is_none() {
-                    let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
-                    for n in directions.iter() {
-                        let p = ivec2(x, y) - *n;
-                        if let Some(cell) = tilemap.grid.get((p.x, p.y)) {
-                            if let Some(wall_texture) = cell.wall {
-                                if wall_texture == texture {
-                                    self.wall(wall_texture, p, -*n);
+        for pic in pics {
+            if let Some(tex) = graphics.textures.get(&pic.atlas) {
+                let atlas = &tex.atlas;
+                tilemap.grid.for_each(|cell, (x,y)| {
+                    if cell.wall.is_none() {
+                        let directions = [ivec2(0, 1), ivec2(0, -1), ivec2(1, 0), ivec2(-1, 0)];
+                        for n in directions.iter() {
+                            let p = ivec2(x, y) - *n;
+                            if let Some(cell) = tilemap.grid.get((p.x, p.y)) {
+                                if let Some(wall_pic) = cell.wall {
+                                    if wall_pic == pic {
+
+                                        self.wall(wall_pic, atlas,  p, -*n);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
         // draw floor 

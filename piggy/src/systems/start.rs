@@ -8,22 +8,23 @@ use crate::{
     textures::{self, CEILING_GREY, FLOOR_GREY},
 };
 use engine_sdk::{
-    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap,
+    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity,
 };
 
-pub fn spawn_thing(registry: &mut Registry, thing: u32, index: (i32, i32), facing: f32) {
+pub fn spawn_entity(registry: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let mut sprite = Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
-        texture: thing,
+        texture: map_entity.pic.atlas,
         opacity: None,
-        facing,
+        facing:map_entity.facing,
         radius: 0.3,
         clips: true,
         ..Default::default()
     };
 
     let mut e = registry.spawn();
-    match thing {
+
+   /* match thing {
         textures::THING_MARKER_EXIT => {
             sprite.hidden = true;
             sprite.clips = false;
@@ -73,7 +74,7 @@ pub fn spawn_thing(registry: &mut Registry, thing: u32, index: (i32, i32), facin
             });
         }
         _ => {}
-    }
+    }*/
 
     e.attach(sprite);
 }
@@ -94,10 +95,11 @@ pub fn start(r: &mut Registry, start: &StartEvent, engine: &mut dyn Engine) {
         map_to_load.grid.for_each(|cell, index| {
             if let Some(wall) = cell.wall {
                 let tile = grid.get_mut(index).unwrap();
-               // tile.wall = Some(wall.);
+                tile.wall = Some(wall.pic);
                 tile.clips = true;
             }
             if let Some(e) = &cell.entity {
+                spawn_entity(r, e, index);
                 //spawn_thing(r, thing, index, cell.thing_facing);
             }
         });

@@ -11,7 +11,7 @@ pub enum Property {
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
-pub struct Entity {
+pub struct MapEntity {
     pub pic:Pic,
     pub facing:f32,
     pub class:String,
@@ -19,16 +19,16 @@ pub struct Entity {
 }
 
 #[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
-pub struct Wall {
+pub struct MapWall {
     pub pic:Pic
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct MapCell {
     #[serde(default)]
-    pub wall:Option<Wall>,
+    pub wall:Option<MapWall>,
     #[serde(default)]
-    pub entity:Option<Entity>
+    pub entity:Option<MapEntity>
 }
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]

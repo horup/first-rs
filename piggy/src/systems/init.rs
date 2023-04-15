@@ -78,7 +78,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     sound!(sounds::LOSE, "../../assets/audio/win.ogg");
     sound!(sounds::FINAL, "../../assets/audio/final.ogg");*/
     
-    //r.spawn().attach(Event::Start(StartEvent::default()));
+    r.spawn().attach(Event::Start(StartEvent::default()));
 
     let took = engine.time() - start;
     println!("init() took {}s", took);

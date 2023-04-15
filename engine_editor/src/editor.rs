@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, Def, Pic, Wall, Entity};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, Def, Pic, MapWall, MapEntity};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -166,7 +166,7 @@ impl Editor {
                 Tool::PlaceWall => {
                     if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                         if engine.mouse_down(0) {
-                            cell.wall = Some(Wall {
+                            cell.wall = Some(MapWall {
                                 pic:def.pic
                             })
                         } else if engine.mouse_down(1) {
@@ -177,7 +177,7 @@ impl Editor {
                 Tool::PlaceEntity => {
                     if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                         if engine.mouse_down(0) {
-                            cell.entity = Some(Entity {
+                            cell.entity = Some(MapEntity {
                                 pic: def.pic,
                                 facing: 0.0,
                                 class: "Unknown".into(),
