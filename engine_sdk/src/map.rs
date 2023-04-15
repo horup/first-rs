@@ -1,11 +1,21 @@
+use egui::epaint::ahash::HashMap;
 use serde::{Serialize, Deserialize};
 use crate::{Grid, Pic};
+
+#[derive(Clone, Serialize, Deserialize, PartialEq)]
+pub enum Property {
+    Bool(bool),
+    I32(i32),
+    F32(f32),
+    String(String)
+}
 
 #[derive(Clone, Default, Serialize, Deserialize, PartialEq)]
 pub struct Entity {
     pub pic:Pic,
     pub facing:f32,
-    pub class:String
+    pub class:String,
+    pub properties:HashMap<String, Property>
 }
 
 #[derive(Clone, Copy, Default, Serialize, Deserialize, PartialEq)]

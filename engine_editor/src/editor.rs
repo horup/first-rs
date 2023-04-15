@@ -168,6 +168,7 @@ impl Editor {
                                 pic: def.pic,
                                 facing: 0.0,
                                 class: "Unknown".into(),
+                                ..Default::default()
                             })
                         } else if engine.mouse_down(1) {
                             cell.entity = None;

@@ -1,7 +1,7 @@
 use engine_sdk::{
     glam::vec2,
     registry::{Facade, Registry},
-    Color, DrawLineParams, DrawRectParams, DrawTextParams, Engine, HorizontalAlign, math::smootherstep,
+    Color, DrawLineParams, DrawRectParams, DrawTextParams, Engine, HorizontalAlign, math::smootherstep, Pic,
 };
 
 use crate::{components::PlayerState, textures, PiggyFacade, PlayerEntity};
@@ -46,7 +46,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             engine.draw_rect(DrawRectParams {
                 pos: vec2(16.0, 32.0),
                 size,
-                texture: Some(textures::THING_ITEM_KEY_BLUE),
+                pic:Some(Pic::new(textures::THING_ITEM_KEY_BLUE, 0)),
                 ..Default::default()
             });
         }
@@ -55,7 +55,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             engine.draw_rect(DrawRectParams {
                 pos: vec2(16.0, 32.0 + size.y),
                 size,
-                texture: Some(textures::THING_ITEM_KEY_GOLD),
+                pic:Some(Pic::new(textures::THING_ITEM_KEY_GOLD, 0)),
                 ..Default::default()
             });
         }
@@ -115,8 +115,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
                 pos: vec2(0.0, 0.0),
                 size: engine.screen_size(),
                 color: Color { r: 0.0, g: 0.0, b: 0.0, a: alpha },
-                texture: None,
-                atlas_index: 0.0,
+                pic:None
             });
         }
 

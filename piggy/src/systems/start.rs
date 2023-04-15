@@ -94,11 +94,11 @@ pub fn start(r: &mut Registry, start: &StartEvent, engine: &mut dyn Engine) {
         map_to_load.grid.for_each(|cell, index| {
             if let Some(wall) = cell.wall {
                 let tile = grid.get_mut(index).unwrap();
-                tile.wall = Some(wall);
+               // tile.wall = Some(wall.);
                 tile.clips = true;
             }
-            if let Some(thing) = cell.thing {
-                spawn_thing(r, thing, index, cell.thing_facing);
+            if let Some(e) = &cell.entity {
+                //spawn_thing(r, thing, index, cell.thing_facing);
             }
         });
         {
