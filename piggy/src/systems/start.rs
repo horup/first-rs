@@ -13,7 +13,21 @@ use engine_sdk::{
 };
 
 fn spawn_player(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
-
+    let mut e = r.spawn();
+    let mut sprite = Sprite {
+        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        texture:0,
+        atlas_index:0.0,
+        opacity: None,
+        facing:map_entity.facing,
+        radius: 0.3,
+        clips: true,
+        ..Default::default()
+    };
+    sprite.hidden = true;
+    e.attach(sprite);
+    e.attach(Player::default());
+    e.attach(Health::default());
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
