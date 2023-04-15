@@ -21,27 +21,40 @@ impl Editor {
     pub fn selected_atlas_def(&self) -> Option<Def> {
         match self.tool {
             Tool::PlaceWall => self.selected_wall.clone(),
-            Tool::PlaceThing => self.selected_entity.clone(),
+            Tool::PlaceEntity => self.selected_entity.clone(),
         }
     }
 
     pub fn update(&mut self, engine:&mut dyn Engine) {
         engine.set_cursor_grabbed(true);
-        if engine.key_just_pressed(VirtualKeyCode::T) {
-            self.show_atlas_def_selector = !self.show_atlas_def_selector;
+        if engine.key_just_pressed(VirtualKeyCode::Escape) {
+            self.show_atlas_def_selector = false;
         }
+
+        if self.show_atlas_def_selector == false {
+            if engine.key_just_pressed(VirtualKeyCode::Q) {
+                self.tool = Tool::PlaceWall;
+                self.show_atlas_def_selector = true;
+            }
+            if engine.key_just_pressed(VirtualKeyCode::E) {
+                self.tool = Tool::PlaceEntity;
+                self.show_atlas_def_selector = true;
+            }
+        }
+       
 
         if self.show_atlas_def_selector {
             let atlas_defs = match self.tool {
                 Tool::PlaceWall => &self.walls,
-                Tool::PlaceThing => &self.entities,
+                Tool::PlaceEntity => &self.entities,
             };
             let selected = self.atlas_def_selector(engine, &atlas_defs);
             if let Some(selected) = selected {
                 match self.tool {
                     Tool::PlaceWall => self.selected_wall = Some(selected),
-                    Tool::PlaceThing => self.selected_entity = Some(selected),
+                    Tool::PlaceEntity => self.selected_entity = Some(selected),
                 }
+                self.show_atlas_def_selector = false;
             }
         } else {
             self.camera.update(engine);
@@ -161,7 +174,7 @@ impl Editor {
                         }
                     }
                 },
-                Tool::PlaceThing => {
+                Tool::PlaceEntity => {
                     if let Some(cell) = self.map.grid.get_mut(self.camera.grid_cursor.into()) {
                         if engine.mouse_down(0) {
                             cell.entity = Some(Entity {
@@ -202,7 +215,7 @@ impl Editor {
                     screen_pos: cursor_pos - vec2(0.0, 12.0),
                     text: match self.tool {
                         Tool::PlaceWall => "Wall",
-                        Tool::PlaceThing => "Thing",
+                        Tool::PlaceEntity => "Thing",
                     }.to_string(),
                     scale: 12.0,
                     color: Color::WHITE,
@@ -228,10 +241,10 @@ impl Editor {
         let size = 64.0;
         let ctx = engine.egui().clone();
 
-        egui::Window::new("Toolbox").show(&ctx, |ui|{
+        /*egui::Window::new("Toolbox").show(&ctx, |ui|{
             ui.radio_value(&mut self.tool, Tool::PlaceWall, Tool::PlaceWall.to_string());
             ui.radio_value(&mut self.tool, Tool::PlaceThing, Tool::PlaceThing.to_string()); 
-        });
+        });*/
 
         /*egui::Window::new("Textures").show(&ctx, |ui|{
             egui::containers::ScrollArea::vertical().show(ui, |ui|{

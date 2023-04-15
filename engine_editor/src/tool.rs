@@ -4,14 +4,14 @@ use serde::{Serialize, Deserialize};
 #[derive(PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Tool {
     PlaceWall,
-    PlaceThing
+    PlaceEntity
 }
 
 impl ToString for Tool {
     fn to_string(&self) -> String {
         match self {
             Tool::PlaceWall {..} => "Wall".to_string(),
-            Tool::PlaceThing {..}=> "Thing".to_string(),
+            Tool::PlaceEntity {..}=> "Thing".to_string(),
         }
     }
 }
