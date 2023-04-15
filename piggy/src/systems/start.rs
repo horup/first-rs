@@ -9,15 +9,14 @@ use crate::{
     textures::{self, CEILING_GREY, FLOOR_GREY},
 };
 use engine_sdk::{
-    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity, egui::epaint::ahash::HashMap,
+    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity, egui::epaint::ahash::HashMap, Pic,
 };
 
 fn spawn_player(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let mut e = r.spawn();
     let mut sprite = Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
-        texture:0,
-        atlas_index:0.0,
+        pic:Pic::new(0, 0),
         opacity: None,
         facing:map_entity.facing,
         radius: 0.3,

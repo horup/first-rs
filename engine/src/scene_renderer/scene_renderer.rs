@@ -353,8 +353,8 @@ impl SceneRenderer {
         let color = [1.0, 1.0, 1.0, sprite.opacity.unwrap_or(1.0)];
         let start_vertex = self.sprites.vertices.len() as u32;
         let start_index = self.sprites.indicies.len() as u32;
-        let u = atlas.u(sprite.atlas_index as u16);
-        let v = atlas.v(sprite.atlas_index as u16);
+        let u = atlas.u(sprite.pic.index as u16);
+        let v = atlas.v(sprite.pic.index as u16);
         match sprite.sprite_type {
             engine_sdk::SpriteType::Wall | engine_sdk::SpriteType::Facing => {
                 let sr = 0.5;
@@ -396,8 +396,8 @@ impl SceneRenderer {
                 let a = vec3(facing.cos(), facing.sin(), 0.0);
                 let b = -vec3(a.y, -a.x, 0.0);
                 let wall = [-sr * a + -sr *b, -sr * a + sr * b, sr * a + sr * b, sr * a - sr * b];
-                let u = atlas.u(sprite.atlas_index as u16);
-                let v = atlas.v(sprite.atlas_index as u16);
+                let u = atlas.u(sprite.pic.index as u16);
+                let v = atlas.v(sprite.pic.index as u16);
                 let wall = [Vertex {
                     position: wall[0].into(),
                     color,
@@ -435,13 +435,13 @@ impl SceneRenderer {
 
         let end_index = self.sprites.indicies.len() as u32;
         if let Some(DrawCall::DrawSprite { texture, range }) = self.draw_calls.last_mut() {
-            if sprite.texture == *texture {
+            if sprite.pic.atlas == *texture {
                 range.end = end_index;
                 return;
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawSprite { texture: sprite.texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawSprite { texture: sprite.pic.atlas, range: start_index..end_index });
             
     }
 
@@ -517,7 +517,7 @@ impl SceneRenderer {
         for id in scene.iter() {
             if let Some(sprite) = sprites.get(id) {
                 if !sprite.hidden {
-                    textures.insert(sprite.texture, ());
+                    textures.insert(sprite.pic.atlas, ());
                     if sprite.opacity.is_none() {
                         self.opaque_sprites.push(id);
                     } else {
@@ -536,7 +536,7 @@ impl SceneRenderer {
         for texture in textures {
             for sprite in sprites.iter() {
                 if let Some(sprite) = scene.component::<Sprite>(*sprite) {
-                    if sprite.texture == texture {
+                    if sprite.pic.atlas == texture {
                         if let Some(texture) = graphics.textures.get(&texture) {
                             self.sprite(camera, &sprite, &texture.atlas);
                         }
@@ -550,9 +550,9 @@ impl SceneRenderer {
         // sort sprites based upon texture (might improve performance since textures of same type might be closer together ?)
         sprites.sort_by(|a, b|{
             if let (Some(a), Some(b)) = (scene.component::<Sprite>(*a), scene.component::<Sprite>(*b)) {
-                if a.texture < b.texture {
+                if a.pic.atlas < b.pic.atlas {
                     return Ordering::Greater;
-                } else if a.texture > b.texture {
+                } else if a.pic.atlas > b.pic.atlas {
                     return Ordering::Less;
                 }
             }
@@ -577,7 +577,7 @@ impl SceneRenderer {
         // and draw
         for sprite in sprites.iter() {
             if let Some(sprite) = scene.component::<Sprite>(*sprite) {
-                if let Some(texture) = graphics.textures.get(&sprite.texture) {
+                if let Some(texture) = graphics.textures.get(&sprite.pic.atlas) {
                     self.sprite(camera, &sprite, &texture.atlas);
                 }
             }

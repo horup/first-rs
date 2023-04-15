@@ -11,7 +11,7 @@ pub fn item_pickup(registry:&mut Registry) {
             let id = item.id;
             let pickup_sound = item.item.pickup_sound;
             if v.length() < pickup_radius {
-                let texture = item.sprite.texture;
+                let texture = item.sprite.pic.atlas;
                 registry.push(move |reg|{
                     reg.singleton_mut::<Global>().unwrap().flash.flash(0.2, 0.5);
                     reg.despawn(id);

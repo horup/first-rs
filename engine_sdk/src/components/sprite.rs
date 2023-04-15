@@ -4,6 +4,8 @@ use registry::uuid::{Uuid, uuid};
 use serde::{Serialize, Deserialize};
 use registry::Component;
 
+use crate::Pic;
+
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub enum SpriteType {
     Facing,
@@ -21,11 +23,10 @@ impl Default for SpriteType {
 pub struct Sprite {
     pub pos:Vec3,
     pub vel:Vec3,
-    pub texture:u32,
+    pub pic:Pic,
     pub opacity:Option<f32>,
     pub sprite_type:SpriteType,
     pub facing:f32,
-    pub atlas_index:f32,
     pub radius:f32,
     pub clips:bool,
     pub hidden:bool
