@@ -14,7 +14,7 @@ pub struct Editor {
     pub entities:Vec<Def>,
     pub selected_wall:Option<Def>,
     pub selected_entity:Option<Def>,
-    pub show_atlas_def_selector:bool
+    pub show_def_selector:bool
 }
 
 impl Editor {
@@ -28,33 +28,33 @@ impl Editor {
     pub fn update(&mut self, engine:&mut dyn Engine) {
         engine.set_cursor_grabbed(true);
         if engine.key_just_pressed(VirtualKeyCode::Escape) {
-            self.show_atlas_def_selector = false;
+            self.show_def_selector = false;
         }
 
-        if self.show_atlas_def_selector == false {
+        if self.show_def_selector == false {
             if engine.key_just_pressed(VirtualKeyCode::Q) {
                 self.tool = Tool::PlaceWall;
-                self.show_atlas_def_selector = true;
+                self.show_def_selector = true;
             }
             if engine.key_just_pressed(VirtualKeyCode::E) {
                 self.tool = Tool::PlaceEntity;
-                self.show_atlas_def_selector = true;
+                self.show_def_selector = true;
             }
         }
        
 
-        if self.show_atlas_def_selector {
+        if self.show_def_selector {
             let atlas_defs = match self.tool {
                 Tool::PlaceWall => &self.walls,
                 Tool::PlaceEntity => &self.entities,
             };
-            let selected = self.atlas_def_selector(engine, &atlas_defs);
+            let selected = self.def_selector(engine, &atlas_defs);
             if let Some(selected) = selected {
                 match self.tool {
                     Tool::PlaceWall => self.selected_wall = Some(selected),
                     Tool::PlaceEntity => self.selected_entity = Some(selected),
                 }
-                self.show_atlas_def_selector = false;
+                self.show_def_selector = false;
             }
         } else {
             self.camera.update(engine);
@@ -67,7 +67,7 @@ impl Editor {
         }
     }
 
-    fn atlas_def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[Def]) -> Option<Def> {
+    fn def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[Def]) -> Option<Def> {
         let mut selected:Option<Def> = None;
         let screen_size = engine.screen_size();
         let mut pos = vec2(0.0, 0.0);
