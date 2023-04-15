@@ -180,7 +180,7 @@ impl Editor {
                             cell.entity = Some(MapEntity {
                                 pic: def.pic,
                                 facing: 0.0,
-                                class: "Unknown".into(),
+                                class: def.class.clone(),
                                 ..Default::default()
                             })
                         } else if engine.mouse_down(1) {

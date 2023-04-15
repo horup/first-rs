@@ -4,7 +4,7 @@ use crate::Pic;
 #[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Def {
     pub pic:Pic,
-    pub tags:Vec<String>
+    pub class:String
 }
 
 pub trait Editor {

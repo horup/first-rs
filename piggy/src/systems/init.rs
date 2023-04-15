@@ -35,15 +35,15 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     if let Some(editor) = engine.editor() {
         editor.def_wall(Def {
             pic:Pic::new(textures::WALLS, 0),
-            tags:vec!["Walls".into()]
+            class:"wall_wood".into()
         });
         editor.def_wall(Def {
             pic:Pic::new(textures::WALLS, 1),
-            tags:vec!["Walls".into()]
+            class:"wall_wood_window".into()
         });
 
-        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 0), tags: vec!["SpawnPlayer".into(), "Marker".into()] });
-        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 1), tags: vec!["ExitLevel".into(), "Marker".into()] });
+        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 0), class:"spawn_player".into() });
+        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 1), class:"exit".into() });
     }
     
     

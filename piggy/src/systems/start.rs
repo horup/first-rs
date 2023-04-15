@@ -1,3 +1,4 @@
+
 use crate::{
     components::{
         Activator, Door, Effector, Event, Health, Item, Mob, Player,
@@ -8,11 +9,22 @@ use crate::{
     textures::{self, CEILING_GREY, FLOOR_GREY},
 };
 use engine_sdk::{
-    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity,
+    glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity, egui::epaint::ahash::HashMap,
 };
 
-pub fn spawn_entity(registry: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
-    let mut sprite = Sprite {
+fn spawn_player(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+
+}
+
+pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+    let class = map_entity.class.as_str();
+    match class {
+        "spawn_player" => spawn_player(r, map_entity, index),
+        _ => {}
+    }
+
+
+   /* let mut sprite = Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         texture: map_entity.pic.atlas,
         opacity: None,
@@ -20,9 +32,7 @@ pub fn spawn_entity(registry: &mut Registry, map_entity:&MapEntity, index: (i32,
         radius: 0.3,
         clips: true,
         ..Default::default()
-    };
-
-    let mut e = registry.spawn();
+    };*/
 
    /* match thing {
         textures::THING_MARKER_EXIT => {
@@ -75,8 +85,6 @@ pub fn spawn_entity(registry: &mut Registry, map_entity:&MapEntity, index: (i32,
         }
         _ => {}
     }*/
-
-    e.attach(sprite);
 }
 
 pub fn start(r: &mut Registry, start: &StartEvent, engine: &mut dyn Engine) {
