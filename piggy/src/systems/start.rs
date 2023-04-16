@@ -45,11 +45,30 @@ fn spawn_item(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     e.attach(Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         clips: false,
-        hidden: false,
         pic:map_entity.pic,
         ..Default::default()
     });
     e.attach(Item::new(1.0));
+}
+
+fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+    let mut e = r.spawn();
+    let pos = Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5);
+    e.attach(Sprite {
+        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        clips: false,
+        facing:map_entity.facing,
+        pic:map_entity.pic,
+        sprite_type:SpriteType::Wall,
+        ..Default::default()
+    });
+    e.attach(Door {
+        pos: pos,
+        ..Default::default()
+    });
+    e.attach(Activator::Door {
+        key: None,
+    });
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
@@ -58,6 +77,7 @@ pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) 
         "spawn_player" => spawn_player(r, map_entity, index),
         "exit" => spawn_exit(r, map_entity, index),
         "item" => spawn_item(r, map_entity, index),
+        "door" => spawn_door(r, map_entity, index),
         _ => {}
     }
 
