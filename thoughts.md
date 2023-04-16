@@ -1,4 +1,10 @@
 
+
+
+maybe map should just be an array of entities, including walls, monsters, etc.
+maybe a grid is not needed. this would atlest be flexible.
+
+
 Maybe i need an intro and a menu?
 
 I need a way to despawn all entities based on some premise.
