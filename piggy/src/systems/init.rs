@@ -46,20 +46,22 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         editor.def_entity(Def::new(atlases::MARKERS, 1, "exit"));
 
         // doors
-        editor.def_entity(Def::new(atlases::DOORS, 0, "door_white"));
-        editor.def_entity(Def::new(atlases::DOORS, 1, "door_blue"));
-        editor.def_entity(Def::new(atlases::DOORS, 2, "door_yellow"));
+        for i in 0..3 {
+            editor.def_entity(Def::new(atlases::DOORS, i, "door"));
+        }
 
         // items
-        editor.def_entity(Def::new(atlases::ITEMS, 0, "item_pokemoncard"));
-        editor.def_entity(Def::new(atlases::ITEMS, 1, "item_key_blue"));
-        editor.def_entity(Def::new(atlases::ITEMS, 2, "item_key_gold"));
+        for i in 0..3 {
+            editor.def_entity(Def::new(atlases::ITEMS, i, "item"));
+        }
 
         // creatures
         editor.def_entity(Def::new(atlases::CREATURES, 2, "creature_piggy"));
         
         // decorations
-        editor.def_entity(Def::new(atlases::DECORATIONS, 0, "decoration_plant"));
+        for i in 0..1 {
+            editor.def_entity(Def::new(atlases::DECORATIONS, i, "decoration"));
+        }
     }
     
     

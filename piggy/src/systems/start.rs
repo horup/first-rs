@@ -34,10 +34,22 @@ fn spawn_exit(r: &mut Registry, _map_entity:&MapEntity, index: (i32, i32)) {
     e.attach(Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
         clips: false,
-        hidden: false,
+        hidden: true,
         ..Default::default()
     });
     e.attach(Effector::ExitMarker);
+}
+
+fn spawn_item(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+    let mut e = r.spawn();
+    e.attach(Sprite {
+        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        clips: false,
+        hidden: false,
+        pic:map_entity.pic,
+        ..Default::default()
+    });
+    e.attach(Item::new(1.0));
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
@@ -45,6 +57,7 @@ pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) 
     match class {
         "spawn_player" => spawn_player(r, map_entity, index),
         "exit" => spawn_exit(r, map_entity, index),
+        "item" => spawn_item(r, map_entity, index),
         _ => {}
     }
 
