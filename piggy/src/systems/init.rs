@@ -1,6 +1,6 @@
 use engine_sdk::{LoadAtlasParams, Engine, image, Atlas, registry::Registry, Def, Pic};
 
-use crate::{textures, sounds, components::{Event, StartEvent}};
+use crate::{textures, sounds, components::{Event, StartEvent}, atlases};
 
 pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     let start = engine.time();
@@ -30,20 +30,36 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         };
     }
 
-    load_atlas!(textures::WALLS, "../../assets/textures/walls.png", Atlas::new(8, 8));
-    load_atlas!(textures::MARKERS, "../../assets/textures/markers.png", Atlas::new(8, 8));
+    load_atlas!(atlases::TILES, "../../assets/atlases/tiles.png", Atlas::new(8, 8));
+    load_atlas!(atlases::CREATURES, "../../assets/atlases/creatures.png", Atlas::new(8, 8));
+    load_atlas!(atlases::DECORATIONS, "../../assets/atlases/decorations.png", Atlas::new(8, 8));
+    load_atlas!(atlases::ITEMS, "../../assets/atlases/items.png", Atlas::new(8, 8));
+    load_atlas!(atlases::MARKERS, "../../assets/atlases/markers.png", Atlas::new(8, 8));
+    load_atlas!(atlases::DOORS, "../../assets/atlases/doors.png", Atlas::new(8, 8));
     if let Some(editor) = engine.editor() {
-        editor.def_wall(Def {
-            pic:Pic::new(textures::WALLS, 0),
-            class:"wall_wood".into()
-        });
-        editor.def_wall(Def {
-            pic:Pic::new(textures::WALLS, 1),
-            class:"wall_wood_window".into()
-        });
+        for i in 0..7 {
+            editor.def_wall(Def::new(atlases::TILES, i, "tile"));
+        }
 
-        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 0), class:"spawn_player".into() });
-        editor.def_entity(Def { pic:Pic::new(textures::MARKERS, 1), class:"exit".into() });
+        // markers
+        editor.def_entity(Def::new(atlases::MARKERS, 0, "spawn_player"));
+        editor.def_entity(Def::new(atlases::MARKERS, 1, "exit"));
+
+        // doors
+        editor.def_entity(Def::new(atlases::DOORS, 0, "door_white"));
+        editor.def_entity(Def::new(atlases::DOORS, 1, "door_blue"));
+        editor.def_entity(Def::new(atlases::DOORS, 2, "door_yellow"));
+
+        // items
+        editor.def_entity(Def::new(atlases::ITEMS, 0, "item_pokemoncard"));
+        editor.def_entity(Def::new(atlases::ITEMS, 1, "item_key_blue"));
+        editor.def_entity(Def::new(atlases::ITEMS, 2, "item_key_gold"));
+
+        // creatures
+        editor.def_entity(Def::new(atlases::CREATURES, 2, "creature_piggy"));
+        
+        // decorations
+        editor.def_entity(Def::new(atlases::DECORATIONS, 0, "decoration_plant"));
     }
     
     

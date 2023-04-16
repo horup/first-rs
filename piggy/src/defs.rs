@@ -20,6 +20,15 @@ pub mod textures {
     pub const MARKERS:u32                       = 19;
 }
 
+pub mod atlases {
+    pub const MARKERS:u32                       = 1;
+    pub const CREATURES:u32                     = 2;
+    pub const TILES:u32                         = 3;
+    pub const DECORATIONS:u32                   = 4;
+    pub const ITEMS:u32                         = 5;
+    pub const DOORS:u32                         = 6;
+}
+
 pub mod sounds {
     pub const PICKUP:u32 = 1;
     pub const DOOR_OPEN:u32 = 2;
