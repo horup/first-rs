@@ -71,6 +71,9 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     });
 }
 
+fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+}
+
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let class = map_entity.class.as_str();
     match class {
@@ -78,6 +81,7 @@ pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) 
         "exit" => spawn_exit(r, map_entity, index),
         "item" => spawn_item(r, map_entity, index),
         "door" => spawn_door(r, map_entity, index),
+        "mob"  => spawn_mob(r, map_entity, index),
         _ => {}
     }
 

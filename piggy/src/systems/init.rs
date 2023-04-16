@@ -56,7 +56,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         }
 
         // creatures
-        editor.def_entity(Def::new(atlases::CREATURES, 2, "creature_piggy"));
+        editor.def_entity(Def::new(atlases::CREATURES, 2, "mob"));
         
         // decorations
         for i in 0..1 {
