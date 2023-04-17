@@ -40,3 +40,12 @@ pub mod sounds {
     pub const LOSE:u32 = 8;
     pub const FINAL:u32 = 9;
 }
+
+pub mod items {
+    use engine_sdk::Pic;
+    use crate::atlases;
+
+    pub const POKEMONCARD:Pic = Pic::new(atlases::ITEMS, 0);
+    pub const KEY_BLUE:Pic =  Pic::new(atlases::ITEMS, 1);
+    pub const KEY_GOLD:Pic =  Pic::new(atlases::ITEMS, 2);
+}

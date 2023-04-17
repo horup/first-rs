@@ -7,7 +7,7 @@ pub struct Pic {
 }
 
 impl Pic {
-    pub fn new(atlas:u32, index:u16) -> Self {
+    pub const fn new(atlas:u32, index:u16) -> Self {
         Self {
             atlas,
             index

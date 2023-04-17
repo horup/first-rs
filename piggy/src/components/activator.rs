@@ -1,10 +1,10 @@
-use engine_sdk::registry::{Component, uuid::{Uuid, uuid}};
+use engine_sdk::{registry::{Component, uuid::{Uuid, uuid}}, Pic};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum Activator {
     Door {
-        key:Option<u32>
+        key:Option<Pic>
     }
 }
 

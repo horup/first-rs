@@ -4,7 +4,7 @@ use engine_sdk::{
     Color, DrawLineParams, DrawRectParams, DrawTextParams, Engine, HorizontalAlign, math::smootherstep, Pic,
 };
 
-use crate::{components::PlayerState, textures, PiggyFacade, PlayerEntity};
+use crate::{components::PlayerState, textures, PiggyFacade, PlayerEntity, items};
 
 pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
     let facade = registry.facade::<PiggyFacade>();
@@ -33,7 +33,7 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             screen_pos: vec2(16.0, 16.0),
             text: format!(
                 "Pokemon Cards: {:?}",
-                e.player.inventory.amount(textures::THING_ITEM_POKEMONCARD) as u32
+                e.player.inventory.amount(items::POKEMONCARD) as u32
             ),
             color: Color::WHITE,
             scale: 16.0,
@@ -42,20 +42,20 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
 
         let size = vec2(32.0, 32.0);
 
-        if e.player.inventory.amount(textures::THING_ITEM_KEY_BLUE) > 0.0 {
+        if e.player.inventory.has(items::KEY_BLUE) {
             engine.draw_rect(DrawRectParams {
                 pos: vec2(16.0, 32.0),
                 size,
-                pic:Some(Pic::new(textures::THING_ITEM_KEY_BLUE, 0)),
+                pic:Some(items::KEY_BLUE),
                 ..Default::default()
             });
         }
 
-        if e.player.inventory.amount(textures::THING_ITEM_KEY_GOLD) > 0.0 {
+        if e.player.inventory.has(items::KEY_GOLD) {
             engine.draw_rect(DrawRectParams {
                 pos: vec2(16.0, 32.0 + size.y),
                 size,
-                pic:Some(Pic::new(textures::THING_ITEM_KEY_GOLD, 0)),
+                pic:Some(items::KEY_GOLD),
                 ..Default::default()
             });
         }

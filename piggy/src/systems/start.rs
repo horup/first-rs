@@ -6,7 +6,7 @@ use crate::{
     },
     singletons::{Campaign, Global},
     sounds,
-    textures::{self, CEILING_GREY, FLOOR_GREY},
+    textures::{self, CEILING_GREY, FLOOR_GREY}, atlases,
 };
 use engine_sdk::{
     glam::Vec3, registry::Registry, Engine, Grid, SoundEmitter, Sprite, SpriteType, Tile, Tilemap, MapEntity, egui::epaint::ahash::HashMap, Pic,
@@ -66,8 +66,13 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
         pos: pos,
         ..Default::default()
     });
+
     e.attach(Activator::Door {
-        key: None,
+        key: match map_entity.pic.index {
+            1 => Some(Pic::new(atlases::ITEMS, 1)),
+            2 => Some(Pic::new(atlases::ITEMS, 2)),
+            _=> None
+        },
     });
 }
 
