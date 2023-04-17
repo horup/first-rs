@@ -308,7 +308,10 @@ impl Engine {
                             };
                             match state {
                                 ElementState::Pressed => self.input.mouse_pressed[button] = true,
-                                ElementState::Released => self.input.mouse_pressed[button] = false,
+                                ElementState::Released => {
+                                    self.input.mouse_pressed[button] = false;
+                                    self.input.mouse_just_released.push(button as u8);
+                                }
                             }
                         }
                         WindowEvent::Focused(focused) => {

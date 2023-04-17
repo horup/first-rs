@@ -77,6 +77,7 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
 }
 
 fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+    //todo!();
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {

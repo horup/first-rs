@@ -57,6 +57,17 @@ impl engine_sdk::Engine for Engine {
         self.input.mouse_pressed[button as usize % 4]
     }
 
+    
+    fn mouse_just_released(&self, button:u8) -> bool {
+        for b in self.input.mouse_just_released.iter() {
+            if *b == button {
+                return true;
+            }
+        }
+        false
+    }
+
+
     fn key_down(&self, key_code: VirtualKeyCode) -> bool {
         if let Some(k) = self.input.keys_pressed.get(&key_code) {
             return *k;
@@ -266,5 +277,6 @@ impl engine_sdk::Engine for Engine {
         }
         None
     }
+
     
 }

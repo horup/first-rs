@@ -40,6 +40,7 @@ pub trait Engine {
     fn draw_text(&mut self, params:DrawTextParams);
     fn mouse_pos(&self) -> Vec2;
     fn mouse_down(&self, button:u8) -> bool;
+    fn mouse_just_released(&self, button:u8) -> bool;
     fn mouse_wheel_delta(&self) -> Vec2;
     fn mouse_motion(&self) -> Vec2;
     fn key_down(&self, key_code:VirtualKeyCode) -> bool;

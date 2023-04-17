@@ -14,7 +14,8 @@ pub struct Editor {
     pub entities:Vec<Def>,
     pub selected_wall:Option<Def>,
     pub selected_entity:Option<Def>,
-    pub show_def_selector:bool
+    pub show_def_selector:bool,
+    pub active:bool,
 }
 
 impl Editor {
@@ -31,17 +32,14 @@ impl Editor {
             self.show_def_selector = false;
         }
 
-        if self.show_def_selector == false {
-            if engine.key_just_pressed(VirtualKeyCode::Q) {
-                self.tool = Tool::PlaceWall;
-                self.show_def_selector = true;
-            }
-            if engine.key_just_pressed(VirtualKeyCode::E) {
-                self.tool = Tool::PlaceEntity;
-                self.show_def_selector = true;
-            }
+        if engine.key_just_pressed(VirtualKeyCode::Q) {
+            self.tool = Tool::PlaceWall;
+            self.show_def_selector = !self.show_def_selector;
         }
-       
+        if engine.key_just_pressed(VirtualKeyCode::E) {
+            self.tool = Tool::PlaceEntity;
+            self.show_def_selector = !self.show_def_selector;
+        }
 
         if self.show_def_selector {
             let atlas_defs = match self.tool {
@@ -103,7 +101,7 @@ impl Editor {
                         ..Default::default()
                     });
 
-                    if engine.mouse_down(0) {
+                    if engine.mouse_just_released(0) {
                         selected = Some(a.clone());
                     }
                 }
