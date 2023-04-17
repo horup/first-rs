@@ -2,11 +2,12 @@
 pub struct Atlas {
     pub columns:u8,
     pub rows:u8,
+    pub size:u16
 }
 
 impl Default for Atlas {
     fn default() -> Self {
-        Self { rows: 1, columns: 1 }
+        Self { rows: 1, columns: 1, size:1 }
     }
 }
 
@@ -14,8 +15,8 @@ impl Atlas {
     pub fn count(&self) -> u16 {
         self.rows as u16 * self.columns as u16
     }
-    pub fn new(columns:u8, rows:u8) -> Self {
-        Self { rows, columns }
+    pub fn new(columns:u8, rows:u8, size:u16) -> Self {
+        Self { rows, columns, size }
     }
     pub fn w(&self) -> f32 {
         1.0 / self.columns as f32
@@ -26,16 +27,18 @@ impl Atlas {
     }
 
     pub fn u(&self, index:u16) -> [f32;2] {
+        let a = 1.0 / self.size as f32 / 2.0;
         let index = index % self.count();
         let x = index % self.columns as u16;
         let x = x as f32 / self.columns as f32;
-        [x, x+self.w()]
+        [x + a, x+self.w() - a]
     }
 
     pub fn v(&self, index:u16) -> [f32;2] {
+        let a = 1.0 / self.size as f32 / 2.0;
         let index = index % self.count();
         let y = index / self.columns as u16;
         let y = y as f32 / self.rows as f32;
-        [y, y+self.h()]
+        [y + a , y+self.h() - a]
     }
 }

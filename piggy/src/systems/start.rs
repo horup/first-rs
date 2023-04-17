@@ -77,7 +77,7 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
 }
 
 fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
-    //todo!();
+    
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
@@ -176,7 +176,6 @@ pub fn start(r: &mut Registry, start: &StartEvent, engine: &mut dyn Engine) {
             }
             if let Some(e) = &cell.entity {
                 spawn_entity(r, e, index);
-                //spawn_thing(r, thing, index, cell.thing_facing);
             }
         });
         {

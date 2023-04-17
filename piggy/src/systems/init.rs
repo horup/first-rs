@@ -30,12 +30,12 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         };
     }
 
-    load_atlas!(atlases::TILES, "../../assets/atlases/tiles.png", Atlas::new(8, 8));
-    load_atlas!(atlases::CREATURES, "../../assets/atlases/creatures.png", Atlas::new(8, 8));
-    load_atlas!(atlases::DECORATIONS, "../../assets/atlases/decorations.png", Atlas::new(8, 8));
-    load_atlas!(atlases::ITEMS, "../../assets/atlases/items.png", Atlas::new(8, 8));
-    load_atlas!(atlases::MARKERS, "../../assets/atlases/markers.png", Atlas::new(8, 8));
-    load_atlas!(atlases::DOORS, "../../assets/atlases/doors.png", Atlas::new(8, 8));
+    load_atlas!(atlases::TILES, "../../assets/atlases/tiles.png", Atlas::new(8, 8, 192));
+    load_atlas!(atlases::CREATURES, "../../assets/atlases/creatures.png", Atlas::new(8, 8, 192));
+    load_atlas!(atlases::DECORATIONS, "../../assets/atlases/decorations.png", Atlas::new(8, 8, 192));
+    load_atlas!(atlases::ITEMS, "../../assets/atlases/items.png", Atlas::new(8, 8, 192));
+    load_atlas!(atlases::MARKERS, "../../assets/atlases/markers.png", Atlas::new(8, 8, 192));
+    load_atlas!(atlases::DOORS, "../../assets/atlases/doors.png", Atlas::new(8, 8, 192));
     if let Some(editor) = engine.editor() {
         for i in 0..7 {
             editor.def_wall(Def::new(atlases::TILES, i, "tile"));
