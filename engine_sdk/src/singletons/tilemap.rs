@@ -2,13 +2,13 @@
 
 use registry::{Component, uuid::{uuid, Uuid}};
 use serde::{Serialize, Deserialize};
-use crate::{Grid, Tile};
+use crate::{Grid, Tile, Pic};
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Tilemap {
     pub grid:Grid<Tile>,
-    pub floor_texture:u32,
-    pub ceiling_texture:u32
+    pub floor_texture:Pic,
+    pub ceiling_texture:Pic
 }
 
 impl Component for Tilemap {

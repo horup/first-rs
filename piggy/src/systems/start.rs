@@ -182,8 +182,8 @@ pub fn start(r: &mut Registry, start: &StartEvent, engine: &mut dyn Engine) {
         {
             let mut tilemap = r.singleton_mut::<Tilemap>().unwrap();
             tilemap.grid = grid;
-            tilemap.floor_texture = FLOOR_GREY;
-            tilemap.ceiling_texture = CEILING_GREY;
+            tilemap.floor_texture = Pic::new(atlases::TILES, 6);
+            tilemap.ceiling_texture =  Pic::new(atlases::TILES, 5);
             r.singleton_mut::<Global>().unwrap().current_level = level;
         }
         r.spawn().attach(SoundEmitter {

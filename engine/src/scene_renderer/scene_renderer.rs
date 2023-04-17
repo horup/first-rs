@@ -186,27 +186,29 @@ impl SceneRenderer {
     }
 
 
-    fn ceiling(&mut self, ceiling_texture:u32, pos:IVec2) {
+    fn ceiling(&mut self, pic:Pic, pos:IVec2, atlas:&Atlas) {
         let color = [1.0, 1.0, 1.0, 1.0];
         let start_vertex = self.geometry.vertices.len() as u32;
         let start_index = self.geometry.indicies.len() as u32;
         let ceiling = [[1.0, 0.0, 1.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0]];
+        let u = atlas.u(pic.index);
+        let v = atlas.v(pic.index);
         let floor = [Vertex {
             position: ceiling[0],
             color,
-            uv: [0.0, 1.0],
+            uv: [u[0], v[1]],
         }, Vertex {
             position: ceiling[1],
             color,
-            uv: [1.0, 1.0],
+            uv: [u[1], v[1]],
         }, Vertex {
             position: ceiling[2],
             color,
-            uv: [1.0, 0.0],
+            uv: [u[1], v[0]],
         },  Vertex {
             position: ceiling[3],
             color,
-            uv: [0.0, 0.0],
+            uv: [u[0], v[0]],
         }];
 
         for mut v in floor {
@@ -224,36 +226,39 @@ impl SceneRenderer {
 
         let end_index = self.geometry.indicies.len() as u32;
         if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
-            if ceiling_texture == *texture {
+            if pic.atlas == *texture {
                 range.end = end_index;
                 return;
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawGeometry { texture: ceiling_texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: pic.atlas, range: start_index..end_index });
     }
-    fn floor(&mut self, floor_texture:u32, pos:IVec2) {
+    
+    fn floor(&mut self, pic:Pic, pos:IVec2, atlas:&Atlas) {
         let color = [1.0, 1.0, 1.0, 1.0];
         let start_vertex = self.geometry.vertices.len() as u32;
         let start_index = self.geometry.indicies.len() as u32;
 
         let floor = [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 0.0, 0.0]];
+        let u = atlas.u(pic.index);
+        let v = atlas.v(pic.index);
         let floor = [Vertex {
             position: floor[0],
             color,
-            uv: [0.0, 1.0],
+            uv: [u[0], v[1]],
         }, Vertex {
             position: floor[1],
             color,
-            uv: [1.0, 1.0],
+            uv: [u[1], v[1]],
         }, Vertex {
             position: floor[2],
             color,
-            uv: [1.0, 0.0],
+            uv: [u[1], v[0]],
         },  Vertex {
             position: floor[3],
             color,
-            uv: [0.0, 0.0],
+            uv: [u[0], v[0]],
         }];
 
         for mut v in floor {
@@ -271,13 +276,13 @@ impl SceneRenderer {
 
         let end_index = self.geometry.indicies.len() as u32;
         if let Some(DrawCall::DrawGeometry { texture, range }) = self.draw_calls.last_mut() {
-            if floor_texture == *texture {
+            if pic.atlas == *texture {
                 range.end = end_index;
                 return;
             }
         }
 
-        self.draw_calls.push(DrawCall::DrawGeometry { texture: floor_texture, range: start_index..end_index });
+        self.draw_calls.push(DrawCall::DrawGeometry { texture: pic.atlas, range: start_index..end_index });
     }
 
     fn wall(&mut self, pic:Pic, atlas:&Atlas, pos:IVec2, normal:IVec2) {
@@ -495,17 +500,19 @@ impl SceneRenderer {
             }
         }
 
+        let atlas = graphics.get_atlas(Some(tilemap.floor_texture));
         // draw floor 
         tilemap.grid.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                self.floor(tilemap.floor_texture, IVec2::new(x, y));
+                self.floor(tilemap.floor_texture, IVec2::new(x, y), &atlas);
             }
         });
 
+        let atlas = graphics.get_atlas(Some(tilemap.ceiling_texture));
         // draw ceiling
         tilemap.grid.for_each(|cell, (x,y)| {
             if cell.wall.is_none() {
-                self.ceiling(tilemap.ceiling_texture, IVec2::new(x, y));
+                self.ceiling(tilemap.ceiling_texture, IVec2::new(x, y), &atlas);
             }
         });
 
