@@ -92,6 +92,18 @@ fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     });
 }
 
+fn spawn_deco(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
+    let mut e = r.spawn();
+    e.attach(Sprite {
+        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        clips: true,
+        radius:0.3,
+        facing:map_entity.facing,
+        pic:map_entity.pic,
+        ..Default::default()
+    });
+}
+
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let class = map_entity.class.as_str();
     match class {
@@ -100,6 +112,7 @@ pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) 
         "item" => spawn_item(r, map_entity, index),
         "door" => spawn_door(r, map_entity, index),
         "mob"  => spawn_mob(r, map_entity, index),
+        "decoration" => spawn_deco(r, map_entity, index),
         _ => {}
     }
 
