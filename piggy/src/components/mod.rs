@@ -21,3 +21,6 @@ pub use health::*;
 
 mod event;
 pub use event::*;
+
+mod decoration;
+pub use decoration::*;

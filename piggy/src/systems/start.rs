@@ -2,7 +2,7 @@
 use crate::{
     components::{
         Activator, Door, Effector, Event, Health, Item, Mob, Player,
-        PlayerCompletedFinalLevelEvent, StartEvent,
+        PlayerCompletedFinalLevelEvent, StartEvent, Decoration,
     },
     singletons::{Campaign, Global},
     sounds,
@@ -96,12 +96,11 @@ fn spawn_deco(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let mut e = r.spawn();
     e.attach(Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
-        clips: true,
-        radius:0.3,
         facing:map_entity.facing,
         pic:map_entity.pic,
         ..Default::default()
     });
+    e.attach(Decoration::default());
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
