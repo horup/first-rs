@@ -55,7 +55,7 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
     let mut e = r.spawn();
     let pos = Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5);
     e.attach(Sprite {
-        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        pos,
         clips: false,
         facing:map_entity.facing,
         pic:map_entity.pic,
@@ -77,7 +77,19 @@ fn spawn_door(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
 }
 
 fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
-    
+    let mut e = r.spawn();
+    e.attach(Sprite {
+        pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
+        clips: true,
+        radius:0.3,
+        facing:map_entity.facing,
+        pic:map_entity.pic,
+        ..Default::default()
+    });
+    e.attach(Mob {
+        is_killer:true,
+        ..Default::default()
+    });
 }
 
 pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
