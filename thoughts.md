@@ -1,4 +1,7 @@
 
+Put in zombies that are slower than piggy. 
+When cought, you are eaten alive.
+
 I need to generate a marker that blocks access.
 
 maybe map should just be an array of entities, including walls, monsters, etc.
