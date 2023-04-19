@@ -1,5 +1,5 @@
 
-
+I need to generate a marker that blocks access.
 
 maybe map should just be an array of entities, including walls, monsters, etc.
 maybe a grid is not needed. this would atlest be flexible.
