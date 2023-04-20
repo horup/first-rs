@@ -33,6 +33,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         // markers
         editor.def_entity(Def::new(atlases::MARKERS, 0, "spawn_player"));
         editor.def_entity(Def::new(atlases::MARKERS, 1, "exit"));
+        editor.def_entity(Def::new(atlases::MARKERS, 2, "blocks"));
 
         // doors
         for i in 0..3 {
@@ -46,6 +47,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
 
         // creatures
         editor.def_entity(Def::new(atlases::CREATURES, 2, "mob"));
+        editor.def_entity(Def::new(atlases::CREATURES, 3, "mob"));
         
         // decorations
         for i in 0..1 {
