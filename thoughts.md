@@ -1,4 +1,6 @@
 
+Impl. beartrap.
+
 Level 3 has piggy in a small room, need a way to stop him.
 Maybe use a trap which can be collected and placed?
 
