@@ -41,7 +41,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
         }
 
         // items
-        for i in 0..3 {
+        for i in 0..5 {
             editor.def_entity(Def::new(atlases::ITEMS, i, "item"));
         }
 

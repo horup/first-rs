@@ -25,7 +25,8 @@ impl Campaign {
         let mut levels = Vec::new();
         //levels.push(Level::from_bytes(include_str!("../../assets/maps/001.map")));
         //levels.push(Level::from_bytes(include_str!("../../assets/maps/002.map")));
-        levels.push(Level::from_bytes(include_str!("../../assets/maps/003.map")));
+        //levels.push(Level::from_bytes(include_str!("../../assets/maps/003.map")));
+        levels.push(Level::from_bytes(include_str!("../../assets/maps/test.map")));
         Self {
             levels
         }
