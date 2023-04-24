@@ -1,4 +1,10 @@
 
+Level 3 has piggy in a small room, need a way to stop him.
+Maybe use a trap which can be collected and placed?
+
+Piggy atlas is clipped, something is wrong with the texture coordinates it seems
+I believe U / V is not calculated 100% correctly in Atlas.RS
+
 Put in zombies that are slower than piggy. 
 When cought, you are eaten alive.
 
