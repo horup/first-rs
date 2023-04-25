@@ -31,6 +31,7 @@ impl Atlas {
         let index = index % self.count();
         let x = index % self.columns as u16;
         let x = x as f32 / self.columns as f32;
+        let a = a / 10.0;
         [x + a, x+self.w() - a]
     }
 
@@ -39,6 +40,7 @@ impl Atlas {
         let index = index % self.count();
         let y = index / self.columns as u16;
         let y = y as f32 / self.rows as f32;
+        let a = a / 10.0;
         [y + a , y+self.h() - a]
     }
 }
