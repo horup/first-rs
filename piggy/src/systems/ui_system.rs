@@ -60,6 +60,16 @@ pub fn ui_system(registry: &mut Registry, engine: &mut dyn Engine) {
             });
         }
 
+        if e.player.inventory.has(items::TRAP) {
+            engine.draw_rect(DrawRectParams {
+                pos: vec2(16.0, 32.0 + size.y),
+                size,
+                pic:Some(items::TRAP),
+                ..Default::default()
+            });
+        }
+        
+
         fn draw_cought(engine: &mut dyn Engine) {
             let size = engine.screen_size();
             engine.draw_text(DrawTextParams {

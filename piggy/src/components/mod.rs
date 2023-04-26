@@ -24,3 +24,6 @@ pub use event::*;
 
 mod decoration;
 pub use decoration::*;
+
+mod trap;
+pub use trap::*;

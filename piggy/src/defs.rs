@@ -48,4 +48,5 @@ pub mod items {
     pub const POKEMONCARD:Pic = Pic::new(atlases::ITEMS, 0);
     pub const KEY_BLUE:Pic =  Pic::new(atlases::ITEMS, 1);
     pub const KEY_GOLD:Pic =  Pic::new(atlases::ITEMS, 2);
+    pub const TRAP:Pic =  Pic::new(atlases::ITEMS, 3);
 }
