@@ -58,6 +58,7 @@ impl Game for Piggy {
         systems::player_system(&mut self.registry, engine);
         systems::mob_system(&mut self.registry, engine);
         systems::physics_system(&mut self.registry, engine);
+        systems::trapping(&mut self.registry);
         systems::item_pickup(&mut self.registry);
         systems::activator_system(&mut self.registry, engine);
         systems::door_system(&mut self.registry, engine);

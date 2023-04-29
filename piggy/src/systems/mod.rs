@@ -42,3 +42,6 @@ pub use diagnostics::*;
 
 mod start;
 pub use start::*;
+
+mod trapping;
+pub use trapping::*;
