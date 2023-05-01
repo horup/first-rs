@@ -1,9 +1,9 @@
 use engine_sdk::{
     registry::{Facade, Registry},
-    SpatialHashmap,
+    SpatialHashmap, Timer,
 };
 
-use crate::{MobEntity, PiggyFacade, TrapEntity};
+use crate::{PiggyFacade, TrapEntity, components::Expire};
 
 pub fn trapping(r: &mut Registry) {
     let mut res = Vec::with_capacity(2);
@@ -23,7 +23,14 @@ pub fn trapping(r: &mut Registry) {
                             if let Some(mut modifiers) = f.modifiers.get_mut(*id) {
                                 trap.trap.triggered = true;
                                 trap.sprite.pic.index = trap.sprite.pic.index - 1; 
-                                modifiers.trap(5.0);
+                                let secs = 5.0;
+                                modifiers.trap(secs);
+                                let trap_id = trap.id;
+                                r.push(move |r|{
+                                    r.component_attach(trap_id, Expire {
+                                        timer: Timer::new(secs),
+                                    })
+                                });
                                 break;
                             }
                         }

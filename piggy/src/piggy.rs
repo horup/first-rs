@@ -1,6 +1,6 @@
 
 use engine_sdk::{Game, Event as EngineEvent, VirtualKeyCode, registry::{Registry}, Sprite, Tilemap, SoundEmitter};
-use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event, PlayerCompletedFinalLevelEvent, StartEvent, Decoration, Trap, Modifiers}, singletons::{Global, Local, Campaign, Timemachine}};
+use crate::{systems::{self, DiagnosticsSystem}, components::{Player, Door, Mob, Activator, Health, Item, Effector, Event, PlayerCompletedFinalLevelEvent, StartEvent, Decoration, Trap, Modifiers, Expire}, singletons::{Global, Local, Campaign, Timemachine}};
 
 pub struct Piggy {
     pub registry:Registry,
@@ -30,6 +30,7 @@ impl Default for Piggy {
         registry.register_component::<Event>();
         registry.register_component::<Trap>();
         registry.register_component::<Modifiers>();
+        registry.register_component::<Expire>();
         Self { registry, 
             diagnostics_system:DiagnosticsSystem::default()
         }
@@ -69,6 +70,7 @@ impl Game for Piggy {
         systems::ui_system(&mut self.registry, engine);
         systems::events_process(&mut self.registry, engine);
         systems::modifiers_update(&mut self.registry, engine.dt());
+        systems::expiring(&mut self.registry, engine.dt());
 
         #[cfg(not(target_arch = "wasm32"))]
         {

@@ -1,15 +1,15 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Timer {
     timeout:f32,
     timer:f32
 }
 
 impl Timer {
-    pub fn new(timeout:f32) -> Self {
+    pub fn new(timeout_secs:f32) -> Self {
         Self {
-            timeout,
+            timeout: timeout_secs,
             timer:0.0
         }
     }
