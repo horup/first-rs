@@ -65,6 +65,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     sound!(sounds::WIN, "../../assets/audio/win.ogg");
     sound!(sounds::LOSE, "../../assets/audio/win.ogg");
     sound!(sounds::FINAL, "../../assets/audio/final.ogg");
+    sound!(sounds::TRAP, "../../assets/audio/trap.ogg");
     
     r.spawn().attach(Event::Start(StartEvent::default()));
 

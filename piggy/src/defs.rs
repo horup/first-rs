@@ -39,6 +39,7 @@ pub mod sounds {
     pub const WIN:u32 = 7;
     pub const LOSE:u32 = 8;
     pub const FINAL:u32 = 9;
+    pub const TRAP:u32 = 10;
 }
 
 pub mod items {

@@ -1,9 +1,9 @@
 use engine_sdk::{
     registry::{Facade, Registry},
-    SpatialHashmap, Timer,
+    SpatialHashmap, Timer, SoundEmitter,
 };
 
-use crate::{PiggyFacade, TrapEntity, components::Expire};
+use crate::{PiggyFacade, TrapEntity, components::Expire, sounds};
 
 pub fn trapping(r: &mut Registry) {
     let mut res = Vec::with_capacity(2);
@@ -29,7 +29,9 @@ pub fn trapping(r: &mut Registry) {
                                 r.push(move |r|{
                                     r.component_attach(trap_id, Expire {
                                         timer: Timer::new(secs),
-                                    })
+                                    });
+
+                                    r.spawn().attach(SoundEmitter::once(sounds::TRAP));
                                 });
                                 break;
                             }
