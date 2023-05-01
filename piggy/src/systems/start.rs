@@ -2,7 +2,7 @@
 use crate::{
     components::{
         Activator, Door, Effector, Event, Health, Item, Mob, Player,
-        PlayerCompletedFinalLevelEvent, StartEvent, Decoration,
+        PlayerCompletedFinalLevelEvent, StartEvent, Decoration, Modifiers,
     },
     singletons::{Campaign, Global},
     sounds,
@@ -90,6 +90,7 @@ fn spawn_mob(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
         is_killer:true,
         ..Default::default()
     });
+    e.attach(Modifiers::default());
 }
 
 fn spawn_deco(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {

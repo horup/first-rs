@@ -27,3 +27,6 @@ pub use decoration::*;
 
 mod trap;
 pub use trap::*;
+
+mod modifiers;
+pub use modifiers::*;

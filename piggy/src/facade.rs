@@ -1,6 +1,6 @@
 use std::cell::RefMut;
 use engine_sdk::{registry::{Facade, Registry, Components, EntityFacade, EntityId}, Sprite};
-use crate::{components::{Door, Mob, Health, Item, Player, Effector, Activator, Decoration, Trap}};
+use crate::{components::{Door, Mob, Health, Item, Player, Effector, Activator, Decoration, Trap, Modifiers}};
 
 pub struct PiggyFacade<'a> {
     pub registry:&'a Registry,
@@ -13,7 +13,8 @@ pub struct PiggyFacade<'a> {
     pub effectors:Components<'a, Effector>,
     pub activators:Components<'a, Activator>,
     pub decorations:Components<'a, Decoration>,
-    pub traps:Components<'a, Trap>
+    pub traps:Components<'a, Trap>,
+    pub modifiers:Components<'a, Modifiers>
 }
 
 impl<'a> Facade<'a> for PiggyFacade<'a> {
@@ -29,7 +30,8 @@ impl<'a> Facade<'a> for PiggyFacade<'a> {
             effectors: registry.components(),
             activators: registry.components(),
             decorations: registry.components(),
-            traps: registry.components()
+            traps: registry.components(),
+            modifiers: registry.components(),
         }
     }
 
@@ -125,7 +127,8 @@ impl<'a> EntityFacade<'a> for ItemEntity<'a> {
 pub struct MobEntity<'a> {
     pub id:EntityId,
     pub sprite:RefMut<'a, Sprite>,
-    pub mob:RefMut<'a, Mob>
+    pub mob:RefMut<'a, Mob>,
+    pub modifiers:RefMut<'a, Modifiers>
 }
 
 impl<'a> EntityFacade<'a> for MobEntity<'a> {
@@ -134,10 +137,12 @@ impl<'a> EntityFacade<'a> for MobEntity<'a> {
     fn query(facade:&'a Self::Facade, id:EntityId) -> Option<Self> {
         let sprite = facade.sprites.get_mut(id)?;
         let mob = facade.mobs.get_mut(id)?;
+        let modifiers = facade.modifiers.get_mut(id)?;
         Some(Self {
             id, 
             sprite,
-            mob
+            mob,
+            modifiers
         })
     }
 }

@@ -33,6 +33,11 @@ pub fn mob_system(registry: &mut Registry, _engine: &mut dyn Engine) -> Option<(
         }
 
         for mut mob_entity in facade.query::<MobEntity>() {
+            if mob_entity.modifiers.is_trapped() {
+                mob_entity.sprite.vel = Vec3::default();
+                continue;
+            }
+
             let v = player_entity.sprite.pos - mob_entity.sprite.pos;
             let dir = v.normalize_or_zero();
             let mob_speed = 2.0;

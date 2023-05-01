@@ -45,3 +45,6 @@ pub use start::*;
 
 mod trapping;
 pub use trapping::*;
+
+mod modifiers_update;
+pub use modifiers_update::*;
