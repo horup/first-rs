@@ -8,7 +8,7 @@ pub fn expiring(r:&mut Registry, dt:f32) {
     for (id, mut expire) in f.expires.iter_mut() {
         expire.timer.tick(dt);
         let a = expire.timer.alpha_capped();
-        let ma = 0.9;
+        let ma = 0.95;
         if a > ma {
             let a = a - ma;
             let a = a / (1.0 - ma);

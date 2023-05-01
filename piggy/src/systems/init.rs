@@ -60,7 +60,7 @@ pub fn init_system(r:&mut Registry, engine:&mut dyn Engine) {
     sound!(sounds::PICKUP_KEY, "../../assets/audio/pickup_key.ogg");
     sound!(sounds::DOOR_OPEN, "../../assets/audio/door_open.ogg");
     sound!(sounds::DOOR_CLOSE, "../../assets/audio/door_close.ogg");
-    //sound!(sounds::MUSIC01, "../../assets/music/iwan_gabovitch.ogg");
+    sound!(sounds::MUSIC01, "../../assets/music/iwan_gabovitch.ogg");
     sound!(sounds::COUGHT, "../../assets/audio/cought.ogg");
     sound!(sounds::WIN, "../../assets/audio/win.ogg");
     sound!(sounds::LOSE, "../../assets/audio/win.ogg");

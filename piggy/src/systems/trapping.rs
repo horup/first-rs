@@ -23,7 +23,7 @@ pub fn trapping(r: &mut Registry) {
                             if let Some(mut modifiers) = f.modifiers.get_mut(*id) {
                                 trap.trap.triggered = true;
                                 trap.sprite.pic.index = trap.sprite.pic.index - 1; 
-                                let secs = 5.0;
+                                let secs = 10.0;
                                 modifiers.trap(secs);
                                 let trap_id = trap.id;
                                 r.push(move |r|{
