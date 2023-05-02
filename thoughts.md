@@ -1,4 +1,10 @@
 
+git modulkes might help me do changes to registry while i am working on piggy.
+Beartrap implemented, works OK.
+UI needs some work.
+maybe restructor code into pre movement and movement code instead of the mess it is now.
+
+
 Impl. beartrap.
 
 Level 3 has piggy in a small room, need a way to stop him.

@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, Def, Pic, MapWall, MapEntity};
+use engine_sdk::{Game, glam::{vec2}, Engine, Color, DrawRectParams, egui::{self, Rect}, Map, DrawLineParams, DrawTextParams, VirtualKeyCode, Rect2, Def, Pic, MapWall, MapEntity, registry::Registry, SoundEmitter};
 use serde::{Serialize, Deserialize};
 
 use crate::{EditorCamera, Tool};
@@ -63,6 +63,11 @@ impl Editor {
             self.draw_cursor(engine);
             self.update_ui(engine);
         }
+
+        let mut r = Registry::new();
+        r.register_component::<SoundEmitter>();
+        engine.play_sounds(&mut r);
+
     }
 
     fn def_selector(&self, engine:&mut dyn Engine, atlas_defs:&[Def]) -> Option<Def> {
