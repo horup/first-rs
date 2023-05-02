@@ -92,7 +92,7 @@ impl HotReloader {
                                 break;
                             }
                             Err(err) => {
-                                println!("Could not load game lib with err:{:?}", err);
+                                // println!("Could not load game lib with err:{:?}", err);
                                 break;
                             }
                         }
@@ -108,7 +108,7 @@ impl HotReloader {
                 //self.events.push(Event::Start);
             }
         } else {
-            println!("Could not load metadata of game lib");
+            // println!("Could not load metadata of game lib");
         }
     }
 }
