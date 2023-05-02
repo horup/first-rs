@@ -41,7 +41,7 @@ fn spawn_exit(r: &mut Registry, _map_entity:&MapEntity, index: (i32, i32)) {
 }
 
 
-fn spawn_block(r: &mut Registry, _map_entity:&MapEntity, index: (i32, i32)) {
+fn spawn_blocks(r: &mut Registry, _map_entity:&MapEntity, index: (i32, i32)) {
     let mut e = r.spawn();
     e.attach(Sprite {
         pos: Vec3::new(index.0 as f32 + 0.5, index.1 as f32 + 0.5, 0.5),
@@ -49,7 +49,7 @@ fn spawn_block(r: &mut Registry, _map_entity:&MapEntity, index: (i32, i32)) {
         hidden: true,
         ..Default::default()
     });
-    e.attach(Effector::ExitMarker);
+    e.attach(Decoration::default());
 }
 
 fn spawn_item(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) {
@@ -121,7 +121,7 @@ pub fn spawn_entity(r: &mut Registry, map_entity:&MapEntity, index: (i32, i32)) 
     match class {
         "spawn_player" => spawn_player(r, map_entity, index),
         "exit" => spawn_exit(r, map_entity, index),
-        "block" => spawn_block(r, map_entity, index),
+        "blocks" => spawn_blocks(r, map_entity, index),
         "item" => spawn_item(r, map_entity, index),
         "door" => spawn_door(r, map_entity, index),
         "mob"  => spawn_mob(r, map_entity, index),
